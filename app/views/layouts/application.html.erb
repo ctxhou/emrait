@@ -5,7 +5,7 @@
         <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-        <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+        <script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry"></script>
         <%= csrf_meta_tags %>
     </head>
     <body>
@@ -13,5 +13,6 @@
             <%= render "units/header" %>
             <%= yield %>
         </div>
+       <%= yield :javascript %>
     </body>
 </html>

@@ -1,0 +1,19 @@
+<div class="search-bar">
+    <%= render "units/clinic_form" %>
+</div>
+
+<input type="hidden" id="lat_val" value="<%= @lat %>">
+<input type="hidden" id="lng_val" value="<%= @lng %>">
+<div class="row">
+    <div class="col-md-4">
+        <div id="list_area"></div>
+    </div>
+    <div class="col-md-8">
+        <div id="gmap"></div>
+    </div>
+</div>
+
+<% content_for :javascript do %>
+<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry"></script>
+<script async="async" data-turbolinks-track="true" src="/assets/dist/clinic_search.js"></script>
+<% end %>

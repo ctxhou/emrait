@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   root :to => "home#index"
   get '/clinic' => "home#clinic"
   get '/shelter' => "home#shelter"
+  get '/clinic_search' => "home#clinic_search"
+  get '/clinic/:lng/:lat' => 'home#get_clinic', :constraints => { :lng => /[\w+\.]+/, :lat => /[\w+\.]+/ }
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

@@ -1,0 +1,21 @@
+<h1>你的所在位置: {{lat}}, {{lng}}</h1>
+{{#if items}}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>診所名稱</th>
+                <th>距離(m)</th>
+                <th></th>
+            </tr>
+        </thead>
+        {{#each items}}
+            <tr>
+                <th>{{@index}}</th>
+                <td>{{id}}</td>
+                <td>{{distance}}</td>
+                <td><a class="glyphicon glyphicon-pushpin js-clinic-location" data-name="{{id}}" aria-hidden="true"></a></td>
+            </tr>
+        {{/each}}
+    </table>
+{{/if}}
