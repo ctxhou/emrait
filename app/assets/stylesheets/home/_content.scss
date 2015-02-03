@@ -1,0 +1,31 @@
+
+#gmap { 
+    height: 600px;
+}
+
+
+#gmap-dropdown {
+    height: 600px;
+}
+
+.js-clinic-location {
+    &:hover {
+        cursor: pointer;
+        text-decoration: none;
+    }
+}
+
+.current_location {
+    padding:6px;
+    color:white;
+    background:rgba(0,0,0,0.6);
+}
+
+.geo_icon:hover {
+    cursor: pointer;
+    color: blue;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+}

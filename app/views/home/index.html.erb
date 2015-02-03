@@ -1,0 +1,22 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>醫院</th>
+            <th>通報119滿床</th>
+            <th>等待看診</th>
+            <th>等待住院</th>
+            <th>等待加護病床</th>
+            <th>等待推床</th>
+        </tr>
+    </thead>
+    <% @json.each do |ary| %>
+        <tr>
+            <td><%= HomeHelper.to_name(ary["hospital"]) %></td>            
+            <td><%= ary["to_119"] %></td>
+            <td><%= ary["wait_see"] %></td>
+            <td><%= ary["wait_bed"] %></td>
+            <td><%= ary["wait_cure_bed"] %></td>
+            <td><%= ary["wait_push_bed"] %></td>
+        </tr>
+    <% end %>
+</table>

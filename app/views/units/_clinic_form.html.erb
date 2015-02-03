@@ -1,0 +1,22 @@
+<form action="/clinic_search" method = "get">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="col-md-12">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="fa fa-location-arrow geo_icon" id="get_geo"></i>
+                </span>
+                <input type="text" class="form-control" name="address" placeholder="輸入你的位置" id="address">
+                <input type="hidden" name="lat" id="lat">
+                <input type="hidden" name="lng" id="lng">
+              </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+        </div>
+<!--         <div class="col-md-2">
+            <input type="text" name="category" placeholder="科別" class="form-control ">
+        </div> -->
+        <div class="col-md-2">
+            <input type="submit" value="submit" class="btn btn-primary">
+        </div>
+    </div>
+</form>

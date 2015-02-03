@@ -1,0 +1,18 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>收容所名稱</th>
+            <th>縣市</th>
+            <th>緯度</th>
+            <th>經度</th>
+        </tr>
+    </thead>
+    <% @json.each do |ary| %>
+        <tr>
+            <td><%= ary["災民收容所名稱"] %></td>
+            <td><%= ary["所在縣市"] %></td>
+            <td><%= ary["lat"] %></td>
+            <td><%= ary["lng"] %></td>
+        </tr>
+    <% end %>
+</table>
