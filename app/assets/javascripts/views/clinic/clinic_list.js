@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var _ = require('underscore');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var templates = require('../../templates/clinic/clinic_list.hbs');
@@ -10,7 +11,8 @@ module.exports = Backbone.Marionette.ItemView.extend({
     initialize: function(options) {
         this.geo_ary = options.geo_ary;
         this.map = options.map;
-        this.listenTo(this.collection, 'sort reset', this.render);
+        this.collection.bind('reset', this.render, this);
+        // this.model.bind('reset', this.render);
     },
 
     events: {

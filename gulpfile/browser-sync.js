@@ -6,6 +6,6 @@ gulp.task('browser-sync', function() {
     var files = config.style.files.concat(config.scripts_dist.files, config.erb.files);
 
     browserSync.init(files, {
-        proxy: "localhost:3000"
+        proxy: "localhost:4000"
     });
 });
