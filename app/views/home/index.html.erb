@@ -1,4 +1,43 @@
-<table class="table">
+<% content_for :javascript do %>
+    <script async="async" data-turbolinks-track="true" src="/assets/dist/home.js"></script>
+<% end %>
+
+<div class="banner-container py2">
+    <div class="banner">EMRAIT</div>
+    <div class="center h4">緊急醫療資源指派與查詢工具</div>
+</div>
+<div class="form-container">
+    <form class="form-horizontal" method="get" action="emergency">
+        <div class="form-group">
+            <div class="col-md-2">
+                <select class="form-control" id="location-select">
+                    <option value="location">地址</option>
+                    <option value="geocode">座標</option>
+                </select>
+            </div>
+            <div id="location-input">
+                <div class="col-md-10" id="location">
+                    <input type="text" class="form-control" name="address" placeholder="輸入所在地址">
+                </div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <label for="injure" class="col-md-2 control-label">傷患人數</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="injure" placeholder="傷患人數" name="injure">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="victims" class="col-md-2 control-label">災民人數</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="victims" placeholder="災民人數" name="victims">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-default pull-right">Submit</button>
+    </form>
+</div>
+<!-- <table class="table">
     <thead>
         <tr>
             <th>醫院</th>
@@ -10,13 +49,13 @@
         </tr>
     </thead>
     <% @json.each do |ary| %>
-        <tr>
-            <td><%= HomeHelper.to_name(ary["hospital"]) %></td>            
-            <td><%= ary["to_119"] %></td>
-            <td><%= ary["wait_see"] %></td>
-            <td><%= ary["wait_bed"] %></td>
-            <td><%= ary["wait_cure_bed"] %></td>
-            <td><%= ary["wait_push_bed"] %></td>
-        </tr>
+    <tr>
+        <td><%= HomeHelper.to_name(ary["hospital"]) %></td>
+        <td><%= ary["to_119"] %></td>
+        <td><%= ary["wait_see"] %></td>
+        <td><%= ary["wait_bed"] %></td>
+        <td><%= ary["wait_cure_bed"] %></td>
+        <td><%= ary["wait_push_bed"] %></td>
+    </tr>
     <% end %>
-</table>
+</table> -->

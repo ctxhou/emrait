@@ -1,6 +1,7 @@
 <div class="search-bar">
     <%= render "units/clinic_form" %>
 </div>
+<h4 style="color: red">注意：依據科別檢索時，因部份診所並未在衛福部登記科別資訊，故無法呈現。</h4>
 <div id="subject_button"></div>
 <input type="hidden" id="lat_val" value="<%= @lat %>">
 <input type="hidden" id="lng_val" value="<%= @lng %>">

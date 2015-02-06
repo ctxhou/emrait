@@ -4,6 +4,7 @@ var geo = {
     geolocation: function(cb) {
         var msg = document.getElementById("msg");
         var that = this;
+        $("#msg").html("取得你的位置中...")
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 var lat = position.coords.latitude,
@@ -12,6 +13,7 @@ var geo = {
                 var city_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+latlng+"&sensor=true_or_false"
                 $.get(city_url, function(data) {
                     var city_name = data.results[0].address_components[5].long_name
+                    $("#msg").empty()
                     cb.call(that, [lat, lng, city_name]);
                 });
             })

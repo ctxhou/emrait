@@ -18,6 +18,6 @@ module.exports = {
     },
 
     erb: {
-        files: ["views/**/*.erb", "views/**/**/*.erb"]
+        files: ["views/**/*.html.erb", "views/**/**/*.html.erb"]
     }
 };

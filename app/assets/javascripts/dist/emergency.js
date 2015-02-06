@@ -6,220 +6,10 @@ Backbone.$ = $;
 
 var Marionette = require('backbone.marionette');
 var bootstrap = require('bootstrap')
-// collection
-var Clinics = require('./collections/clinic_location')
-// view
-var ClinicListView = require('./views/clinic/clinic_list')
-var ClinicMapView = require('./views/clinic/clinic_map')
-
-var GetGeo = require('./module/get_geo')
-require("./vendor/jquery.tinyMap-3.1.3.min")
-
-var clinic_app = new Marionette.Application();
-var geo;
-clinic_app.addRegions({
-    list_area: "#list_area",
-    map_area: "#gmap"
-})
-
-clinic_app.on("before:start", function() {
-    var that = this;
-    var geo = [$("#lat_val").val(), $("#lng_val").val()]
-    var map = $("#gmap").tinyMap({
-        zoom: 15,
-        center: {lat:geo[0], lng:geo[1]}
-    })
-    this.initView(geo, map);
-    $("#get_geo").click(function(event) {
-        GetGeo.geolocation(that.setCoor);
-    });
-})
-
-clinic_app.setCoor = function(coor) {
-    console.log(coor)
-    $("#lat").val(coor[0]);
-    $("#lng").val(coor[1]);
-    $("#address").attr("placeholder", "已定位你的位置")
-    $("#address").prop("readonly", true)
-}
-
-clinic_app.initView = function(geo, map) {
-    var that = this;
-    var clinics = new Clinics({location: geo})
-    clinics.fetch({
-        success: function() {
-            that.refactor_data(that.show_list, clinics, geo, map)
-        }
-    })
-}
-
-clinic_app.show_list = function(clinics, geo, map) {
-    var new_clinics = new Clinics()
-    new_clinics.reset(clinics)
-    var clinicListView = new ClinicListView({collection: new_clinics, geo_ary: geo, map: map})
-    this.list_area.show(clinicListView)
-    var clinicMapView = new ClinicMapView({clinics: clinics, geo: geo, map: map})
-    // this.show_custom_list(clinics, geo, map);
-    var that = this;
-    var subject = []
-    $(".js-subject").click(function(e) {
-        var $target = $(e.currentTarget)
-        if ($target.hasClass('active')) {
-            $target.removeClass('active');
-            subject = _.without(subject, $target.text())
-        } else {
-            $target.addClass('active')
-            subject.push($target.text());
-        }
-        var filterApps = new_clinics.filter(function(model) {
-            return _.some(model.attributes, function(val, attr) {
-                if (jQuery.inArray( attr, subject ) != -1) {
-                    return ~val.indexOf("T")                        
-                }
-            })
-        })
-        var search_clinic = new Clinics();
-        search_clinic.reset(filterApps);
-        var clinicListView = new ClinicListView({collection: search_clinic, geo_ary: geo, map: map})
-        that.list_area.show(clinicListView)
-        var json_filter = search_clinic.toJSON();
-        map.tinyMap('clear', 'marker')
-        new ClinicMapView({clinics: json_filter, geo: geo, map: map})
-    })
-
-}
- 
-var subejct_button = _.template("<button class='btn btn-default js-subject' ><%= sub %></button>")
-// refactor data used to rename data and count distance
-clinic_app.refactor_data = function(cb, clinics, geo, map) {
-    var pos, clinics_add_distance = [], tmp_dis, obj;
-    var now = new google.maps.LatLng(geo[0], geo[1])
-    var clinics_json = clinics.toJSON();
-    var subject_header = ["不分科", "內科", "兒科", "家醫科", "復健科", "眼科", "牙科", "精神科", "皮膚科", "耳鼻喉科", "婦產科", "外科", "口腔顎面外科", "中醫科", "骨科", "神經科", "整形外科", "神經外科", "泌尿科", "病理科", "急診醫學科", "麻醉科", "放射線科", "洗腎科", "齒顎矯正科", "不分科"]
-    var subject = []
-    var that = this;
-    for(var i=0 ; i < clinics_json.length; i+=1) {
-        pos = new google.maps.LatLng(clinics_json[i]["緯度"], clinics_json[i]["經度"]);
-        tmp_dis = Math.round(google.maps.geometry.spherical.computeDistanceBetween(pos, now));
-        obj = clinics_json[i];
-        var show_text = "<h4>"+obj["醫事機構名稱"]+"</h4>"+obj["地址"]+"<br>"+obj["電話"] + that.open_time(obj["看診時段"]);
-        var input_obj = {distance: tmp_dis,addr:[obj["緯度"], obj["經度"]], text: show_text, id: obj["醫事機構名稱"]};
-        $.each(subject_header, function(index, val) {
-            input_obj[val] = clinics_json[i][val]                
-            if (clinics_json[i][val] == "T"){
-                subject.push(val)
-            }
-        });
-        clinics_add_distance.push(input_obj)
-    }
-    // var nearest = distance.indexOf(Math.min.apply(Math, distance));
-    subject = _.uniq(subject)
-    // show subject button
-    $.each(subject, function(index, val) {
-        $("#subject_button").append(subejct_button({sub: val}))
-    });
-    cb.call(this, clinics_add_distance, geo, map)
-}
-clinic_app.open_time = function(time) {
-    if (time == "false") {
-        return ""
-    }
-    var time = time.split("-");
-    var morning = ["早"]
-    var evening = ["下"]
-    var night = ["晚"]
-    $.each(time, function(index, val) {
-        var new_val = val.split("")
-        morning.push(new_val[0])
-        evening.push(new_val[1])
-        night.push(new_val[2])
-    });
-    var inner = "<table class='table table-bordered'><tr><th></th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th></tr><tr>"
-
-    $.each(morning, function(index, val) {
-        if (val == "1") {
-            inner += "<td>O</td>"
-        } else if (val == "0") {
-            inner += "<td>X</td>"
-        } else {
-            inner += "<td>"+val+"</td>"
-        }
-    })
-    inner += "</tr><tr>"
-    $.each(evening, function(index, val) {
-        if (val == "1") {
-            inner += "<td>O</td>"
-        } else if (val == "0") {
-            inner += "<td>X</td>"
-        } else {
-            inner += "<td>"+val+"</td>"
-        }
-    })
-    inner += "</tr><tr>"
-    $.each(night, function(index, val) {
-        if (val == "1") {
-            inner += "<td>O</td>"
-        } else if (val == "0") {
-            inner += "<td>X</td>"
-        } else {
-            inner += "<td>"+val+"</td>"
-        }
-    })
-    inner += "</tr></table>"
-    return inner
-}
-clinic_app.on("initialize:after", function() {
-    if (Backbone.history) {
-        Backbone.history.start();
-    }
-});
-
-clinic_app.start();
-},{"./collections/clinic_location":2,"./module/get_geo":4,"./vendor/jquery.tinyMap-3.1.3.min":7,"./views/clinic/clinic_list":8,"./views/clinic/clinic_map":9,"backbone":14,"backbone.marionette":10,"bootstrap":15,"jquery":6,"underscore":36}],2:[function(require,module,exports){
-var Backbone = require('backbone');
-var $ = require('jquery');
-Backbone.$ = $;
-
-var basic_model = require('../models/basic_model');
-
-module.exports = Backbone.Collection.extend({
-    model: basic_model,
-
-    initialize: function(options) {
-        if (options){
-            this.lng = options.location[0] 
-            this.lat = options.location[1]
-        }
-        this.sort_key = 'distance';
-    },
-
-    url: function() {
-        return "/clinic/" + this.lng + "/" + this.lat
-    },
-
-    comparator: function(a, b) {
-        a = a.get(this.sort_key);
-        b = b.get(this.sort_key);
-        return a > b ?  1
-             : a < b ? -1
-             :          0;
-    },
-
-    sort_by_id: function() {
-        this.sort_key = 'id';
-        this.sort();
-    }
-});
-},{"../models/basic_model":3,"backbone":14,"jquery":6}],3:[function(require,module,exports){
-var Backbone = require('backbone');
-var $ = require('jquery');
-Backbone.$ = $;
+var get_geo = require('./module/get_geo')
 
 
-module.exports = Backbone.Model.extend({
-
-});
-},{"backbone":14,"jquery":6}],4:[function(require,module,exports){
+},{"./module/get_geo":2,"backbone":8,"backbone.marionette":4,"bootstrap":9,"jquery":3,"underscore":22}],2:[function(require,module,exports){
 var $ = require('jquery');
 
 var geo = {
@@ -246,37 +36,7 @@ var geo = {
 }
 
 module.exports = geo
-},{"jquery":6}],5:[function(require,module,exports){
-// hbsfy compiled Handlebars template
-var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "    <table class=\"table\">\n        <thead>\n            <tr>\n                <th>#</th>\n                <th>診所名稱</th>\n                <th>距離(m)</th>\n                <th></th>\n            </tr>\n        </thead>\n";
-  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.items : depth0), {"name":"each","hash":{},"fn":this.program(2, data),"inverse":this.noop,"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  return buffer + "    </table>\n";
-},"2":function(depth0,helpers,partials,data) {
-  var helper, lambda=this.lambda, escapeExpression=this.escapeExpression, functionType="function", helperMissing=helpers.helperMissing;
-  return "            <tr>\n                <th>"
-    + escapeExpression(lambda((data && data.index), depth0))
-    + "</th>\n                <td>"
-    + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
-    + "</td>\n                <td>"
-    + escapeExpression(((helper = (helper = helpers.distance || (depth0 != null ? depth0.distance : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"distance","hash":{},"data":data}) : helper)))
-    + "</td>\n                <td><a class=\"glyphicon glyphicon-pushpin js-clinic-location\" data-name=\""
-    + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
-    + "\" aria-hidden=\"true\"></a></td>\n            </tr>\n";
-},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<h3>你的所在位置: "
-    + escapeExpression(((helper = (helper = helpers.lat || (depth0 != null ? depth0.lat : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"lat","hash":{},"data":data}) : helper)))
-    + ", "
-    + escapeExpression(((helper = (helper = helpers.lng || (depth0 != null ? depth0.lng : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"lng","hash":{},"data":data}) : helper)))
-    + "</h3>\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.items : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  return buffer;
-},"useData":true});
-
-},{"hbsfy/runtime":35}],6:[function(require,module,exports){
+},{"jquery":3}],3:[function(require,module,exports){
 (function (global){
 ;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 /*! jQuery v2.1.3 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
@@ -289,133 +49,7 @@ module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partia
 }).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
-(function (global){
-;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
-(function(m,w,C,u){function q(b,a){var d=[],c=/^[+-]?\d+(\.\d+)?$/,f={lat:"",lng:""};if("string"===typeof b||Array.isArray(b))if(d="string"===typeof b?b.replace(/\s+/,"").split(","):b,2===d.length)c.test(d[0])&&c.test(d[1])&&(f.lat=d[0],f.lng=d[1]);else return b;else if("object"===typeof b){if("function"===typeof b.lat||"function"===typeof b.lng)return b;b.hasOwnProperty("x")&&b.hasOwnProperty("y")?(f.lat=b.x,f.lng=b.y):b.hasOwnProperty("lat")&&b.hasOwnProperty("lng")&&(f.lat=b.lat,f.lng=b.lng)}return!0===
-a?new google.maps.LatLng(f.lat,f.lng):f}function r(b){var a=b.hasOwnProperty("css")?b.css.toString():"";this.setValues(b);this.span=m("<span/>").css({position:"relative",left:"-50%",top:"0","white-space":"nowrap"}).addClass(a);this.div=m("<div/>").css({position:"absolute",display:"none"});this.span.appendTo(this.div)}function x(b,a){var d=m.extend({},B,a),c={},f="";if(w.hasOwnProperty("google")){this.map=null;this._markers=[];this._labels=[];this.container=b;this.options=d;this.googleMapOptions={};
-this.interval=parseInt(this.options.interval,10)||200;for(f in this.options)this.options.hasOwnProperty(f)&&(c=this.options[f],/ControlOptions/g.test(f)&&c.hasOwnProperty("position")&&"string"===typeof c.position&&(this.options[f].position=google.maps.ControlPosition[c.position.toUpperCase()]));this.googleMapOptions=this.options;d.hasOwnProperty("streetView")&&(this.googleMapOptions.streetViewObj=d.streetView,delete this.googleMapOptions.streetView);this.googleMapOptions.center=q(d.center,!0);d.hasOwnProperty("styles")&&
-("string"===typeof d.styles&&y.hasOwnProperty(d.styles)?this.googleMapOptions.styles=y[d.styles]:Array.isArray(d.styles)&&(this.googleMapOptions.styles=d.styles));m(this.container).html(d.loading);this.init()}else console.error("Google Maps API was not loaded.")}var B={autoLocation:!1,center:[24,121],event:null,infoWindowAutoClose:!0,interval:200,kml:[],loading:"\u8b80\u53d6\u4e2d&hellip;",marker:[],markerCluster:!1,markerFitBounds:!1,notfound:"\u627e\u4e0d\u5230\u67e5\u8a62\u7684\u5730\u9ede",polyline:[],
-zoom:8},z=0,A=0,y={},y={greyscale:[{featureType:"all",stylers:[{saturation:-100},{gamma:.5}]}]};r.prototype=new google.maps.OverlayView;r.prototype.onAdd=function(){this.div.appendTo(m(this.getPanes().overlayLayer));this.listeners=[google.maps.event.addListener(this,"visible_changed",this.onRemove)]};r.prototype.draw=function(){var b=this.getProjection(),a={};try{a=b.fromLatLngToDivPixel(this.get("position")),this.div.css({left:a.x+"px",top:a.y+"px",display:"block"}),this.text&&this.span.html(this.text.toString())}catch(d){}};
-r.prototype.onRemove=function(){m(this.div).remove()};x.prototype={VERSION:"3.1.3",_polylines:[],_polygons:[],_circles:[],_kmls:[],_directions:[],_directionsMarkers:[],bounds:new google.maps.LatLngBounds,kml:function(b,a){var d={},c={url:"",map:b,preserveViewport:!1,suppressInfoWindows:!1},f=0;if(a.hasOwnProperty("kml"))if("string"===typeof a.kml)c.url=a.kml,d=new google.maps.KmlLayer(c),this._kmls.push(d);else if(Array.isArray(a.kml))for(f=0;f<a.kml.length;f+=1)"string"===typeof a.kml[f]&&(c.url=
-a.kml[f],d=new google.maps.KmlLayer(c),this._kmls.push(d))},direction:function(b,a){if(a.hasOwnProperty("direction")&&Array.isArray(a.direction))for(var d=0;d<a.direction.length;d+=1)this.directionService(a.direction[d])},markers:function(b,a,d){var c={},f=0,e=0,h=c=0,k=[],l=[];A=z=0;k=this._markers;if(!d||0===k.length&&Array.isArray(a.marker))for(e=0,f=a.marker.length;e<f;e+=1)c=a.marker[e],c.hasOwnProperty("addr")&&(c.parseAddr=q(c.addr,!0),"string"===typeof c.parseAddr?this.markerByGeocoder(b,
-c,a):this.markerDirect(b,c,a));else{if("modify"===d)for(l=this._labels,e=0,f=a.marker.length;e<f;e+=1){if(a.marker[e].hasOwnProperty("id"))for(c=0;c<k.length;c+=1)if(a.marker[e].id===k[c].id&&a.marker[e].hasOwnProperty("addr"))k[c].setPosition(new google.maps.LatLng(a.marker[e].addr[0],a.marker[e].addr[1])),a.marker[e].hasOwnProperty("text")&&(k[c].hasOwnProperty("infoWindow")?"function"===typeof k[c].infoWindow.setContent&&k[c].infoWindow.setContent(a.marker[e].text):(k[c].infoWindow=new google.maps.InfoWindow({content:a.marker[e].text}),
-this.bindEvents(k[c],a.marker[e].event))),a.marker[e].hasOwnProperty("icon")&&k[c].setIcon(a.marker[e].icon);else{if(a.marker[e].hasOwnProperty("forceInsert")&&!0===a.marker[e].forceInsert&&a.marker[e].hasOwnProperty("addr")){a.marker[e].parseAddr=q(a.marker[e].addr,!0);"string"===typeof a.marker[e].parseAddr?this.markerByGeocoder(b,a.marker[e]):this.markerDirect(b,a.marker[e]);break}}else a.marker[e].hasOwnProperty("addr")&&(a.marker[e].parseAddr=q(a.marker[e].addr,!0),"string"===typeof a.marker[e].parseAddr?
-this.markerByGeocoder(b,a.marker[e]):this.markerDirect(b,a.marker[e]));c=0;for(h=l.length;c<h;c+=1)a.marker[e].id===l[c].id&&(a.marker[e].hasOwnProperty("label")&&(l[c].text=a.marker[e].label),a.marker[e].hasOwnProperty("css")&&m(l[c].span).addClass(a.marker[e].css),l[c].draw())}if(a.hasOwnProperty("markerCluster")&&!0===a.markerCluster&&"function"===typeof MarkerClusterer)return new MarkerClusterer(b,this._markers)}},drawPolyline:function(b,a){var d={},c=0,f={},e={},f={},h=0,k=0,f={},l=[],f={},n=
-[],v=[],p={};if(a.hasOwnProperty("polyline")&&Array.isArray(a.polyline))for(k=a.polyline.length-1;0<=k;--k)if(e=a.polyline[k],e.hasOwnProperty("coords")&&Array.isArray(e.coords)){n=new google.maps.MVCArray;for(c=0;c<e.coords.length;c+=1)f=e.coords[c],f=q(f,!0),"function"===typeof f.lat&&n.push(f);f=m.extend({},{strokeColor:e.color||"#FF0000",strokeOpacity:1,strokeWeight:e.width||2},e);d=new google.maps.Polyline(f);this._polylines.push(d);if(2<n.getLength())for(c=0;c<n.length;c+=1)0<c&&n.length-1>
-c&&v.push({location:n.getAt(c),stopover:!1});e.hasOwnProperty("event")&&this.bindEvents(d,e.event);e.hasOwnProperty("snap")&&!0===e.snap?(f=new google.maps.DirectionsService,f.route({origin:n.getAt(0),waypoints:v,destination:n.getAt(n.length-1),travelMode:google.maps.DirectionsTravelMode.DRIVING},function(b,a){if(a===google.maps.DirectionsStatus.OK){c=0;for(h=b.routes[0].overview_path;c<h.length;c+=1)l.push(h[c]);d.setPath(l);"function"===typeof e.getDistance&&(p=b.routes[0].legs[0].distance,e.getDistance.call(this,
-p))}})):(d.setPath(n),google.maps.hasOwnProperty("geometry")&&google.maps.geometry.hasOwnProperty("spherical")&&"function"===typeof google.maps.geometry.spherical.computeDistanceBetween&&(p=google.maps.geometry.spherical.computeDistanceBetween(n.getAt(0),n.getAt(n.length-1)),"function"===typeof e.getDistance&&e.getDistance.call(this,p)));d.setMap(b)}},drawPolygon:function(b,a){var d={},c=0,d=0,f={},f={},e=0,d={},h=[];if(a.hasOwnProperty("polygon")&&Array.isArray(a.polygon))for(e=a.polygon.length;c<
-e;c+=1)if(h=[],a.polygon[c].hasOwnProperty("coords")){for(d=0;d<a.polygon[c].coords.length;d+=1)f=a.polygon[c].coords[d],f=q(f,!0),"function"===typeof f.lat&&h.push(f);d=m.extend({},{path:h,strokeColor:a.polygon[c].color||"#FF0000",strokeOpacity:1,strokeWeight:a.polygon[c].width||2,fillColor:a.polygon[c].fillcolor||"#CC0000",fillOpacity:.35},a.polygon[c]);d=new google.maps.Polygon(d);a.polygon[c].hasOwnProperty("event")&&this.bindEvents(d,a.polygon[c].event);this._polygons.push(d);d.setMap(b)}},drawCircle:function(b,
-a){var d=0,c={},f={},e={},f={};if(a.hasOwnProperty("circle")&&Array.isArray(a.circle))for(d=a.circle.length-1;0<=d;--d)e=a.circle[d],f=m.extend({},{map:b,strokeColor:e.color||"#FF0000",strokeOpacity:e.opacity||.8,strokeWeight:e.width||2,fillColor:e.fillcolor||"#FF0000",fillOpacity:e.fillopacity||.35,radius:e.radius||10,zIndex:100,id:e.hasOwnProperty("id")?e.id:""},e),e.hasOwnProperty("center")&&(c=q(e.center,!0),f.center=c),"function"===typeof c.lat&&(f=new google.maps.Circle(f),this._circles.push(f),
-e.hasOwnProperty("event")&&this.bindEvents(f,e.event))},overlay:function(){var b=this.map,a=this.options;try{this.kml(b,a),this.direction(b,a),this.markers(b,a),this.drawPolyline(b,a),this.drawPolygon(b,a),this.drawCircle(b,a),this.streetView(b,a),this.geoLocation(b,a)}catch(d){console.dir(d)}},markerIcon:function(b){var a=m.extend({},a,b.icon);if(b.hasOwnProperty("icon")){if("string"===typeof b.icon)return b.icon;b.icon.hasOwnProperty("url")&&(a.url=b.icon.url);b.icon.hasOwnProperty("size")&&Array.isArray(b.icon.size)&&
-2===b.icon.size.length&&(a.size=new google.maps.Size(b.icon.size[0],b.icon.size[1]));b.icon.hasOwnProperty("scaledSize")&&Array.isArray(b.icon.scaledSize)&&2===b.icon.scaledSize.length&&(a.scaledSize=new google.maps.Size(b.icon.scaledSize[0],b.icon.scaledSize[1]));b.icon.hasOwnProperty("anchor")&&Array.isArray(b.icon.anchor)&&2===b.icon.anchor.length&&(a.anchor=new google.maps.Point(b.icon.anchor[0],b.icon.anchor[1]))}return a},markerDirect:function(b,a){var d={},c={},c=a.hasOwnProperty("id")?a.id:
-"",d=a.hasOwnProperty("title")?a.title.toString().replace(/<([^>]+)>/g,""):!1,f=a.hasOwnProperty("text")?a.text.toString():!1,e=m.extend({},{map:b,position:a.parseAddr,animation:null,id:c},a),h=this.markerIcon(a);d&&(e.title=d);f&&(e.text=f,e.infoWindow=new google.maps.InfoWindow({content:f}));m.isEmptyObject(h)||(e.icon=h);a.hasOwnProperty("animation")&&"string"===typeof a.animation&&(e.animation=google.maps.Animation[a.animation.toUpperCase()]);d=new google.maps.Marker(e);this._markers.push(d);
-d.hasOwnProperty("position")&&("function"===typeof d.getPosition&&this.bounds.extend(d.position),!0===this.options.markerFitBounds&&this._markers.length===this.options.marker.length&&b.fitBounds(this.bounds));if(!0===this.options.markerCluster&&"function"===typeof MarkerClusterer&&z===this.options.marker.length)return new MarkerClusterer(b,this._markers);a.hasOwnProperty("label")&&(c=new r({text:a.label,map:b,css:a.hasOwnProperty("css")?a.css.toString():"",id:c}),c.bindTo("position",d,"position"),
-c.bindTo("text",d,"position"),c.bindTo("visible",d),this._labels.push(c));this.bindEvents(d,a.event)},markerByGeocoder:function(b,a){var d=this;(new google.maps.Geocoder).geocode({address:a.parseAddr},function(c,f){if(f===google.maps.GeocoderStatus.OVER_QUERY_LIMIT)w.setTimeout(function(){d.markerByGeocoder(b,a)},d.interval);else if(f===google.maps.GeocoderStatus.OK){var e={},h={},h=a.hasOwnProperty("id")?a.id:"",e=a.hasOwnProperty("title")?a.title.toString().replace(/<([^>]+)>/g,""):!1,k=a.hasOwnProperty("text")?
-a.text.toString():!1,l={map:b,position:c[0].geometry.location,animation:null,id:h},n=d.markerIcon(a);e&&(l.title=e);k&&(l.text=k,l.infoWindow=new google.maps.InfoWindow({content:k}));m.isEmptyObject(n)||(l.icon=n);a.hasOwnProperty("animation")&&"string"===typeof a.animation&&(l.animation=google.maps.Animation[a.animation.toUpperCase()]);l=m.extend({},l,a);e=new google.maps.Marker(l);d._markers.push(e);e.hasOwnProperty("position")&&("function"===typeof e.getPosition&&d.bounds.extend(e.position),!0===
-d.options.markerFitBounds&&d._markers.length===d.options.marker.length&&b.fitBounds(d.bounds));if(d.options.hasOwnProperty("markerCluster")&&"function"===typeof MarkerClusterer&&A===d.options.marker.length)return new MarkerClusterer(b,d._markers);a.hasOwnProperty("label")&&(h=new r({text:a.label,map:d.map,css:a.hasOwnProperty("css")?a.css.toString():"",id:h}),h.bindTo("position",e,"position"),h.bindTo("text",e,"position"),h.bindTo("visible",e),d._labels.push(h));d.bindEvents(e,a.event)}})},directionService:function(b){if(b.hasOwnProperty("from")&&
-b.hasOwnProperty("to")){var a=this,d=new google.maps.DirectionsService,c=new google.maps.DirectionsRenderer,f={travelMode:google.maps.DirectionsTravelMode.DRIVING,optimizeWaypoints:b.hasOwnProperty("optimize")?b.optimize:!1},e={},h={},k=[],l={},n=[],v={},p="",g=0,t=0;f.origin=q(b.from,!0);f.destination=q(b.to,!0);b.hasOwnProperty("travel")&&google.maps.TravelMode[b.travel.toString().toUpperCase()]&&(f.travelMode=google.maps.TravelMode[b.travel.toString().toUpperCase()]);b.hasOwnProperty("panel")&&
-(e=m(b.panel));if(b.hasOwnProperty("waypoint")&&Array.isArray(b.waypoint)){g=0;for(t=b.waypoint.length;g<t;g+=1)l={},"string"===typeof b.waypoint[g]||Array.isArray(b.waypoint[g])?l={location:q(b.waypoint[g],!0),stopover:!0}:(b.waypoint[g].hasOwnProperty("location")&&(l.location=q(b.waypoint[g].location,!0)),l.stopover=b.waypoint[g].hasOwnProperty("stopover")?b.waypoint[g].stopover:!0),n.push(b.waypoint[g].text||b.waypoint[g].toString()),k.push(l);f.waypoints=k}d.route(f,function(d,f){var e=0,g=0;
-if(f===google.maps.DirectionsStatus.OK){e=d.routes[0].legs;b.hasOwnProperty("autoViewport")&&(h.preserveViewport=!1===b.autoViewport?!0:!1);try{for(b.hasOwnProperty("fromText")&&(e[0].start_address=b.fromText),b.hasOwnProperty("toText")&&(1===e.length?e[0].end_address=b.toText:e[e.length-1].end_address=b.toText),1===e.length?(v=e[0].end_location,p=e[0].end_address):(v=e[e.length-1].end_location,p=e[e.length-1].end_address),b.hasOwnProperty("icon")&&(h.suppressMarkers=!0,b.icon.hasOwnProperty("from")&&
-"string"===typeof b.icon.from&&a.directionServiceMarker(e[0].start_location,{icon:b.icon.from,text:e[0].start_address}),b.icon.hasOwnProperty("to")&&"string"===typeof b.icon.to&&a.directionServiceMarker(v,{icon:b.icon.to,text:p})),g=0;g<e.length-1;g+=1)e[g].end_address=n[g],b.hasOwnProperty("icon")&&b.icon.hasOwnProperty("waypoint")&&a.directionServiceMarker(e[g].start_location,{icon:b.icon.waypoint,text:e[g].start_address})}catch(k){}a.bindEvents(c,b.event);c.setOptions(h);c.setDirections(d)}});
-c.setMap(a.map);e.length&&c.setPanel(e.get(0));a._directions.push(c)}},directionServiceMarker:function(b,a){var d=m.extend({},{position:b,map:this.map},a),c={};d.hasOwnProperty("text")&&(d.infoWindow=new google.maps.InfoWindow({content:d.text}));c=new google.maps.Marker(d);this._directionsMarkers.push(c);this.bindEvents(c)},bindEvents:function(b,a){var d=this,c={};switch(typeof a){case "function":google.maps.event.addListener(b,"click",a);break;case "object":for(c in a)"function"===typeof a[c]?google.maps.event.addListener(b,
-c,a[c]):a[c].hasOwnProperty("func")&&"function"===typeof a[c].func?a[c].hasOwnProperty("once")&&!0===a[c].once?google.maps.event.addListenerOnce(b,c,a[c].func):google.maps.event.addListener(b,c,a[c].func):"function"===typeof a[c]&&google.maps.event.addListener(b,c,a[c])}b.hasOwnProperty("infoWindow")&&google.maps.event.addListener(b,"click",function(){var a=0,c={};if(d.options.hasOwnProperty("infoWindowAutoClose")&&!0===d.options.infoWindowAutoClose)for(a=0;a<d._markers.length;a+=1)c=d._markers[a],
-c.hasOwnProperty("infoWindow")&&"function"===typeof c.infoWindow.close&&c.infoWindow.close();b.infoWindow.open(d.map,b)})},markerFitBounds:function(b,a){a.hasOwnProperty("markerFitBounds")&&!0===a.markerFitBounds&&b.fitBounds(this.bounds)},streetView:function(b,a){var d={},c=a.hasOwnProperty("streetViewObj")?a.streetViewObj:{},f={heading:0,pitch:0,zoom:1},e={};"function"===typeof b.getStreetView&&a.hasOwnProperty("streetViewObj")&&(d=b.getStreetView(),c.hasOwnProperty("position")?(e=q(c.position,
-!0),c.position="object"!==typeof e?b.getCenter():e):c.position=b.getCenter(),c.hasOwnProperty("pov")&&(c.pov=m.extend({},f,c.pov)),c.hasOwnProperty("visible")&&d.setVisible(c.visible),d.setOptions(c),c.hasOwnProperty("event")&&this.bindEvents(d,c.event))},panto:function(b){var a={},d={},c=this.map;null!==c&&u!==c&&(a=q(b,!0),"string"===typeof a?(d=new google.maps.Geocoder,d.geocode({address:a},function(a,b){b===google.maps.GeocoderStatus.OK&&"function"===typeof c.panTo&&a.length?c.panTo(a[0].geometry.location):
-console.error(b)})):"function"===typeof c.panTo&&c.panTo(a))},clear:function(b){for(var a="marker,circle,polygon,polyline,direction,kml",d="",c=0,f=0,a="string"===typeof b?b.split(","):Array.isArray(b)?b:a.split(","),c=0;c<a.length;c+=1){d="_"+m.trim(a[c].toString().toLowerCase())+"s";if(u!==this[d]&&this[d].length){for(f=0;f<this[d].length;f+=1)this.map===this[d][f].getMap()&&(this[d][f].set("visible",!1),this[d][f].set("directions",null),this[d][f].setMap(null));this[d].length=0}if("direction"===
-a[c])for(f=0;f<this._directionsMarkers.length;f+=1)this._directionsMarkers[f].setMap(null)}},modify:function(b){var a=[],d=[["kml","kml"],["marker","markers"],["direction","direction"],["polyline","drawPolyline"],["polygon","drawPolygon"],["circle","drawCircle"],["streetView","streetView"],["markerFitBounds","markerFitBounds"]],c=0,f=this.map;if(u!==b){for(c=0;c<d.length;c+=1)b.hasOwnProperty(d[c][0])&&a.push(d[c][1]);if(null!==f){if(a.length)for(c=0;c<a.length;c+=1)"function"===typeof this[a[c]]&&
-("streetView"===a[c]&&(b.streetViewObj=b.streetView,delete b.streetView),this[a[c]](f,b,"modify"));else f.setOptions(b);b.hasOwnProperty("event")&&this.bindEvents(f,b.event)}}},destroy:function(){m.data(m(this.container).get(0),"tinyMap",null)},getKML:function(b){var a=m(this.container).data("tinyMap");b=m.extend({},{marker:!0,polyline:!0,direction:!0,download:!1},b);var d='<?xml version="1.0" encoding="UTF-8"?>;<kml xmlns="http://earth.google.com/kml/2.2">;<Document>;<name><![CDATA[]]\x3e</name>;<description><![CDATA[]]\x3e</description>;<Style id="style1">;<IconStyle>;<Icon>;<href>http://maps.google.com/mapfiles/kml/paddle/grn-circle_maps.png</href>;</Icon>;</IconStyle>;</Style>;#PLACEMARKS#;</Document>;</kml>'.split(";"),
-c="<Placemark> <name><![CDATA[]]\x3e</name> <Snippet></Snippet> <description><![CDATA[]]\x3e</description> <styleUrl>#style1</styleUrl> <ExtendedData> </ExtendedData> #DATA# </Placemark>".split(" "),f=[],e=[],e=[],h=[],k=[],l="",n="",q="",p="",p="",g=0,t=f=0,r=0;if(a){if(!0===b.marker)for(f=a._markers,g=0;g<f.length;g+=1)p=f[g].position.lng()+","+f[g].position.lat(),l+=c.join("").replace(/#DATA#/gi,"<Point><coordinates>#LATLNG#,0.000000</coordinates></Point>".replace(/#LATLNG#/gi,p));if(!0===b.polyline)for(e=
-a._polylines,g=0;g<e.length;g+=1){obj=e[g].getPath().getArray();p="";for(f=0;f<obj.length;f+=1)p+=obj[f].lng()+","+obj[f].lat()+",0.000000\n";n+=c.join("").replace(/#DATA#/gi,"<LineString><tessellate>1</tessellate><coordinates>#LATLNG#</coordinates></LineString>".replace(/#LATLNG#/gi,p))}if(!0===b.direction)for(e=a._directions,g=0;g<e.length;g+=1)if(Array.isArray(e[g].directions.routes)&&Array.isArray(e[g].directions.routes[0].legs))for(h=e[g].directions.routes[0].legs,f=0;f<h.length;f+=1)if(Array.isArray(h[f].steps))for(t=
-0;t<h[f].steps.length;t+=1){p="";if(Array.isArray(h[f].steps[t].path))for(r=0;r<h[f].steps[t].path.length;r+=1)k=h[f].steps[t].path[r],u!==k&&"function"===typeof k.lat&&(p+=k.lng()+","+k.lat()+",0.000000\n");q+=c.join("").replace(/#DATA#/gi,"<LineString><tessellate>1</tessellate><coordinates>#LATLNG#</coordinates></LineString>".replace(/#LATLNG#/gi,p))}p=d.join("").replace(/#PLACEMARKS#/gi,l+n+q);if(!0===b.download)w.open("data:application/vnd.google-earth.kml+xml;charset=utf-8;base64,"+w.btoa(unescape(encodeURIComponent(p))));
-else return p}},geoLocation:function(b,a){var d=navigator.geolocation;d&&!0===a.autoLocation&&d.getCurrentPosition(function(a){a&&a.hasOwnProperty("coords")&&b.panTo(new google.maps.LatLng(a.coords.latitude,a.coords.longitude))},function(a){console.error(a)},{maximumAge:6E5,timeout:3E3,enableHighAccuracy:!1})},init:function(){var b=this,a={};"string"===typeof b.options.center?(a=new google.maps.Geocoder,a.geocode({address:b.options.center},function(a,c){try{c===google.maps.GeocoderStatus.OVER_QUERY_LIMIT?
-b.init():c===google.maps.GeocoderStatus.OK&&0!==a.length?u!==a[0]&&a[0].hasOwnProperty("geometry")&&(b.googleMapOptions.center=a[0].geometry.location,b.map=new google.maps.Map(b.container,b.googleMapOptions),google.maps.event.addListenerOnce(b.map,"idle",function(){b.overlay()}),b.bindEvents(b.map,b.options.event)):console.error("Geocoder Error Code: "+c)}catch(f){console.error(f)}})):(b.map=new google.maps.Map(b.container,b.googleMapOptions),google.maps.event.addListenerOnce(b.map,"idle",function(){b.overlay()}),
-b.bindEvents(b.map,b.options.event))}};m.fn.tinyMap=function(b){var a=arguments,d=[],c={};return"string"===typeof b?(this.each(function(){c=m.data(this,"tinyMap");c instanceof x&&"function"===typeof c[b]&&(d=c[b].apply(c,Array.prototype.slice.call(a,1)))}),u!==d?d:this):this.each(function(){m.data(this,"tinyMap")||m.data(this,"tinyMap",new x(this,b))})}})(jQuery,window,document);
-; browserify_shim__define__module__export__(typeof tinymap != "undefined" ? tinymap : window.tinymap);
-
-}).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],8:[function(require,module,exports){
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Marionette = require('backbone.marionette');
-var templates = require('../../templates/clinic/clinic_list.hbs');
-Backbone.$ = $;
-
-module.exports = Backbone.Marionette.ItemView.extend({
-    template: templates,
-
-    initialize: function(options) {
-        this.geo_ary = options.geo_ary;
-        this.map = options.map;
-        this.collection.bind('reset', this.render, this);
-        // this.model.bind('reset', this.render);
-    },
-
-    events: {
-        "click .js-clinic-location": "click_location"
-    },
-
-    templateHelpers: function() {
-        return {
-            lat: this.geo_ary[0],
-            lng: this.geo_ary[1]
-        }
-    },
-
-    click_location: function(e) {
-        var id = $(e.currentTarget).attr("data-name");
-        m = this.map.data('tinyMap');
-        markers = m._markers;
-        var position;
-        for(var i = 0; i < markers.length; i +=1) {
-            marker = markers[i];
-            marker.infoWindow.close();
-            if (id === marker.id) {        
-                marker.infoWindow.open(m.map, marker);
-                m.map.panTo(marker.position);
-                position = marker.position
-            }
-        }
-        this.map.tinyMap('clear', 'direction')
-        this.map.tinyMap('modify', {
-            direction: [
-                {
-                    'from': [this.geo_ary[0], this.geo_ary[1]],
-                    'to': [position.k, position.D]
-                }
-            ]
-        })
-
-
-    }
-});
-},{"../../templates/clinic/clinic_list.hbs":5,"backbone":14,"backbone.marionette":10,"jquery":6,"underscore":36}],9:[function(require,module,exports){
-var $ = require('jquery');
-var Backbone = require('backbone');
-var Marionette = require('backbone.marionette');
-var templates = require('../../templates/clinic/clinic_list.hbs');
-Backbone.$ = $;
-
-module.exports = Backbone.Marionette.ItemView.extend({
-    initialize: function(options) {
-        this.data = options.clinics;
-        this.geo = options.geo
-        this.show_map(options.map);
-    },
-
-    show_map: function(map) {
-        this.data.push({id: "current", addr: [this.geo[0], this.geo[1]],'text': '<strong>目前位置</strong>', 'icon': 'http://app.essoduke.org/tinyMap/4.png', 'label': '目前位置', 'css': 'current_location'})
-        map.tinyMap('modify', { 
-            marker: this.data
-        })
-    }
-});
-
-
-},{"../../templates/clinic/clinic_list.hbs":5,"backbone":14,"backbone.marionette":10,"jquery":6}],10:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 // MarionetteJS (Backbone.Marionette)
 // ----------------------------------
 // v2.3.2
@@ -3545,7 +3179,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
   return Marionette;
 }));
 
-},{"backbone":14,"backbone.babysitter":11,"backbone.wreqr":12,"underscore":13}],11:[function(require,module,exports){
+},{"backbone":8,"backbone.babysitter":5,"backbone.wreqr":6,"underscore":7}],5:[function(require,module,exports){
 // Backbone.BabySitter
 // -------------------
 // v0.1.6
@@ -3737,7 +3371,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
 }));
 
-},{"backbone":14,"underscore":13}],12:[function(require,module,exports){
+},{"backbone":8,"underscore":7}],6:[function(require,module,exports){
 // Backbone.Wreqr (Backbone.Marionette)
 // ----------------------------------
 // v1.3.1
@@ -4179,7 +3813,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
 }));
 
-},{"backbone":14,"underscore":13}],13:[function(require,module,exports){
+},{"backbone":8,"underscore":7}],7:[function(require,module,exports){
 //     Underscore.js 1.6.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -5524,7 +5158,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
   }
 }).call(this);
 
-},{}],14:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 //     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -7134,7 +6768,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
 }));
 
-},{"underscore":36}],15:[function(require,module,exports){
+},{"underscore":22}],9:[function(require,module,exports){
 // This file is autogenerated via the `commonjs` Grunt task. You can require() this file in a CommonJS environment.
 require('../../js/transition.js')
 require('../../js/alert.js')
@@ -7148,7 +6782,7 @@ require('../../js/popover.js')
 require('../../js/scrollspy.js')
 require('../../js/tab.js')
 require('../../js/affix.js')
-},{"../../js/affix.js":16,"../../js/alert.js":17,"../../js/button.js":18,"../../js/carousel.js":19,"../../js/collapse.js":20,"../../js/dropdown.js":21,"../../js/modal.js":22,"../../js/popover.js":23,"../../js/scrollspy.js":24,"../../js/tab.js":25,"../../js/tooltip.js":26,"../../js/transition.js":27}],16:[function(require,module,exports){
+},{"../../js/affix.js":10,"../../js/alert.js":11,"../../js/button.js":12,"../../js/carousel.js":13,"../../js/collapse.js":14,"../../js/dropdown.js":15,"../../js/modal.js":16,"../../js/popover.js":17,"../../js/scrollspy.js":18,"../../js/tab.js":19,"../../js/tooltip.js":20,"../../js/transition.js":21}],10:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: affix.js v3.3.2
  * http://getbootstrap.com/javascript/#affix
@@ -7312,7 +6946,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],17:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: alert.js v3.3.2
  * http://getbootstrap.com/javascript/#alerts
@@ -7408,7 +7042,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],18:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: button.js v3.3.2
  * http://getbootstrap.com/javascript/#buttons
@@ -7526,7 +7160,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],19:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: carousel.js v3.3.2
  * http://getbootstrap.com/javascript/#carousel
@@ -7765,7 +7399,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],20:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: collapse.js v3.3.2
  * http://getbootstrap.com/javascript/#collapse
@@ -7978,7 +7612,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],21:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: dropdown.js v3.3.2
  * http://getbootstrap.com/javascript/#dropdowns
@@ -8141,7 +7775,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],22:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: modal.js v3.3.2
  * http://getbootstrap.com/javascript/#modals
@@ -8467,7 +8101,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],23:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: popover.js v3.3.2
  * http://getbootstrap.com/javascript/#popovers
@@ -8582,7 +8216,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],24:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: scrollspy.js v3.3.2
  * http://getbootstrap.com/javascript/#scrollspy
@@ -8759,7 +8393,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],25:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: tab.js v3.3.2
  * http://getbootstrap.com/javascript/#tabs
@@ -8914,7 +8548,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],26:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: tooltip.js v3.3.2
  * http://getbootstrap.com/javascript/#tooltip
@@ -9388,7 +9022,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],27:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: transition.js v3.3.2
  * http://getbootstrap.com/javascript/#transitions
@@ -9449,607 +9083,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],28:[function(require,module,exports){
-"use strict";
-/*globals Handlebars: true */
-var base = require("./handlebars/base");
-
-// Each of these augment the Handlebars object. No need to setup here.
-// (This is done to easily share code between commonjs and browse envs)
-var SafeString = require("./handlebars/safe-string")["default"];
-var Exception = require("./handlebars/exception")["default"];
-var Utils = require("./handlebars/utils");
-var runtime = require("./handlebars/runtime");
-
-// For compatibility and usage outside of module systems, make the Handlebars object a namespace
-var create = function() {
-  var hb = new base.HandlebarsEnvironment();
-
-  Utils.extend(hb, base);
-  hb.SafeString = SafeString;
-  hb.Exception = Exception;
-  hb.Utils = Utils;
-  hb.escapeExpression = Utils.escapeExpression;
-
-  hb.VM = runtime;
-  hb.template = function(spec) {
-    return runtime.template(spec, hb);
-  };
-
-  return hb;
-};
-
-var Handlebars = create();
-Handlebars.create = create;
-
-Handlebars['default'] = Handlebars;
-
-exports["default"] = Handlebars;
-},{"./handlebars/base":29,"./handlebars/exception":30,"./handlebars/runtime":31,"./handlebars/safe-string":32,"./handlebars/utils":33}],29:[function(require,module,exports){
-"use strict";
-var Utils = require("./utils");
-var Exception = require("./exception")["default"];
-
-var VERSION = "2.0.0";
-exports.VERSION = VERSION;var COMPILER_REVISION = 6;
-exports.COMPILER_REVISION = COMPILER_REVISION;
-var REVISION_CHANGES = {
-  1: '<= 1.0.rc.2', // 1.0.rc.2 is actually rev2 but doesn't report it
-  2: '== 1.0.0-rc.3',
-  3: '== 1.0.0-rc.4',
-  4: '== 1.x.x',
-  5: '== 2.0.0-alpha.x',
-  6: '>= 2.0.0-beta.1'
-};
-exports.REVISION_CHANGES = REVISION_CHANGES;
-var isArray = Utils.isArray,
-    isFunction = Utils.isFunction,
-    toString = Utils.toString,
-    objectType = '[object Object]';
-
-function HandlebarsEnvironment(helpers, partials) {
-  this.helpers = helpers || {};
-  this.partials = partials || {};
-
-  registerDefaultHelpers(this);
-}
-
-exports.HandlebarsEnvironment = HandlebarsEnvironment;HandlebarsEnvironment.prototype = {
-  constructor: HandlebarsEnvironment,
-
-  logger: logger,
-  log: log,
-
-  registerHelper: function(name, fn) {
-    if (toString.call(name) === objectType) {
-      if (fn) { throw new Exception('Arg not supported with multiple helpers'); }
-      Utils.extend(this.helpers, name);
-    } else {
-      this.helpers[name] = fn;
-    }
-  },
-  unregisterHelper: function(name) {
-    delete this.helpers[name];
-  },
-
-  registerPartial: function(name, partial) {
-    if (toString.call(name) === objectType) {
-      Utils.extend(this.partials,  name);
-    } else {
-      this.partials[name] = partial;
-    }
-  },
-  unregisterPartial: function(name) {
-    delete this.partials[name];
-  }
-};
-
-function registerDefaultHelpers(instance) {
-  instance.registerHelper('helperMissing', function(/* [args, ]options */) {
-    if(arguments.length === 1) {
-      // A missing field in a {{foo}} constuct.
-      return undefined;
-    } else {
-      // Someone is actually trying to call something, blow up.
-      throw new Exception("Missing helper: '" + arguments[arguments.length-1].name + "'");
-    }
-  });
-
-  instance.registerHelper('blockHelperMissing', function(context, options) {
-    var inverse = options.inverse,
-        fn = options.fn;
-
-    if(context === true) {
-      return fn(this);
-    } else if(context === false || context == null) {
-      return inverse(this);
-    } else if (isArray(context)) {
-      if(context.length > 0) {
-        if (options.ids) {
-          options.ids = [options.name];
-        }
-
-        return instance.helpers.each(context, options);
-      } else {
-        return inverse(this);
-      }
-    } else {
-      if (options.data && options.ids) {
-        var data = createFrame(options.data);
-        data.contextPath = Utils.appendContextPath(options.data.contextPath, options.name);
-        options = {data: data};
-      }
-
-      return fn(context, options);
-    }
-  });
-
-  instance.registerHelper('each', function(context, options) {
-    if (!options) {
-      throw new Exception('Must pass iterator to #each');
-    }
-
-    var fn = options.fn, inverse = options.inverse;
-    var i = 0, ret = "", data;
-
-    var contextPath;
-    if (options.data && options.ids) {
-      contextPath = Utils.appendContextPath(options.data.contextPath, options.ids[0]) + '.';
-    }
-
-    if (isFunction(context)) { context = context.call(this); }
-
-    if (options.data) {
-      data = createFrame(options.data);
-    }
-
-    if(context && typeof context === 'object') {
-      if (isArray(context)) {
-        for(var j = context.length; i<j; i++) {
-          if (data) {
-            data.index = i;
-            data.first = (i === 0);
-            data.last  = (i === (context.length-1));
-
-            if (contextPath) {
-              data.contextPath = contextPath + i;
-            }
-          }
-          ret = ret + fn(context[i], { data: data });
-        }
-      } else {
-        for(var key in context) {
-          if(context.hasOwnProperty(key)) {
-            if(data) {
-              data.key = key;
-              data.index = i;
-              data.first = (i === 0);
-
-              if (contextPath) {
-                data.contextPath = contextPath + key;
-              }
-            }
-            ret = ret + fn(context[key], {data: data});
-            i++;
-          }
-        }
-      }
-    }
-
-    if(i === 0){
-      ret = inverse(this);
-    }
-
-    return ret;
-  });
-
-  instance.registerHelper('if', function(conditional, options) {
-    if (isFunction(conditional)) { conditional = conditional.call(this); }
-
-    // Default behavior is to render the positive path if the value is truthy and not empty.
-    // The `includeZero` option may be set to treat the condtional as purely not empty based on the
-    // behavior of isEmpty. Effectively this determines if 0 is handled by the positive path or negative.
-    if ((!options.hash.includeZero && !conditional) || Utils.isEmpty(conditional)) {
-      return options.inverse(this);
-    } else {
-      return options.fn(this);
-    }
-  });
-
-  instance.registerHelper('unless', function(conditional, options) {
-    return instance.helpers['if'].call(this, conditional, {fn: options.inverse, inverse: options.fn, hash: options.hash});
-  });
-
-  instance.registerHelper('with', function(context, options) {
-    if (isFunction(context)) { context = context.call(this); }
-
-    var fn = options.fn;
-
-    if (!Utils.isEmpty(context)) {
-      if (options.data && options.ids) {
-        var data = createFrame(options.data);
-        data.contextPath = Utils.appendContextPath(options.data.contextPath, options.ids[0]);
-        options = {data:data};
-      }
-
-      return fn(context, options);
-    } else {
-      return options.inverse(this);
-    }
-  });
-
-  instance.registerHelper('log', function(message, options) {
-    var level = options.data && options.data.level != null ? parseInt(options.data.level, 10) : 1;
-    instance.log(level, message);
-  });
-
-  instance.registerHelper('lookup', function(obj, field) {
-    return obj && obj[field];
-  });
-}
-
-var logger = {
-  methodMap: { 0: 'debug', 1: 'info', 2: 'warn', 3: 'error' },
-
-  // State enum
-  DEBUG: 0,
-  INFO: 1,
-  WARN: 2,
-  ERROR: 3,
-  level: 3,
-
-  // can be overridden in the host environment
-  log: function(level, message) {
-    if (logger.level <= level) {
-      var method = logger.methodMap[level];
-      if (typeof console !== 'undefined' && console[method]) {
-        console[method].call(console, message);
-      }
-    }
-  }
-};
-exports.logger = logger;
-var log = logger.log;
-exports.log = log;
-var createFrame = function(object) {
-  var frame = Utils.extend({}, object);
-  frame._parent = object;
-  return frame;
-};
-exports.createFrame = createFrame;
-},{"./exception":30,"./utils":33}],30:[function(require,module,exports){
-"use strict";
-
-var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
-
-function Exception(message, node) {
-  var line;
-  if (node && node.firstLine) {
-    line = node.firstLine;
-
-    message += ' - ' + line + ':' + node.firstColumn;
-  }
-
-  var tmp = Error.prototype.constructor.call(this, message);
-
-  // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
-  for (var idx = 0; idx < errorProps.length; idx++) {
-    this[errorProps[idx]] = tmp[errorProps[idx]];
-  }
-
-  if (line) {
-    this.lineNumber = line;
-    this.column = node.firstColumn;
-  }
-}
-
-Exception.prototype = new Error();
-
-exports["default"] = Exception;
-},{}],31:[function(require,module,exports){
-"use strict";
-var Utils = require("./utils");
-var Exception = require("./exception")["default"];
-var COMPILER_REVISION = require("./base").COMPILER_REVISION;
-var REVISION_CHANGES = require("./base").REVISION_CHANGES;
-var createFrame = require("./base").createFrame;
-
-function checkRevision(compilerInfo) {
-  var compilerRevision = compilerInfo && compilerInfo[0] || 1,
-      currentRevision = COMPILER_REVISION;
-
-  if (compilerRevision !== currentRevision) {
-    if (compilerRevision < currentRevision) {
-      var runtimeVersions = REVISION_CHANGES[currentRevision],
-          compilerVersions = REVISION_CHANGES[compilerRevision];
-      throw new Exception("Template was precompiled with an older version of Handlebars than the current runtime. "+
-            "Please update your precompiler to a newer version ("+runtimeVersions+") or downgrade your runtime to an older version ("+compilerVersions+").");
-    } else {
-      // Use the embedded version info since the runtime doesn't know about this revision yet
-      throw new Exception("Template was precompiled with a newer version of Handlebars than the current runtime. "+
-            "Please update your runtime to a newer version ("+compilerInfo[1]+").");
-    }
-  }
-}
-
-exports.checkRevision = checkRevision;// TODO: Remove this line and break up compilePartial
-
-function template(templateSpec, env) {
-  /* istanbul ignore next */
-  if (!env) {
-    throw new Exception("No environment passed to template");
-  }
-  if (!templateSpec || !templateSpec.main) {
-    throw new Exception('Unknown template object: ' + typeof templateSpec);
-  }
-
-  // Note: Using env.VM references rather than local var references throughout this section to allow
-  // for external users to override these as psuedo-supported APIs.
-  env.VM.checkRevision(templateSpec.compiler);
-
-  var invokePartialWrapper = function(partial, indent, name, context, hash, helpers, partials, data, depths) {
-    if (hash) {
-      context = Utils.extend({}, context, hash);
-    }
-
-    var result = env.VM.invokePartial.call(this, partial, name, context, helpers, partials, data, depths);
-
-    if (result == null && env.compile) {
-      var options = { helpers: helpers, partials: partials, data: data, depths: depths };
-      partials[name] = env.compile(partial, { data: data !== undefined, compat: templateSpec.compat }, env);
-      result = partials[name](context, options);
-    }
-    if (result != null) {
-      if (indent) {
-        var lines = result.split('\n');
-        for (var i = 0, l = lines.length; i < l; i++) {
-          if (!lines[i] && i + 1 === l) {
-            break;
-          }
-
-          lines[i] = indent + lines[i];
-        }
-        result = lines.join('\n');
-      }
-      return result;
-    } else {
-      throw new Exception("The partial " + name + " could not be compiled when running in runtime-only mode");
-    }
-  };
-
-  // Just add water
-  var container = {
-    lookup: function(depths, name) {
-      var len = depths.length;
-      for (var i = 0; i < len; i++) {
-        if (depths[i] && depths[i][name] != null) {
-          return depths[i][name];
-        }
-      }
-    },
-    lambda: function(current, context) {
-      return typeof current === 'function' ? current.call(context) : current;
-    },
-
-    escapeExpression: Utils.escapeExpression,
-    invokePartial: invokePartialWrapper,
-
-    fn: function(i) {
-      return templateSpec[i];
-    },
-
-    programs: [],
-    program: function(i, data, depths) {
-      var programWrapper = this.programs[i],
-          fn = this.fn(i);
-      if (data || depths) {
-        programWrapper = program(this, i, fn, data, depths);
-      } else if (!programWrapper) {
-        programWrapper = this.programs[i] = program(this, i, fn);
-      }
-      return programWrapper;
-    },
-
-    data: function(data, depth) {
-      while (data && depth--) {
-        data = data._parent;
-      }
-      return data;
-    },
-    merge: function(param, common) {
-      var ret = param || common;
-
-      if (param && common && (param !== common)) {
-        ret = Utils.extend({}, common, param);
-      }
-
-      return ret;
-    },
-
-    noop: env.VM.noop,
-    compilerInfo: templateSpec.compiler
-  };
-
-  var ret = function(context, options) {
-    options = options || {};
-    var data = options.data;
-
-    ret._setup(options);
-    if (!options.partial && templateSpec.useData) {
-      data = initData(context, data);
-    }
-    var depths;
-    if (templateSpec.useDepths) {
-      depths = options.depths ? [context].concat(options.depths) : [context];
-    }
-
-    return templateSpec.main.call(container, context, container.helpers, container.partials, data, depths);
-  };
-  ret.isTop = true;
-
-  ret._setup = function(options) {
-    if (!options.partial) {
-      container.helpers = container.merge(options.helpers, env.helpers);
-
-      if (templateSpec.usePartial) {
-        container.partials = container.merge(options.partials, env.partials);
-      }
-    } else {
-      container.helpers = options.helpers;
-      container.partials = options.partials;
-    }
-  };
-
-  ret._child = function(i, data, depths) {
-    if (templateSpec.useDepths && !depths) {
-      throw new Exception('must pass parent depths');
-    }
-
-    return program(container, i, templateSpec[i], data, depths);
-  };
-  return ret;
-}
-
-exports.template = template;function program(container, i, fn, data, depths) {
-  var prog = function(context, options) {
-    options = options || {};
-
-    return fn.call(container, context, container.helpers, container.partials, options.data || data, depths && [context].concat(depths));
-  };
-  prog.program = i;
-  prog.depth = depths ? depths.length : 0;
-  return prog;
-}
-
-exports.program = program;function invokePartial(partial, name, context, helpers, partials, data, depths) {
-  var options = { partial: true, helpers: helpers, partials: partials, data: data, depths: depths };
-
-  if(partial === undefined) {
-    throw new Exception("The partial " + name + " could not be found");
-  } else if(partial instanceof Function) {
-    return partial(context, options);
-  }
-}
-
-exports.invokePartial = invokePartial;function noop() { return ""; }
-
-exports.noop = noop;function initData(context, data) {
-  if (!data || !('root' in data)) {
-    data = data ? createFrame(data) : {};
-    data.root = context;
-  }
-  return data;
-}
-},{"./base":29,"./exception":30,"./utils":33}],32:[function(require,module,exports){
-"use strict";
-// Build out our basic SafeString type
-function SafeString(string) {
-  this.string = string;
-}
-
-SafeString.prototype.toString = function() {
-  return "" + this.string;
-};
-
-exports["default"] = SafeString;
-},{}],33:[function(require,module,exports){
-"use strict";
-/*jshint -W004 */
-var SafeString = require("./safe-string")["default"];
-
-var escape = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#x27;",
-  "`": "&#x60;"
-};
-
-var badChars = /[&<>"'`]/g;
-var possible = /[&<>"'`]/;
-
-function escapeChar(chr) {
-  return escape[chr];
-}
-
-function extend(obj /* , ...source */) {
-  for (var i = 1; i < arguments.length; i++) {
-    for (var key in arguments[i]) {
-      if (Object.prototype.hasOwnProperty.call(arguments[i], key)) {
-        obj[key] = arguments[i][key];
-      }
-    }
-  }
-
-  return obj;
-}
-
-exports.extend = extend;var toString = Object.prototype.toString;
-exports.toString = toString;
-// Sourced from lodash
-// https://github.com/bestiejs/lodash/blob/master/LICENSE.txt
-var isFunction = function(value) {
-  return typeof value === 'function';
-};
-// fallback for older versions of Chrome and Safari
-/* istanbul ignore next */
-if (isFunction(/x/)) {
-  isFunction = function(value) {
-    return typeof value === 'function' && toString.call(value) === '[object Function]';
-  };
-}
-var isFunction;
-exports.isFunction = isFunction;
-/* istanbul ignore next */
-var isArray = Array.isArray || function(value) {
-  return (value && typeof value === 'object') ? toString.call(value) === '[object Array]' : false;
-};
-exports.isArray = isArray;
-
-function escapeExpression(string) {
-  // don't escape SafeStrings, since they're already safe
-  if (string instanceof SafeString) {
-    return string.toString();
-  } else if (string == null) {
-    return "";
-  } else if (!string) {
-    return string + '';
-  }
-
-  // Force a string conversion as this will be done by the append regardless and
-  // the regex test will do this transparently behind the scenes, causing issues if
-  // an object's to string has escaped characters in it.
-  string = "" + string;
-
-  if(!possible.test(string)) { return string; }
-  return string.replace(badChars, escapeChar);
-}
-
-exports.escapeExpression = escapeExpression;function isEmpty(value) {
-  if (!value && value !== 0) {
-    return true;
-  } else if (isArray(value) && value.length === 0) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
-  return (contextPath ? contextPath + '.' : '') + id;
-}
-
-exports.appendContextPath = appendContextPath;
-},{"./safe-string":32}],34:[function(require,module,exports){
-// Create a simple path alias to allow browserify to resolve
-// the runtime on a supported path.
-module.exports = require('./dist/cjs/handlebars.runtime');
-
-},{"./dist/cjs/handlebars.runtime":28}],35:[function(require,module,exports){
-module.exports = require("handlebars/runtime")["default"];
-
-},{"handlebars/runtime":34}],36:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 //     Underscore.js 1.7.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors

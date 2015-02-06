@@ -12,11 +12,23 @@ var files = [
     output     : 'clinic_search.js',
     destination: dist
   },
+
   {
     input      : [src + 'clinic.js'],
     output     : 'clinic.js',
     destination: dist
+  },
+  {
+    input      : [src + 'home.js'],
+    output     : 'home.js',
+    destination: dist
+  },
+  {
+    input      : [src + 'emergency.js'],
+    output     : 'emergency.js',
+    destination: dist
   }
+
 ];
 
 /**

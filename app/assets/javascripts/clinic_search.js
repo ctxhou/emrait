@@ -61,7 +61,6 @@ clinic_app.show_list = function(clinics, geo, map) {
     // this.show_custom_list(clinics, geo, map);
     var that = this;
     var subject = []
-    console.log(subject)
     $(".js-subject").click(function(e) {
         var $target = $(e.currentTarget)
         if ($target.hasClass('active')) {
@@ -71,7 +70,6 @@ clinic_app.show_list = function(clinics, geo, map) {
             $target.addClass('active')
             subject.push($target.text());
         }
-        console.log(subject)
         var filterApps = new_clinics.filter(function(model) {
             return _.some(model.attributes, function(val, attr) {
                 if (jQuery.inArray( attr, subject ) != -1) {
@@ -89,28 +87,7 @@ clinic_app.show_list = function(clinics, geo, map) {
     })
 
 }
-
-clinic_app.click_location = function(map) {
-    $(".js-clinic-location").click(function(event) {
-        console.log(event)
-        var id = $(event.currentTarget.val())
-        console.log(id)
-        m = map.data('tinyMap');
-        markers = m._markers;
-        for(i; i < markers.length; i +=1) {
-            marker = markers[i];
-            marker.infoWindow.close();
-            console.log(marker)
-            if (id === marker.id) {
-                marker.infoWindow.open(m.map, marker);
-                // 移動地圖
-                m.map.panTo(marker.position);            
-            }
-        }
-    });
-}
-
-    
+ 
 var subejct_button = _.template("<button class='btn btn-default js-subject' ><%= sub %></button>")
 // refactor data used to rename data and count distance
 clinic_app.refactor_data = function(cb, clinics, geo, map) {
