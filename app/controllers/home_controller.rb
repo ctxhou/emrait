@@ -40,6 +40,13 @@ class HomeController < ApplicationController
     end
 
     def emergency
-
+        lat = params[:lat]
+        lng = params[:lng]
+        victims = params[:victims]
+        injure = params[:injure].to_i
+        api_key = "54d5b6424abca63f64271ed8"
+        uri = "http://www.datagarage.io/api/#{api_key}"
+        data_ary = JSON.load(open(uri))
+        @result_hash = HomeHelper.compare_distance([lat, lng], data_ary, injure)
     end
 end
