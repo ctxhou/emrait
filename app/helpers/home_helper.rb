@@ -5,13 +5,48 @@ module HomeHelper
         return @@name[id]
     end 
 
-    def HomeHelper.compare_distance(geo, data_ary, injure)
-        result_hash = {}
-        result_hash = {}
+    def HomeHelper.compare_119_distance(geo, data_ary, injure)
+        abmulance_hash = {}
         data_ary.each do |ary|
+            if ary["number"].to_i > 0
+                dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
+                abmulance_hash[dis] = ary
+            end
+        end
+        abmulance_hash = abmulance_hash.sort.to_h
+        return self.suggest_ambulance(abmulance_hash, injure)
+        # return abmulance_hash.sort.to_h.first injure+2
+    end
+
+    def HomeHelper.suggest_ambulance(abmulance_hash, injure)
+        suggest = {}
+        count = 0
+        abmulance_hash.each do |dis, data|
+            if injure > 0
+                # has problem
+                suggest[dis] = data["number"]
+                injure -= data["number"]
+                count += 1
+            else
+                break
+            end
+        end
+        return suggest, (abmulance_hash.first count+4)
+    end
+
+    def HomeHelper.get_near_shelter(geo)
+        result_hash = {}
+        distance = 3 #km
+        box = Geocoder::Calculations.bounding_box(geo, distance)
+        api_key = "54ce0b394abca63f6426bd97" #shelter
+        selector = "selector=lat>=#{box[0]}ANDlat<=#{box[2]}ANDlng>=#{box[1]}ANDlng<=#{box[3]}"
+        uri = "http://www.datagarage.io/api/#{api_key}?#{selector}"
+        shelter = JSON.load(open(uri))
+        shelter.each do |ary|
+            p ary
             dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
             result_hash[dis] = ary
         end
-        return result_hash.sort.to_h.first injure+2
+        return result_hash.sort.to_h
     end
 end

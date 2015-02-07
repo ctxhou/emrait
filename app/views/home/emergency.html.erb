@@ -1,3 +1,5 @@
+<div class="pull-right"><a href="#">出勤中救護車</a></div>
+<h2>鄰近救護車列表</h2>
 <table class="table">
     <thead>
         <tr>
@@ -5,14 +7,51 @@
             <th>機構名稱</th>
             <th>電話</th>
             <th>救護車數</th>
+            <th>建議</th>
+            <th></th>
         </tr>
     </thead>
-    <% @result_hash.each do |distance, data| %>
+    <% @abmulance_hash.each do |distance, data| %>
     <tr>
         <td><%= distance %></td>
         <td><%= data["name"] %></td>
         <td><%= data["phone"] %></td>
         <td><%= data["number"] %></td>
+        <td>
+            <% if @suggest_ambulance[distance] %>
+                <%= @suggest_ambulance[distance] %>
+            <% else %>
+                0
+            <% end %>
+        </td>
+        <td><button class="btn btn-primary js-ambulance" data-content="<%= data["name"] %>" data-toggle="modal" data-target="#myModal">指派</button></td>
     </tr>
     <% end %>
 </table>
+
+<% if @shelter_hash %>
+    <h2>鄰近災民收容所列表</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>距離(km)</th>
+                <th>收容所名稱</th>
+                <th>縣市</th>
+                <th>地址</th>
+            </tr>
+        </thead>
+        <% @shelter_hash.each do |distance, ary| %>
+            <tr>
+                <td><%= distance %></td>
+                <td><%= ary["災民收容所名稱"] %></td>
+                <td><%= ary["所在縣市"] %></td>
+                <td><%= ary["收容所地址"] %></td>
+            </tr>
+        <% end %>
+    </table>
+<% end %>
+<%= render "units/bootstrap_modal" %>
+
+<% content_for :javascript do %>
+<script async="async" data-turbolinks-track="true" src="/assets/dist/emergency.js"></script>
+<% end %>

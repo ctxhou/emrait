@@ -47,6 +47,10 @@ class HomeController < ApplicationController
         api_key = "54d5b6424abca63f64271ed8"
         uri = "http://www.datagarage.io/api/#{api_key}"
         data_ary = JSON.load(open(uri))
-        @result_hash = HomeHelper.compare_distance([lat, lng], data_ary, injure)
+        @suggest_ambulance, @abmulance_hash = HomeHelper.compare_119_distance([lat, lng], data_ary, injure)
+         # = HomeHelper.suggest_ambulance(@abmulance_hash, injure)
+        if victims
+            @shelter_hash = HomeHelper.get_near_shelter([lat, lng])
+        end
     end
 end
