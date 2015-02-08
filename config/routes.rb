@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   get '/clinic_search' => "home#clinic_search"
   get '/clinic/:lng/:lat' => 'home#get_clinic', :constraints => { :lng => /[\w+\.]+/, :lat => /[\w+\.]+/ }
   get '/emergency' => "home#emergency"
+  get '/ambulance/:id' => "ambulance#show"
+  put '/ambulance/:id' => "ambulance#assign_mission"
+  get '/mission' => "home#mission"
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

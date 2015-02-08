@@ -40,17 +40,17 @@ class HomeController < ApplicationController
     end
 
     def emergency
-        lat = params[:lat]
-        lng = params[:lng]
+        @lat = params[:lat]
+        @lng = params[:lng]
         victims = params[:victims]
         injure = params[:injure].to_i
-        api_key = "54d71ca24abca63f6427211a"
-        uri = "http://www.datagarage.io/api/#{api_key}"
-        data_ary = JSON.load(open(uri))
-        @suggest_ambulance, @abmulance_hash = HomeHelper.compare_119_distance([lat, lng], data_ary, injure)
-         # = HomeHelper.suggest_ambulance(@abmulance_hash, injure)
+        @suggest_ambulance, @abmulance_hash = HomeHelper.compare_119_distance([@lat, @lng], injure)
         if victims
-            @shelter_hash = HomeHelper.get_near_shelter([lat, lng])
+            @shelter_hash = HomeHelper.get_near_shelter([@lat, @lng])
         end
+    end
+
+    def mission
+        @mission = Mission.where(status: "ing")
     end
 end

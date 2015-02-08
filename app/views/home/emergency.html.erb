@@ -1,5 +1,6 @@
-<div class="pull-right"><a href="#">出勤中救護車</a></div>
+<div class="pull-right"><a href="/mission">出勤中救護車</a></div>
 <h2>鄰近救護車列表</h2>
+<button class="btn btn-success">一鍵指派</button>
 <table class="table">
     <thead>
         <tr>
@@ -51,7 +52,8 @@
     </table>
 <% end %>
 <%= render "units/bootstrap_modal" %>
-
+<input type="hidden" value="<%= @lat %>" id="end_lat">
+<input type="hidden" value="<%= @lng %>" id="end_lng">
 <% content_for :javascript do %>
 <script async="async" data-turbolinks-track="true" src="/assets/dist/emergency.js"></script>
 <% end %>

@@ -5,17 +5,17 @@ module HomeHelper
         return @@name[id]
     end 
 
-    def HomeHelper.compare_119_distance(geo, data_ary, injure)
+    def HomeHelper.compare_119_distance(geo, injure)
+        data_ary = Ambulance.all
         abmulance_hash = {}
         data_ary.each do |ary|
-            if ary["number"].to_i > 0
+            if ary["exist"].to_i > 0
                 dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
                 abmulance_hash[dis] = ary
             end
         end
         abmulance_hash = abmulance_hash.sort.to_h
         return self.suggest_ambulance(abmulance_hash, injure)
-        # return abmulance_hash.sort.to_h.first injure+2
     end
 
     def HomeHelper.suggest_ambulance(abmulance_hash, injure)
@@ -43,7 +43,6 @@ module HomeHelper
         uri = "http://www.datagarage.io/api/#{api_key}?#{selector}"
         shelter = JSON.load(open(uri))
         shelter.each do |ary|
-            p ary
             dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
             result_hash[dis] = ary
         end

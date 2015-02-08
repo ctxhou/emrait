@@ -1,0 +1,18 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">{{name}}</h4>
+  </div>
+  <div class="modal-body">
+    <h3>指派 <input type="number" max={{number}} id="assign"> 台救護車(現有{{number}}台)</h3>
+    <ul>
+        <li>地址：{{address}}</li>
+        <li>電話：{{phone}}</li>
+    </ul>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button class="btn btn-default" id="submit">指派</button>
+  </div>
+</div>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150208085945) do
+ActiveRecord::Schema.define(version: 20150208134550) do
 
   create_table "ambulances", force: true do |t|
     t.integer  "seq_id"
@@ -25,6 +25,21 @@ ActiveRecord::Schema.define(version: 20150208085945) do
     t.string   "car_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "exist"
+    t.text     "status"
+  end
+
+  create_table "missions", force: true do |t|
+    t.integer  "seq_id"
+    t.string   "start_lat"
+    t.string   "start_lng"
+    t.string   "end_lat"
+    t.string   "end_lng"
+    t.string   "processing_time"
+    t.string   "hospital"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "status"
   end
 
 end

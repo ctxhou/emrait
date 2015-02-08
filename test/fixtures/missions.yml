@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  seq_id: 1
+  start_lat: MyString
+  start_lng: MyString
+  end_lat: MyString
+  end_lng: MyString
+  processing_time: MyString
+  hospital: MyString
+
+two:
+  seq_id: 1
+  start_lat: MyString
+  start_lng: MyString
+  end_lat: MyString
+  end_lng: MyString
+  processing_time: MyString
+  hospital: MyString
