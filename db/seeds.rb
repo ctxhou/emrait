@@ -1,7 +1,10 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+require "open-uri"
+require "json"
+
+Ambulance.delete_all
+data_ary = JSON.load(open("http://www.datagarage.io/api/54d71ca24abca63f6427211a"))
+
+data_ary.each do |ary|
+    Ambulance.create!(:seq_id=>ary["seq_id"], :site_type=>ary["type"], :name=>ary["name"], :address=>ary["address"],
+                      :phone=>ary["phone"], :lat=>ary["lat"], :lng=>ary["lng"], :number=>ary["number"], :car_id=>ary["car_id"])
+end

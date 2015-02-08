@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  seq_id: 1
+  site_type: MyString
+  name: MyString
+  address: MyString
+  phone: MyString
+  lat: 1.5
+  lng: 1.5
+  number: 1
+  car_id: MyString
+
+two:
+  seq_id: 1
+  site_type: MyString
+  name: MyString
+  address: MyString
+  phone: MyString
+  lat: 1.5
+  lng: 1.5
+  number: 1
+  car_id: MyString
