@@ -40,8 +40,8 @@ module HomeHelper
         box = Geocoder::Calculations.bounding_box(geo, distance)
         api_key = "54ce0b394abca63f6426bd97" #shelter
         selector = "selector=lat>=#{box[0]}ANDlat<=#{box[2]}ANDlng>=#{box[1]}ANDlng<=#{box[3]}"
-        uri = "http://www.datagarage.io/api/#{api_key}?#{selector}"
-        shelter = JSON.load(open(uri))
+        uri = URI.encode("http://www.datagarage.io/api/#{api_key}?#{selector}")
+        shelter = JSON.load(open(URI.parse(uri)))
         shelter.each do |ary|
             dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
             result_hash[dis] = ary
