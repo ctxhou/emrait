@@ -16,11 +16,13 @@
                 </select>
             </div>
             <div id="location-input">
-                <div class="col-md-10" id="location">
-                    <input type="text" class="form-control" name="address" placeholder="輸入所在地址">
+                <div class="col-md-6" id="location">
+                    <input type="text" class="form-control" name="address" placeholder="輸入所在地址" id="address" required>
+                    <input type="hidden" name="lat" id="lat" required>
+                    <input type="hidden" name="lng" id="lng" required>
                 </div>
             </div>
-
+            <span id="msg" class="col-md-4"></span>
         </div>
         <div class="form-group">
             <label for="injure" class="col-md-2 control-label">傷患人數</label>
@@ -34,7 +36,7 @@
                 <input type="text" class="form-control" id="victims" placeholder="災民人數" name="victims">
             </div>
         </div>
-        <button type="submit" class="btn btn-default pull-right">Submit</button>
+        <button type="submit" class="btn btn-primary pull-right" disabled="disabled" id="submit">Submit</button>
     </form>
 </div>
 <!-- <table class="table">

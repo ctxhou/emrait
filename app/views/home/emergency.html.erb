@@ -1,6 +1,6 @@
 <div class="pull-right"><a href="/mission">出勤中救護車</a></div>
 <h2>鄰近救護車列表</h2>
-<button class="btn btn-success">一鍵指派</button>
+<div class="h4">有<%= @injure %>位病患</div>
 <table class="table">
     <thead>
         <tr>
@@ -20,18 +20,22 @@
         <td><%= data["number"] %></td>
         <td>
             <% if @suggest_ambulance[distance] %>
-                <%= @suggest_ambulance[distance] %>
+                <input type="number" value="<%= @suggest_ambulance[distance] %>" min="0" max="<%= data["number"] %>" class="js-assign" data-id="<%= data["id"] %>">
             <% else %>
-                0
+                <input type="number" value="0" min="0" max="<%= data["number"] %>" class="js-assign" data-id="<%= data["id"] %>">
             <% end %>
         </td>
-        <td><button class="btn btn-primary js-ambulance" data-id="<%= data["id"] %>" data-toggle="modal" data-target="#myModal">指派</button></td>
+        <td>
+            <button class="glyphicon glyphicon-info-sign js-ambulance" data-id="<%= data["id"] %>" data-toggle="modal" data-target="#myModal"></button>
+        </td>
     </tr>
     <% end %>
 </table>
+<button class="btn btn-success pull-right" id="assign-submit">一鍵指派</button>
 
 <% if @shelter_hash %>
     <h2>鄰近災民收容所列表</h2>
+    <div class="h4">有<%= @victims %>位災民</div>
     <table class="table">
         <thead>
             <tr>
@@ -55,5 +59,6 @@
 <input type="hidden" value="<%= @lat %>" id="end_lat">
 <input type="hidden" value="<%= @lng %>" id="end_lng">
 <% content_for :javascript do %>
+<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry"></script>
 <script async="async" data-turbolinks-track="true" src="/assets/dist/emergency.js"></script>
 <% end %>

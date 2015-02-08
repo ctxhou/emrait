@@ -21,11 +21,6 @@ class HomeController < ApplicationController
         @address = params[:address]
         @lat = params[:lat]
         @lng = params[:lng]
-        unless @address.length == 0
-          @address = Geocoder.coordinates(@address)
-          @lat = @address[0]
-          @lng = @address[1]
-        end
     end
 
     def get_clinic
@@ -42,10 +37,10 @@ class HomeController < ApplicationController
     def emergency
         @lat = params[:lat]
         @lng = params[:lng]
-        victims = params[:victims]
-        injure = params[:injure].to_i
-        @suggest_ambulance, @abmulance_hash = HomeHelper.compare_119_distance([@lat, @lng], injure)
-        if victims
+        @victims = params[:victims]
+        @injure = params[:injure].to_i
+        @suggest_ambulance, @abmulance_hash = HomeHelper.compare_119_distance([@lat, @lng], @injure)
+        if @victims
             @shelter_hash = HomeHelper.get_near_shelter([@lat, @lng])
         end
     end

@@ -1,22 +1,16 @@
-<form action="/clinic_search" method = "get">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="col-md-12">
-              <div class="input-group">
-                <span class="input-group-addon">
-                  <i class="fa fa-location-arrow geo_icon" id="get_geo"></i>
-                </span>
-                <input type="text" class="form-control" name="address" placeholder="輸入你的位置" id="address">
-                <input type="hidden" name="lat" id="lat">
-                <input type="hidden" name="lng" id="lng">
-              </div><!-- /input-group -->
-            </div><!-- /.col-lg-6 -->
+<div class="form-container">
+    <form action="/clinic_search" method = "get" class="form-horizontal">
+        <span class="input-group py1" style="width:70%; margin: 0 auto">
+            <span class="input-group-addon">
+            <i class="fa fa-location-arrow geo_icon" id="get_geo"></i>
+            </span>
+            <input type="text" class="form-control" name="address" placeholder="輸入你的地址" id="address">
+        </span>
+        <div id="address-msg" class="center pyb4"></div>
+        <input type="hidden" name="lat" id="lat">
+        <input type="hidden" name="lng" id="lng">
+        <div class="center">
+            <button class="btn btn-primary" id="submit" disabled="disabled">送出</button>
         </div>
-<!--         <div class="col-md-2">
-            <input type="text" name="category" placeholder="科別" class="form-control ">
-        </div> -->
-        <div class="col-md-2">
-            <input type="submit" value="submit" class="btn btn-primary">
-        </div>
-    </div>
-</form>
+    </form>
+</div>

@@ -1,20 +1,51 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var $ = require('jquery');
 var GetGeo = require('./module/get_geo')
+var SearchForm = require('./module/clinic_search_form')
+
+
+SearchForm.init();
+
 
 $("#get_geo").click(function() {
+    $("#address-msg").html("定位中....")
     GetGeo.geolocation(setCoor);
 });
-
 
 var setCoor = function(coor) {
     console.log(coor)
     $("#lat").val(coor[0]);
     $("#lng").val(coor[1]);
+    $("#address-msg").empty();
     $("#address").attr("placeholder", "已定位你的位置")
     $("#address").prop("readonly", true)
+    $("#submit").removeAttr('disabled')
 }
-},{"./module/get_geo":2,"jquery":3}],2:[function(require,module,exports){
+},{"./module/clinic_search_form":2,"./module/get_geo":3,"jquery":4}],2:[function(require,module,exports){
+var $ = require('jquery');
+
+module.exports = {
+    init: function() {
+        $("#address").change(function() {
+            var google_url = "http://maps.googleapis.com/maps/api/geocode/json?address="
+            var val = $(this).val();
+            $.get(google_url + val, function(data) {
+                if (data.results[0]) {
+                    var geo = data.results[0].geometry.location
+                    $("#lat").val(geo.lat)
+                    $("#lng").val(geo.lng)
+                    $("#address-msg").html("正確的地址！")
+                    $("#submit").removeAttr('disabled')
+                } else {
+                    $("#address-msg").html("你輸入錯誤的地址...")
+                    $("#submit").attr('disabled', "disabled")
+                }
+            });
+        })
+    }
+}
+
+},{"jquery":4}],3:[function(require,module,exports){
 var $ = require('jquery');
 
 var geo = {
@@ -41,7 +72,7 @@ var geo = {
 }
 
 module.exports = geo
-},{"jquery":3}],3:[function(require,module,exports){
+},{"jquery":4}],4:[function(require,module,exports){
 (function (global){
 ;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 /*! jQuery v2.1.3 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
