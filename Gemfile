@@ -11,6 +11,8 @@ gem 'bootstrap-sass', '~> 3.3.3'
 gem 'font-awesome-rails'
 gem 'addressable', '~> 2.3.6'
 gem 'geocoder'
+gem "rufus-scheduler"
+gem "tw_hospital"
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .js.coffee assets and views
@@ -29,6 +31,7 @@ gem 'sdoc', '~> 0.4.0',          group: :doc
 
 # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
 gem 'spring',        group: :development
+gem 'whenever', :require => false
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

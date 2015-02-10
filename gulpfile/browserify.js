@@ -27,6 +27,11 @@ var files = [
     input      : [src + 'emergency.js'],
     output     : 'emergency.js',
     destination: dist
+  },
+  {
+    input      : [src + 'mission.js'],
+    output     : 'mission.js',
+    destination: dist
   }
 
 ];

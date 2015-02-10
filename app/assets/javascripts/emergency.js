@@ -7,6 +7,7 @@ var Marionette = require('backbone.marionette');
 var bootstrap = require('bootstrap');
 var AmbulanceView = require('./views/ambulance/ambulance_modal');
 var Ambulance = require('./models/ambulance');
+var Hospitals = require('./collections/hospital');
 
 var app = new Marionette.Application();
 app.addRegions({
@@ -14,6 +15,10 @@ app.addRegions({
 })
 
 app.on("before:start", function() {
+    var lat = $("#end_lat").val();
+    var lng = $("#end_lng").val();
+    var hospitals = new Hospitals({lat: lat, lng: lng});
+    hospitals.fetch(); // fetch the near hospital data
     $(".js-ambulance").click(function(event) {
         var $target = $(event.currentTarget);
         var id = $target.attr("data-id");
@@ -21,13 +26,12 @@ app.on("before:start", function() {
 
         ambulance.fetch({
             success: function() {
-                var ambulanceView = new AmbulanceView({model: ambulance, id: id})
+                var ambulanceView = new AmbulanceView({model: ambulance, id: id, hospital: hospitals})
                 app.modal.show(ambulanceView)
             }
         })
     });
-    var lat = $("#end_lat").val();
-    var lng = $("#end_lng").val();
+
     $("#assign-submit").click(function(event) {
         var json = {}
         json["assign"] = []
@@ -45,7 +49,7 @@ app.on("before:start", function() {
         })
         .done(function() {
             alert("指派成功")
-            location.reload()
+            location.replace("/mission")
         })
     });
 })

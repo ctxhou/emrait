@@ -14,8 +14,27 @@ module HomeHelper
                 abmulance_hash[dis] = ary
             end
         end
+        d_to_hospital = self.distance_disaster_to_hospital(geo)
         abmulance_hash = abmulance_hash.sort.to_h
-        return self.suggest_ambulance(abmulance_hash, injure)
+        suggest, abmulance_hash = self.suggest_ambulance(abmulance_hash, injure)
+        return suggest, abmulance_hash, d_to_hospital
+    end
+
+    def self.distance_119_to_disaster(disaster, fire_fighter)
+
+    end
+
+    def self.distance_disaster_to_hospital(disaster)
+        ary = []
+        hospital = Hospitals.all
+        hospital.each do |data|
+            dis = Geocoder::Calculations.distance_between(disaster, [data["lat"],data["lng"]]).round(3)
+            if dis <= 8 # if the hospital is in 8 km distance, return 
+                ary << {name: data["name"], distance: dis, lat: data["lat"], lng: data["lng"]}
+            end
+        end
+
+        return ary.sort_by {|k| k[:distance]}
     end
 
     def HomeHelper.suggest_ambulance(abmulance_hash, injure)
@@ -23,7 +42,6 @@ module HomeHelper
         count = 0
         abmulance_hash.each do |dis, data|
             if injure > 0
-                # has problem
                 suggest[dis] = data["number"]
                 injure -= data["number"]
                 count += 1
@@ -36,7 +54,7 @@ module HomeHelper
 
     def HomeHelper.get_near_shelter(geo)
         result_hash = {}
-        distance = 3 #km
+        distance = 1.5 #km
         box = Geocoder::Calculations.bounding_box(geo, distance)
         api_key = "54ce0b394abca63f6426bd97" #shelter
         selector = "selector=lat>=#{box[0]}ANDlat<=#{box[2]}ANDlng>=#{box[1]}ANDlng<=#{box[3]}"
@@ -44,7 +62,9 @@ module HomeHelper
         shelter = JSON.load(open(URI.parse(uri)))
         shelter.each do |ary|
             dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
-            result_hash[dis] = ary
+            if dis < 1.2
+                result_hash[dis] = ary
+            end
         end
         return result_hash.sort.to_h
     end

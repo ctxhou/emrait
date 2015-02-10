@@ -1,10 +1,11 @@
 require 'open-uri'
 require "addressable/uri"
+require "json"
 
 class HomeController < ApplicationController
     def index
-        uri = "http://140.116.96.118:9000/new.json"
-        @json = JSON.load(open(uri))
+        # uri = "http://140.116.96.118:9000/new.json"
+        # @json = JSON.load(open(uri))
     end
 
     def clinic
@@ -12,9 +13,12 @@ class HomeController < ApplicationController
     end
 
     def shelter
-        api_key = "54ce0b394abca63f6426bd97"
-        uri = "http://www.datagarage.io/api/#{api_key}"
-        @json = JSON.load(open(uri))
+        @lat = params[:lat]
+        @lng = params[:lng]
+        @victims = params[:victims]
+        if @victims
+            @shelter_hash = HomeHelper.get_near_shelter([@lat, @lng])
+        end
     end
 
     def clinic_search
@@ -39,13 +43,15 @@ class HomeController < ApplicationController
         @lng = params[:lng]
         @victims = params[:victims]
         @injure = params[:injure].to_i
-        @suggest_ambulance, @abmulance_hash = HomeHelper.compare_119_distance([@lat, @lng], @injure)
-        if @victims
-            @shelter_hash = HomeHelper.get_near_shelter([@lat, @lng])
-        end
+        @suggest_ambulance, @abmulance_hash, @d_to_hospital = HomeHelper.compare_119_distance([@lat, @lng], @injure)
     end
 
     def mission
-        @mission = Mission.where(status: "ing")
+        @mission = Mission.where(status: "ing").order(:created_at)
+    end
+
+    def reset
+        Mission.delete_all
+
     end
 end

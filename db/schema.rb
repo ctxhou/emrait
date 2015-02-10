@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150208134550) do
+ActiveRecord::Schema.define(version: 20150210074522) do
 
   create_table "ambulances", force: true do |t|
     t.integer  "seq_id"
@@ -29,6 +29,21 @@ ActiveRecord::Schema.define(version: 20150208134550) do
     t.text     "status"
   end
 
+  create_table "hospitals", force: true do |t|
+    t.string   "hospital_id"
+    t.text     "name"
+    t.text     "address"
+    t.float    "lat"
+    t.float    "lng"
+    t.string   "report_full"
+    t.integer  "wait_see"
+    t.integer  "wait_push_bed"
+    t.integer  "wait_bed"
+    t.integer  "wait_cure_bed"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "missions", force: true do |t|
     t.integer  "seq_id"
     t.string   "start_lat"
@@ -40,6 +55,7 @@ ActiveRecord::Schema.define(version: 20150208134550) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "status"
+    t.text     "structure"
   end
 
 end

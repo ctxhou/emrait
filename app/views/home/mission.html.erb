@@ -2,20 +2,24 @@
 <table class="table">
     <thead>
         <tr>
-            <th>出發緯度</th>
-            <th>出發經度</th>
+            <th>機構</th>
             <th>目的地緯度</th>
             <th>目的地經度</th>
+            <th>指派時間</th>
             <th></th>
         </tr>
     </thead>
     <% @mission.each do |ary| %>
         <tr>
-            <td><%= ary["start_lat"] %></td>
-            <td><%= ary["start_lng"] %></td>
+            <td><%= ary["structure"] %></td>
             <td><%= ary["end_lat"] %></td>
             <td><%= ary["end_lng"] %></td>
-            <td><button class="btn btn-success">任務完成</button></td>
+            <td><%= ary["created_at"] %></td>
+            <td><button class="btn btn-success js-mission-complete" data-id="<%= ary["id"] %>">任務完成</button></td>
         </tr>
     <% end %>
 </table>
+
+<% content_for :javascript do %>
+    <script async="async" data-turbolinks-track="true" src="/assets/dist/mission.js"></script>
+<% end %>

@@ -1,7 +1,13 @@
 class AmbulanceController < ApplicationController
-      skip_before_filter :verify_authenticity_token, :only => :assign_mission
+    skip_before_filter :verify_authenticity_token, :only => :assign_mission
     def show
         render json: Ambulance.find(params[:id])
+    end
+
+    def to_hospital
+        lat = params[:lat]
+        lng = params[:lng]
+        render json: HomeHelper.distance_disaster_to_hospital([lat, lng]).to_json
     end
 
     def assign_mission
@@ -11,12 +17,14 @@ class AmbulanceController < ApplicationController
             end_lat = param[:end_lat]
             end_lng = param[:end_lng]
             exist = param["exist"].to_i
-            @ambulance = Ambulance.find(param[:id])
+            @ambulance = Ambulance.find(param["id"])
             start_lat = @ambulance["lat"]
             start_lng = @ambulance["lng"]
+            structure = @ambulance["name"]
             seq_id = @ambulance["seq_id"] # 119 station id
+
             exist.times do |k|
-                Mission.create(seq_id: seq_id, start_lat: start_lat, start_lng: start_lng, end_lat: end_lat, end_lng: end_lng, status: 'ing')
+                Mission.create(seq_id: param["id"], start_lat: start_lat, start_lng: start_lng, end_lat: end_lat, end_lng: end_lng, status: 'ing', structure: structure)
             end
 
             less_ambulance = @ambulance["exist"] - exist

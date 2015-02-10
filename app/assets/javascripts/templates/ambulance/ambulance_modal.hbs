@@ -3,12 +3,19 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title" id="myModalLabel">{{name}}</h4>
   </div>
+
   <div class="modal-body">
-    <ul class="h4">
+    <ul class="h4 mb2">
         <li>地址：{{address}}</li>
         <li>電話：{{phone}}</li>
     </ul>
-    
+    <div class="mb3">
+      {{#if hospital}}
+        {{#each hospital}}
+            <button class="btn btn-primary js-hospital" data-lng="{{lng}}" data-lat="{{lat}}">{{name}}</button>
+        {{/each}}
+      {{/if}}
+    </div>
     <div id="map"></div>
   </div>
   <div class="modal-footer">

@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  hospital_id: MyString
+  name: MyText
+  address: MyText
+  lat: 1.5
+  lng: 1.5
+  report_full: MyString
+  wait_see: 1
+  wait_push_bed: 1
+  wait_bed: 1
+  wait_cure_bed: 1
+
+two:
+  hospital_id: MyString
+  name: MyText
+  address: MyText
+  lat: 1.5
+  lng: 1.5
+  report_full: MyString
+  wait_see: 1
+  wait_push_bed: 1
+  wait_bed: 1
+  wait_cure_bed: 1

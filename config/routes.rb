@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   get '/ambulance/:id' => "ambulance#show"
   post '/assign_mission' => "ambulance#assign_mission"
   get '/mission' => "home#mission"
+  get '/hospital_distance' => "ambulance#to_hospital"
+  put '/mission/:id' => "mission#update"
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
