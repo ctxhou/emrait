@@ -36,11 +36,13 @@ app.on("before:start", function() {
         var json = {}
         json["assign"] = []
         $(".js-assign").each(function(i, obj) {
-            var val = $(this).val();
-            var id = $(this).attr("data-id");
-            json["assign"].push({exist: val, id: id, end_lat: lat, end_lng: lng})
+            var val = $(this).text();
+            var id = $(this).attr('id');
+            var hospital = $('input[name="send_hospital_'+id+'"]:checked').val();
+            json["assign"].push({exist: val, id: id, end_lat: lat, end_lng: lng, hospital: hospital})
         })
         json = JSON.stringify(json)
+        console.log(json)
         $.ajax({
             url: "/assign_mission",
             type: 'post',
@@ -51,6 +53,26 @@ app.on("before:start", function() {
             alert("指派成功")
             location.replace("/mission")
         })
+    });
+    var total = parseInt($("#total").text());
+    $(".js-add").click(function(event) {
+        var id = $(this).attr("data-id");
+        var now = $("#"+id).text();
+        var max = $("#"+id).attr("data-max");
+        if (now < max) {
+            $("#"+id).text(parseInt(now)+1)     
+            total += 1 
+            $("#total").text(total)
+        }
+    });
+    $(".js-minus").click(function(event) {
+        var id = $(this).attr("data-id");
+        var now = $("#"+id).text();
+        if (parseInt(now) > 0) {
+            $("#"+id).text(parseInt(now)-1) 
+            total -= 1 
+            $("#total").text(total)           
+        }
     });
 })
 app.on("initialize:after", function() {

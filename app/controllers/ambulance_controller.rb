@@ -7,7 +7,8 @@ class AmbulanceController < ApplicationController
     def to_hospital
         lat = params[:lat]
         lng = params[:lng]
-        render json: HomeHelper.distance_disaster_to_hospital([lat, lng]).to_json
+        return_json = HomeHelper.distance_disaster_to_hospital([lat, lng]).to_json
+        render json: return_json
     end
 
     def assign_mission
@@ -22,9 +23,9 @@ class AmbulanceController < ApplicationController
             start_lng = @ambulance["lng"]
             structure = @ambulance["name"]
             seq_id = @ambulance["seq_id"] # 119 station id
-
+            hospital = param[:hospital]
             exist.times do |k|
-                Mission.create(seq_id: param["id"], start_lat: start_lat, start_lng: start_lng, end_lat: end_lat, end_lng: end_lng, status: 'ing', structure: structure)
+                Mission.create(hospital: hospital, seq_id: param["id"], start_lat: start_lat, start_lng: start_lng, end_lat: end_lat, end_lng: end_lng, status: 'ing', structure: structure)
             end
 
             less_ambulance = @ambulance["exist"] - exist

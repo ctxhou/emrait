@@ -6,7 +6,7 @@ var geocode = _.template('<div class="col-md-2">'+
                 '</div>'+'<div class="col-md-2">'+
                 '<input type="text" class="form-control" placeholder="經度" name="lng" id="lng" required></div>'+
                 '<div class="col-md-2">'+
-                '<i class="fa fa-location-arrow geo_icon" id="get_geo"></i></div>'
+                '<a class="btn btn-default" id="get_geo">自動定位</a></div>'
                 )
 var location = _.template('<div class="col-md-10" id="location">'+
                 '<input type="text" class="form-control" name="address" placeholder="輸入所在地址" required id="address">'+

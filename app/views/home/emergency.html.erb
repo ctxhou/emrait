@@ -1,15 +1,23 @@
 <div class="pull-right"><a href="/mission">出勤中救護車</a></div>
 
+<h3>以下為到災點
+    <% if @address %>
+        <%= @address %>
+    <% else %>
+        <%= @lat %>, <%= @lng %>
+    <% end %>
+    的救護車指派建議 ( 有<%= @injure %>位病患 )
+</h3>
 
-<h3>鄰近救護車 <span class="h4">(有<%= @injure %>位病患)</span></h3>
 <table class="table">
     <thead>
         <tr>
             <th>距離(km)</th>
             <th>機構名稱</th>
             <th>電話</th>
-            <th>救護車數</th>
-            <th>建議</th>
+            <!-- <th>救護車數</th> -->
+            <th>建議派救護車數</th>
+            <th>送至醫院</th>
             <th></th>
         </tr>
     </thead>
@@ -18,13 +26,38 @@
         <td><%= distance %></td>
         <td><%= data["name"] %></td>
         <td><%= data["phone"] %></td>
-        <td><%= data["exist"] %></td>
+        <!-- <td><%#= data["exist"] %></td> -->
         <td>
-            <% if @suggest_ambulance[distance] %>
-                <input type="number" value="<%= @suggest_ambulance[distance] %>" min="0" max="<%= data["number"] %>" class="js-assign" data-id="<%= data["id"] %>">
-            <% else %>
-                <input type="number" value="0" min="0" max="<%= data["number"] %>" class="js-assign" data-id="<%= data["id"] %>">
-            <% end %>
+            <div class="row">
+                <div class="col-md-6 right h4">
+                    <% if @suggest_ambulance[distance] %>
+                        <div class="js-assign" id="<%= data["id"] %>" data-max="<%= data["number"] %>"><%= @suggest_ambulance[distance] %></div>
+                    <% else %>
+                        <div class="js-assign" id="<%= data["id"] %>" data-max="<%= data["number"] %>">0</div>
+                    <% end %>
+                </div>
+                <div class="col-md-6 left">
+                    <ul>
+                        <li class="mb2">
+                            <button class="glyphicon glyphicon-plus js-add" data-id="<%= data["id"] %>"></button>                    
+                        </li>
+                        <li>
+                            <button class="glyphicon glyphicon-minus js-minus" data-id="<%= data["id"] %>"></button>                    
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </td>
+        <td>
+            <ul>  
+            <% @d_to_hospital.each_with_index do |ary, index| %>
+                <% if index == 0 %>
+                    <li><input type="radio" name="send_hospital_<%= data["id"] %>" value="<%= ary[:name] %>" checked> &nbsp;<%= ary[:name] %></li>
+                <% else %>
+                    <li><input type="radio" name="send_hospital_<%= data["id"] %>" value="<%= ary[:name] %>"> &nbsp;<%= ary[:name] %></li>
+                <% end %>
+            <% end %>   
+            </ul> 
         </td>
         <td>
             <button class="btn btn-link js-ambulance" data-id="<%= data["id"] %>" data-toggle="modal" data-target="#myModal">詳細資訊</button>
@@ -32,21 +65,27 @@
     </tr>
     <% end %>
 </table>
-
-<button class="btn btn-success pull-right" id="assign-submit">一鍵指派</button>
-
-<hr>
-<div class="h4 pyb2">可送至以下醫院:</div>
-<ul>
-    <% @d_to_hospital.each do |ary| %>
-        <li class="h5"><%= ary[:name] %>: <%= ary[:distance] %> km</li>
-    <% end %>    
-</ul>
+<div class="result  right">
+    <h3>共指派 <span id="total"><%= @injure %></span>台救護車</h3>
+    <button class="btn btn-success" id="assign-submit">一鍵指派</button>    
+</div>
 
 <hr>
-<% if @victims %>
-    <a href="/shelter?lat=<%= @lat %>&amp;lng=<%= @lng %>&amp;victims=<%= @victims %>">災民收容所</a>
+<% if @d_to_hospital.length > 0 %>
+    <div class="h4 pyb2">可送至以下醫院:</div>
+    <ul>
+        <% @d_to_hospital.each do |ary| %>
+            <li class="h5"><%= ary[:name] %>: <%= ary[:distance] %> km</li>
+        <% end %>    
+    </ul>
+<% else %>
+    <div class="h4 pyb2">附近並無大醫院，可考慮相關診所做初步急救措施</div>
+    <ul>
+        <li><% @clinic %></li>
+    </ul>
 <% end %>
+
+<hr>
 
 <%= render "units/bootstrap_modal" %>
 <input type="hidden" value="<%= @lat %>" id="end_lat">

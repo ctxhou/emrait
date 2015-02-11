@@ -4,6 +4,7 @@ var $ = require('jquery');
 var bootstrap = require('bootstrap')
 
 $(".js-mission-complete").click(function(event) {
+    var id = $(this).attr("data-tr");
     $.ajax({
         url: '/mission/' + $(this).attr("data-id"),
         type: 'put',
@@ -11,6 +12,9 @@ $(".js-mission-complete").click(function(event) {
     })
     .done(function() {
         console.log("success");
+        $("#"+id).fadeOut("normal", function() {
+            $(this).remove();
+        })
     })
 });
 },{"bootstrap":3,"jquery":2}],2:[function(require,module,exports){

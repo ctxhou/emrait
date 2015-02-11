@@ -5,17 +5,19 @@
             <th>機構</th>
             <th>目的地緯度</th>
             <th>目的地經度</th>
+            <th>指定醫院</th>
             <th>指派時間</th>
             <th></th>
         </tr>
     </thead>
-    <% @mission.each do |ary| %>
-        <tr>
+    <% @mission.each_with_index do |ary, index| %>
+        <tr id="row_<%= index%>">
             <td><%= ary["structure"] %></td>
             <td><%= ary["end_lat"] %></td>
             <td><%= ary["end_lng"] %></td>
+            <td><%= ary["hospital"] %></td>
             <td><%= ary["created_at"] %></td>
-            <td><button class="btn btn-success js-mission-complete" data-id="<%= ary["id"] %>">任務完成</button></td>
+            <td><button class="btn btn-success js-mission-complete" data-tr="row_<%= index%>" data-id="<%= ary["id"] %>">任務完成</button></td>
         </tr>
     <% end %>
 </table>

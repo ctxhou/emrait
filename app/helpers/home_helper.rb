@@ -20,10 +20,6 @@ module HomeHelper
         return suggest, abmulance_hash, d_to_hospital
     end
 
-    def self.distance_119_to_disaster(disaster, fire_fighter)
-
-    end
-
     def self.distance_disaster_to_hospital(disaster)
         ary = []
         hospital = Hospitals.all
@@ -33,7 +29,6 @@ module HomeHelper
                 ary << {name: data["name"], distance: dis, lat: data["lat"], lng: data["lng"]}
             end
         end
-
         return ary.sort_by {|k| k[:distance]}
     end
 
@@ -41,11 +36,15 @@ module HomeHelper
         suggest = {}
         count = 0
         abmulance_hash.each do |dis, data|
-            if injure > 0
-                suggest[dis] = data["number"]
-                injure -= data["number"]
-                count += 1
-            else
+            suggest[dis] = 0
+            1.upto(data["exist"]) do |k|
+                if injure > 0
+                    suggest[dis] += 1
+                    injure -= 1
+                end
+            end
+            count += 1
+            if injure == 0
                 break
             end
         end
@@ -67,5 +66,21 @@ module HomeHelper
             end
         end
         return result_hash.sort.to_h
+    end
+
+
+    def HomeHelper.near_clinic(lat, lng)
+        center_point = [lat, lng]
+        distance = 3 #km
+        box = Geocoder::Calculations.bounding_box(center_point, distance)
+        selector = Addressable::URI.parse("selector=緯度>=#{box[0]}AND緯度<=#{box[2]}AND經度>=#{box[1]}AND經度<=#{box[3]}").normalize.to_str
+        api_key = "54d3420c4abca63f6426cd35"
+        uri = "http://www.datagarage.io/api/#{api_key}?#{selector}"
+        @json = JSON.load(open(uri))
+        @json.each_with_index do |ary, index|
+            dis = Geocoder::Calculations.distance_between(center_point, [ary["緯度"],ary["經度"]]).round(3)
+            @json[index]["distance"] = dis
+        end
+        return @json
     end
 end

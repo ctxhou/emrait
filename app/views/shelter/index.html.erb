@@ -4,10 +4,10 @@
 
 <div class="banner-container py2">
     <div class="banner">EMRAIT</div>
-    <div class="center h4">緊急醫療資源指派與查詢工具</div>
+    <div class="center h4">鄰近災民收容所查詢</div>
 </div>
 <div class="form-container">
-    <form class="form-horizontal" method="get" action="emergency">
+    <form class="form-horizontal" method="get" action="shelter_result">
         <div class="form-group">
             <div class="col-md-2">
                 <select class="form-control" id="location-select">
@@ -24,10 +24,11 @@
             </div>
             <span id="msg" class="col-md-4"></span>
         </div>
+
         <div class="form-group">
-            <label for="injure" class="col-md-2 control-label">傷患人數</label>
+            <label for="victims" class="col-md-2 control-label">災民人數</label>
             <div class="col-md-10">
-                <input type="text" class="form-control" id="injure" placeholder="傷患人數" name="injure">
+                <input type="text" class="form-control" id="victims" placeholder="災民人數" name="victims">
             </div>
         </div>
         <button type="submit" class="btn btn-primary pull-right" disabled="disabled" id="submit">Submit</button>

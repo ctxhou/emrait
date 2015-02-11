@@ -40,9 +40,13 @@ module.exports = Backbone.Marionette.ItemView.extend({
     },
 
     hospital_route: function(e) {
-        
-        var lat = $(e.currentTarget).attr("data-lat");
-        var lng = $(e.currentTarget).attr("data-lng");
+        $(".js-hospital").removeClass('active')
+        var $target = $(e.currentTarget);
+        $target.addClass('active')
+        var lat = $target.attr("data-lat");
+        var lng = $target.attr("data-lng");
+        console.log($target.text())
+        $("#hospital-route").text("再到"+$target.text()+"(C)")
         this.map.tinyMap('clear', 'direction')
         this.map.tinyMap('modify', {
             direction: [
