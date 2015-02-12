@@ -70,7 +70,7 @@ app.on("before:start", function() {
         var now = $("#"+id).text();
         if (parseInt(now) > 0) {
             $("#"+id).text(parseInt(now)-1) 
-            total -= 1 
+            total -= 1
             $("#total").text(total)           
         }
     });

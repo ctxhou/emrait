@@ -55,10 +55,7 @@ module HomeHelper
         result_hash = {}
         distance = 1.5 #km
         box = Geocoder::Calculations.bounding_box(geo, distance)
-        api_key = "54ce0b394abca63f6426bd97" #shelter
-        selector = "selector=lat>=#{box[0]}ANDlat<=#{box[2]}ANDlng>=#{box[1]}ANDlng<=#{box[3]}"
-        uri = URI.encode("http://www.datagarage.io/api/#{api_key}?#{selector}")
-        shelter = JSON.load(open(URI.parse(uri)))
+        shelter = Shelter.where(lat: (box[0]..box[2]), lng:(box[1]..box[3]))
         shelter.each do |ary|
             dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
             if dis < 1.2

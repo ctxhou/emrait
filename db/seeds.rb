@@ -15,3 +15,10 @@ data_ary.each do |ary|
     Hospitals.create!(:hospital_id=>ary["uid"], :name=>ary["hospital"], :address=>ary["address"], :lat=>ary["lat"],
                       :lng=>ary["lng"])
 end
+
+Shelter.delete_all
+data_ary = JSON.load(open("http://www.datagarage.io/api/54ce0b394abca63f6426bd97/"))
+data_ary.each do |ary|
+    Shelter.create!(:uid=>ary["災民收容所編號"], :name=>ary["災民收容所名稱"], :city=>ary["所在縣市"], :state=>ary["所在鄉鎮市"],
+                    :address=>ary["收容所地址"], :lat=>ary["lat"], :lng=>ary["lng"])
+end

@@ -14,10 +14,11 @@
         <% @shelter_hash.each do |distance, ary| %>
             <tr>
                 <td><%= distance %></td>
-                <td><%= ary["災民收容所名稱"] %></td>
-                <td><%= ary["所在縣市"] %></td>
-                <td><%= ary["收容所地址"] %></td>
-                <td><button class="btn btn-link js-shelter" data-lat="<%= ary["lat"] %>" data-lng="<%= ary["lng"] %>" data-toggle="modal" data-target="#myModal">詳細資訊</button></td>
+                <td><%= ary["name"] %></td>
+                <td><%= ary["city"] %></td>
+                <td><%= ary["address"] %></td>
+                <td><button class="btn btn-primary js-shelter" data-lat="<%= ary["lat"] %>" data-lng="<%= ary["lng"] %>" data-toggle="modal" data-target="#myModal">詳細資訊</button></td>
+                <td><a href="/shelter/<%= ary["id"] %>" class="btn btn-link">民眾回報</a></td>
             </tr>
         <% end %>
     </table>

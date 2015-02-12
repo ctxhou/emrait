@@ -1,0 +1,53 @@
+<div class="row">
+    <div class="col-md-6">
+        <span class="h2" style="padding-right:20px"><%= @shelter.name %></span><span class="h4"><%= @shelter.address %></span>
+    </div>
+    <div class="col-md-6 right">
+        <button class="btn btn-success" data-toggle="modal" data-target="#myModal">回報狀況</button>
+    </div>
+</div>
+<hr>
+<% if @shelter_info.length > 0 %>
+  <% @shelter_info.each do |ary| %>
+    <div class="px3">
+        <span class="inline-block h4"><%= ary.name %>說：</span>
+        <span class="inline-block h4"><%= ary.content %></span>
+        <span class="inline-block pull-right"><%= ary.created_at %></span>
+    </div>
+    <hr>
+  <% end %>
+<% else %>
+    目前尚無人回報
+<% end %>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">民眾回報</h4>
+      </div>
+      <div class="modal-body">
+        <form action="/shelter/<%= @id %>" method="post">
+            <input type="hidden" name="id" value="<%= @id %>">
+            <div class="form-group">
+               <label for="name">暱稱</label>
+               <input type="text" class="form-control" name="name" placeholder="輸入暱稱">
+            </div>
+            <label for="">回報狀況</label>
+            <textarea class="form-control" rows="5" placeholder="回報狀況" name="report"></textarea>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <input type="submit" class="btn btn-primary" value="送出">
+            </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+<% content_for :javascript do %>
+<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry"></script>
+<script async="async" data-turbolinks-track="true" src="/assets/dist/shelter_show.js"></script>
+<% end %>

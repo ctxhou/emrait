@@ -136,7 +136,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
     onShow: function() {
         this.map = $("#map").tinyMap({
             zoom: 15,
-            center: [this.disaster_lat, this.disaster_lng],
+            center: [(this.disaster_lat+this.shelter_lat)/2, (this.disaster_lng+this.shelter_lng)/2],
             direction: [
                 {
                     'from': [this.disaster_lat, this.disaster_lng],

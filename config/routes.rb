@@ -5,8 +5,6 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   root :to => "home#index"
   get '/clinic' => "home#clinic"
-  get '/shelter' => "shelter#index"
-  get '/shelter_result' => "shelter#result"
   get '/clinic_search' => "home#clinic_search"
   get '/clinic/:lat/:lng' => 'clinic#get_clinic', :constraints => { :lng => /[\w+\.]+/, :lat => /[\w+\.]+/ }
   get '/emergency' => "home#emergency"
@@ -15,7 +13,11 @@ Rails.application.routes.draw do
   get '/mission' => "home#mission"
   get '/hospital_distance' => "ambulance#to_hospital"
   put '/mission/:id' => "mission#update"
-
+  get '/shelter' => "shelter#index"
+  get '/shelter/:id' => "shelter#show"
+  post '/shelter/:id' => "shelter#create"
+  get '/shelter_result' => "shelter#result"
+  
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
