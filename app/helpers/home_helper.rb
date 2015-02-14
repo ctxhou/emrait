@@ -25,8 +25,10 @@ module HomeHelper
         hospital = Hospitals.all
         hospital.each do |data|
             dis = Geocoder::Calculations.distance_between(disaster, [data["lat"],data["lng"]]).round(3)
-            if dis <= 8 # if the hospital is in 8 km distance, return 
-                ary << {name: data["name"], distance: dis, lat: data["lat"], lng: data["lng"]}
+            if dis <= 4 # if the hospital is in 4 km distance, return 
+                ary << {name: data["name"], distance: dis, lat: data["lat"], lng: data["lng"], address: data["address"],
+                        report_full: data["report_full"], wait_see: data["wait_see"], wait_push_bed:data["wait_push_bed"],
+                        wait_bed: data["wait_bed"], wait_cure_bed: data["wait_cure_bed"]}
             end
         end
         return ary.sort_by {|k| k[:distance]}

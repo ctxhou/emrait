@@ -71,13 +71,33 @@
 </div>
 
 <hr>
+
 <% if @d_to_hospital.length > 0 %>
-    <div class="h4 pyb2">可送至以下醫院:</div>
-    <ul>
+    <div class="h4 pyb2">可送至以下醫院: (以下為此醫院即時資料)</div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>醫院名稱</th>
+                <th>距離(km)</th>
+                <th>向119通報滿床</th>
+                <th>待看診</th>
+                <th>待推床</th>
+                <th>待住院</th>
+                <th>待加護住院</th>
+            </tr>
+        </thead>
         <% @d_to_hospital.each do |ary| %>
-            <li class="h5"><%= ary[:name] %>: <%= ary[:distance] %> km</li>
-        <% end %>    
-    </ul>
+            <tr>
+                <td><%= ary[:name] %></td>
+                <td><%= ary[:distance] %></td>
+                <td><%= ary[:report_full] %></td>
+                <td><%= ary[:wait_see] %></td>
+                <td><%= ary[:wait_push_bed] %></td>
+                <td><%= ary[:wait_bed] %></td>
+                <td><%= ary[:wait_cure_bed] %></td>
+            </tr>
+        <% end %>
+    </table>
 <% else %>
     <div class="h4 pyb2">附近並無大醫院，可考慮相關診所做初步急救措施</div>
     <ul>
