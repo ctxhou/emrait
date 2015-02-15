@@ -34,6 +34,7 @@ module AiAmbulanceHelper
     def AiAmbulanceHelper.suggest_ambulance(geo, d_to_hospital, ambulance_hash, injure, setup_time, speed)
         ambulance_hash = ambulance_hash.sort_by{|k,v| v["available_time"]}.to_h
         near_hospital = d_to_hospital.first
+        hos_id = near_hospital[:id]
         hospital_distance = near_hospital[:distance]
         schedule = []
         now_time = Time.now.to_i
@@ -52,7 +53,7 @@ module AiAmbulanceHelper
             end
             time_arrive_hospital = time_arrive_disaster + (near_hospital[:distance]/speed)*60.round(0) + setup_time
             ambulance_hash[name]["available_time"] = time_arrive_hospital + setup_time
-            schedule << {id: value[:id], name: name, start_lat: value[:lat], start_lng: value[:lng], hos_lat: near_hospital[:lat], hos_lat: near_hospital[:lng], phone: value[:phone],
+            schedule << {hos_id: hos_id, id: value[:id], name: name, start_lat: value[:lat], start_lng: value[:lng], hos_lat: near_hospital[:lat], hos_lat: near_hospital[:lng], phone: value[:phone],
                         hos_name: near_hospital[:name], time_disaster: time_arrive_disaster+now_time, time_hospital: time_arrive_hospital+now_time, distance: dis_to_disaster}
             ambulance_hash = ambulance_hash.sort_by{|k,v| v["available_time"]}.to_h
             injure -= 1
@@ -68,7 +69,7 @@ module AiAmbulanceHelper
         hospital.each do |data|
             dis = Geocoder::Calculations.distance_between(geo, [data["lat"],data["lng"]]).round(3)
             if dis <= 4 # if the hospital is in 4 km distance, return 
-                ary << {name: data["name"], distance: dis, lat: data["lat"], lng: data["lng"], address: data["address"],
+                ary << {id:data["id"], name: data["name"], distance: dis, lat: data["lat"], lng: data["lng"], address: data["address"],
                         report_full: data["report_full"], wait_see: data["wait_see"], wait_push_bed:data["wait_push_bed"],
                         wait_bed: data["wait_bed"], wait_cure_bed: data["wait_cure_bed"]}
             end

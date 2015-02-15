@@ -32,8 +32,9 @@
         <td class="time"><%= data[:time_hospital]*1000%></td>
         <td><%= data[:hos_name] %></td>
         <td>
-            <button class="btn btn-link js-ambulance" data-id="<%= data[:id] %>" data-toggle="modal" data-target="#myModal">詳細資訊</button>
+            <button class="btn btn-link js-ambulance" data-id="<%= data[:id] %>" data-toggle="modal" data-target="#myModal" data-hos-id="<%= data[:hos_id] %>">詳細資訊</button>
         </td>
+        <input type="hidden" class="js-assign" data-name="<%= data[:name] %>" data-hospital="<%= data[:hos_name] %>" data-id="<%= data[:id] %>" >
     </tr>
     <% end %>
 </table>

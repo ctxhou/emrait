@@ -238,6 +238,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
     initialize: function(options) {
         this.hospital = options.hospital.toJSON();
+        delete this.hospital["id"]
         this.start_lat = this.model.get("lat")
         this.start_lng = this.model.get("lng")
         this.end_lat = $("#end_lat").val()
@@ -251,7 +252,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
     onShow: function() {
         this.map = $("#map").tinyMap({
             zoom: 15,
-            center: [this.start_lat, this.start_lng],
+            center: [this.end_lat, this.end_lng],
             direction: [
                 {
                     'from': [this.start_lat, this.start_lng],
@@ -267,7 +268,6 @@ module.exports = Backbone.Marionette.ItemView.extend({
         $target.addClass('active')
         var lat = $target.attr("data-lat");
         var lng = $target.attr("data-lng");
-        console.log($target.text())
         $("#hospital-route").text("再到"+$target.text()+"(C)")
         this.map.tinyMap('clear', 'direction')
         this.map.tinyMap('modify', {

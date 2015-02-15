@@ -250,21 +250,19 @@ module.exports = geo
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "    <table class=\"table\">\n        <thead>\n            <tr>\n                <th>#</th>\n                <th>診所名稱</th>\n                <th>距離(m)</th>\n                <th></th>\n            </tr>\n        </thead>\n";
+  var stack1, buffer = "    <table class=\"table\">\n        <thead>\n            <tr>\n                <th>診所名稱</th>\n                <th>距離(m)</th>\n                <th></th>\n            </tr>\n        </thead>\n";
   stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.items : depth0), {"name":"each","hash":{},"fn":this.program(2, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "    </table>\n";
 },"2":function(depth0,helpers,partials,data) {
-  var helper, lambda=this.lambda, escapeExpression=this.escapeExpression, functionType="function", helperMissing=helpers.helperMissing;
-  return "            <tr>\n                <th>"
-    + escapeExpression(lambda((data && data.index), depth0))
-    + "</th>\n                <td>"
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "            <tr>\n                <td>"
     + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
     + "</td>\n                <td>"
     + escapeExpression(((helper = (helper = helpers.distance || (depth0 != null ? depth0.distance : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"distance","hash":{},"data":data}) : helper)))
-    + "</td>\n                <td><a class=\"glyphicon glyphicon-pushpin js-clinic-location\" data-name=\""
+    + "</td>\n                <td><a class=\"js-clinic-location\" data-name=\""
     + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
-    + "\" aria-hidden=\"true\"></a></td>\n            </tr>\n";
+    + "\" aria-hidden=\"true\">定位</a></td>\n            </tr>\n";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.items : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});

@@ -2,7 +2,7 @@
     <table class="table">
         <thead>
             <tr>
-                <th>#</th>
+                {{!-- <th>#</th> --}}
                 <th>診所名稱</th>
                 <th>距離(m)</th>
                 <th></th>
@@ -10,10 +10,10 @@
         </thead>
         {{#each items}}
             <tr>
-                <th>{{@index}}</th>
+                {{!-- <th>{{@index}}</th> --}}
                 <td>{{id}}</td>
                 <td>{{distance}}</td>
-                <td><a class="glyphicon glyphicon-pushpin js-clinic-location" data-name="{{id}}" aria-hidden="true"></a></td>
+                <td><a class="js-clinic-location" data-name="{{id}}" aria-hidden="true">定位</a></td>
             </tr>
         {{/each}}
     </table>
