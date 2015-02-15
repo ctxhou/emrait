@@ -1,0 +1,88 @@
+<h1>系統指派</h1>
+<div class="pull-right"><a href="/mission">出勤中救護車</a></div>
+
+<h3>以下為到災點
+    <% if @address %>
+        <%= @address %>
+    <% else %>
+        <%= @lat %>, <%= @lng %>
+    <% end %>
+    的救護車指派建議 ( 有<%= @injure %>位病患 )
+</h3>
+
+<h5>setup time: <%= @setup_time %> ; speed: <%= @speed.round(4) %> km/hr</h5>
+<table class="table">
+    <thead>
+        <tr>
+            <th>名稱</th>
+            <th>消防局電話</th>
+            <th>出發位置</th>
+            <th>抵達災點時間</th>
+            <th>到醫院時間</th>
+            <th>送至醫院</th>
+            <th></th>
+        </tr>
+    </thead>
+    <% @schedule.each do |data| %>
+    <tr>
+        <td><%= data[:name] %></td>
+        <td><%= data[:phone] %></td>
+        <td><%= data[:start_lat].round(3) %>, <%= data[:start_lng].round(3) %></td>
+        <td class="time"><%= data[:time_disaster]*1000%></td>
+        <td class="time"><%= data[:time_hospital]*1000%></td>
+        <td><%= data[:hos_name] %></td>
+        <td>
+            <button class="btn btn-link js-ambulance" data-id="<%= data[:id] %>" data-toggle="modal" data-target="#myModal">詳細資訊</button>
+        </td>
+    </tr>
+    <% end %>
+</table>
+<div class="result  right">
+    <h3>共指派 <span id="total"><%= @injure %></span>台救護車</h3>
+    <button class="btn btn-success" id="assign-submit">一鍵指派</button>    
+</div>
+
+<hr>
+
+<% if @d_to_hospital.length > 0 %>
+    <div class="h4 pyb2">可送至以下醫院: (以下為此醫院即時資料)</div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>醫院名稱</th>
+                <th>距離(km)</th>
+                <th>向119通報滿床</th>
+                <th>待看診</th>
+                <th>待推床</th>
+                <th>待住院</th>
+                <th>待加護住院</th>
+            </tr>
+        </thead>
+        <% @d_to_hospital.each do |ary| %>
+            <tr>
+                <td><%= ary[:name] %></td>
+                <td><%= ary[:distance] %></td>
+                <td><%= ary[:report_full] %></td>
+                <td><%= ary[:wait_see] %></td>
+                <td><%= ary[:wait_push_bed] %></td>
+                <td><%= ary[:wait_bed] %></td>
+                <td><%= ary[:wait_cure_bed] %></td>
+            </tr>
+        <% end %>
+    </table>
+<% else %>
+    <div class="h4 pyb2">附近並無大醫院，可考慮相關診所做初步急救措施</div>
+    <ul>
+        <li><% @clinic %></li>
+    </ul>
+<% end %>
+
+<hr>
+
+<%= render "units/bootstrap_modal" %>
+<input type="hidden" value="<%= @lat %>" id="end_lat">
+<input type="hidden" value="<%= @lng %>" id="end_lng">
+<% content_for :javascript do %>
+<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry"></script>
+<script async="async" data-turbolinks-track="true" src="/assets/dist/ai_ambulance.js"></script>
+<% end %>
