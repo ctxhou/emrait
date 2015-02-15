@@ -16,6 +16,8 @@ class HomeController < ApplicationController
 
     end
 
+
+
     def clinic_search
         @address = params[:address]
         @lat = params[:lat]
@@ -27,9 +29,20 @@ class HomeController < ApplicationController
         @lng = params[:lng]
         @address = params[:address]
         @injure = params[:injure].to_i
-        @suggest_ambulance, @abmulance_hash, @d_to_hospital = HomeHelper.compare_119_distance([@lat, @lng], @injure)
+        @schedule, @d_to_hospital = HomeHelper.compare_119_distance([@lat, @lng], @injure)
         if @d_to_hospital.length == 0
             @clinic = HomeHelper.near_clinic(@lat, @lng)
+        end
+    end
+
+    def ai_ambulance
+        @lat = params[:lat]
+        @lng = params[:lng]
+        @address = params[:address]
+        @injure = params[:injure].to_i
+        @schedule, @d_to_hospital = AiAmbulanceHelper.compare_119_distance([@lat, @lng], @injure)
+        if @d_to_hospital.length == 0
+            @clinic = AiAmbulanceHelper.near_clinic(@lat, @lng)
         end
     end
 

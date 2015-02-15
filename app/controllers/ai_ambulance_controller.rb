@@ -1,0 +1,2 @@
+class AiAmbulanceController < ApplicationController
+end
