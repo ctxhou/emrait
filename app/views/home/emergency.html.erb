@@ -12,27 +12,55 @@
 <table class="table">
     <thead>
         <tr>
-            <th>名稱</th>
-            <th>消防局電話</th>
-            <th>出發位置</th>
-            <th>抵達災點時間</th>
-            <th>到醫院時間</th>
+            <th>距離(km)</th>
+            <th>機構名稱</th>
+            <th>電話</th>
+            <!-- <th>救護車數</th> -->
+            <th>建議派救護車數</th>
             <th>送至醫院</th>
             <th></th>
         </tr>
     </thead>
-    <% @schedule.each do |data| %>
+    <% @abmulance_hash.each do |distance, data| %>
     <tr>
-        <td><%= data[:name] %></td>
-        <td><%= data[:phone] %></td>
-        <td><%= data[:start_lat] %>, <%= data[:start_lng] %></td>
-        <td><%= data[:time_disaster] %></td>
-        <td><%= data[:time_hospital] %></td>
-        <td><%= data[:hos_name] %></td>
+        <td><%= distance %></td>
+        <td><%= data["name"] %></td>
+        <td><%= data["phone"] %></td>
         <!-- <td><%#= data["exist"] %></td> -->
-
         <td>
-            <button class="btn btn-link js-ambulance" data-id="<%= data[:id] %>" data-toggle="modal" data-target="#myModal">詳細資訊</button>
+            <div class="row">
+                <div class="col-md-6 right h4">
+                    <% if @suggest_ambulance[distance] %>
+                        <div class="js-assign" id="<%= data["id"] %>" data-max="<%= data["number"] %>"><%= @suggest_ambulance[distance] %></div>
+                    <% else %>
+                        <div class="js-assign" id="<%= data["id"] %>" data-max="<%= data["number"] %>">0</div>
+                    <% end %>
+                </div>
+                <div class="col-md-6 left">
+                    <ul>
+                        <li class="mb2">
+                            <button class="glyphicon glyphicon-plus js-add" data-id="<%= data["id"] %>"></button>                    
+                        </li>
+                        <li>
+                            <button class="glyphicon glyphicon-minus js-minus" data-id="<%= data["id"] %>"></button>                    
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </td>
+        <td>
+            <ul>  
+            <% @d_to_hospital.each_with_index do |ary, index| %>
+                <% if index == 0 %>
+                    <li><input type="radio" name="send_hospital_<%= data["id"] %>" value="<%= ary[:name] %>" checked> &nbsp;<%= ary[:name] %></li>
+                <% else %>
+                    <li><input type="radio" name="send_hospital_<%= data["id"] %>" value="<%= ary[:name] %>"> &nbsp;<%= ary[:name] %></li>
+                <% end %>
+            <% end %>   
+            </ul> 
+        </td>
+        <td>
+            <button class="btn btn-link js-ambulance" data-id="<%= data["id"] %>" data-toggle="modal" data-target="#myModal">詳細資訊</button>
         </td>
     </tr>
     <% end %>

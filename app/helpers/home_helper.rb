@@ -6,50 +6,51 @@ module HomeHelper
     end 
 
     def HomeHelper.compare_119_distance(geo, injure)
-        setup_time = 15 # 15 min to pick up patient and place in hospital
-        speed = 70/60.0 # speed: 70km/hr = (70/60)km/min
         data_ary = Ambulance.all
-        ambulance_hash = {}
+        abmulance_hash = {}
         data_ary.each do |ary|
             if ary["exist"].to_i > 0
-                1.upto(ary["exist"].to_i) do |k|
-                    content = {phone: ary[:phone], lat: ary[:lat], lng: ary[:lng], id: ary[:id]}
-                    dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
-                    name = ary["name"] + k.to_s
-                    content["available_time"] = dis/speed
-                    content["distance"] = dis
-                    ambulance_hash[name] = content
-                end
+                dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
+                abmulance_hash[dis] = ary
             end
         end
         d_to_hospital = self.distance_disaster_to_hospital(geo)
-        ambulance_hash = ambulance_hash.sort.to_h
-
-        # p ambulance_hash
-        schedule = self.suggest_ambulance(geo, d_to_hospital, ambulance_hash, injure, setup_time, speed)
-        return schedule, d_to_hospital
+        abmulance_hash = abmulance_hash.sort.to_h
+        suggest, abmulance_hash = self.suggest_ambulance(abmulance_hash, injure)
+        return suggest, abmulance_hash, d_to_hospital
     end
 
-    def HomeHelper.suggest_ambulance(geo, d_to_hospital, ambulance_hash, injure, setup_time, speed)
-        ambulance_hash = ambulance_hash.sort_by{|k,v| v["available_time"]}.to_h
-        near_hospital = d_to_hospital.first
-        hospital_distance = near_hospital[:distance]
-        schedule = []
-        while injure > 0
-            first = ambulance_hash.first
-            name = first[0]
-            value = first[1]
-            available_time = ambulance_hash[name]["available_time"]
-            dis_to_disaster = Geocoder::Calculations.distance_between([value[:lat], value[:lng]], geo).round(3)
-            route_distance = dis_to_disaster + near_hospital[:distance]
-            ambulance_hash[name]["available_time"] = available_time + route_distance/speed + setup_time
-            schedule << {id: value[:id], name: name, start_lat: value[:lat], start_lng: value[:lng], hos_lat: near_hospital[:lat], hos_lat: near_hospital[:lng], phone: value[:phone],
-                        hos_name: near_hospital[:name], time_disaster: available_time + dis_to_disaster/speed, time_hospital: available_time+ near_hospital[:distance]/speed}
-            ambulance_hash = ambulance_hash.sort_by{|k,v| v["available_time"]}.to_h
-            injure -= 1
+    def self.distance_disaster_to_hospital(disaster)
+        ary = []
+        hospital = Hospitals.all
+        hospital.each do |data|
+            dis = Geocoder::Calculations.distance_between(disaster, [data["lat"],data["lng"]]).round(3)
+            if dis <= 4 # if the hospital is in 4 km distance, return 
+                ary << {name: data["name"], distance: dis, lat: data["lat"], lng: data["lng"], address: data["address"],
+                        report_full: data["report_full"], wait_see: data["wait_see"], wait_push_bed:data["wait_push_bed"],
+                        wait_bed: data["wait_bed"], wait_cure_bed: data["wait_cure_bed"]}
+            end
         end
-        # p schedule
-        return schedule
+        return ary.sort_by {|k| k[:distance]}
+    end
+
+    def HomeHelper.suggest_ambulance(abmulance_hash, injure)
+        suggest = {}
+        count = 0
+        abmulance_hash.each do |dis, data|
+            suggest[dis] = 0
+            1.upto(data["exist"]) do |k|
+                if injure > 0
+                    suggest[dis] += 1
+                    injure -= 1
+                end
+            end
+            count += 1
+            if injure == 0
+                break
+            end
+        end
+        return suggest, (abmulance_hash.first count+4)
     end
 
     def HomeHelper.get_near_shelter(geo)
@@ -66,20 +67,6 @@ module HomeHelper
         return result_hash.sort.to_h
     end
 
-    def self.distance_disaster_to_hospital(geo)
-        # get the near hospital data
-        ary = []
-        hospital = Hospitals.all
-        hospital.each do |data|
-            dis = Geocoder::Calculations.distance_between(geo, [data["lat"],data["lng"]]).round(3)
-            if dis <= 4 # if the hospital is in 4 km distance, return 
-                ary << {name: data["name"], distance: dis, lat: data["lat"], lng: data["lng"], address: data["address"],
-                        report_full: data["report_full"], wait_see: data["wait_see"], wait_push_bed:data["wait_push_bed"],
-                        wait_bed: data["wait_bed"], wait_cure_bed: data["wait_cure_bed"]}
-            end
-        end
-        return ary.sort_by {|k| k[:distance]}
-    end
 
     def HomeHelper.near_clinic(lat, lng)
         center_point = [lat, lng]
