@@ -29,6 +29,11 @@ var files = [
     destination: dist
   },
   {
+    input      : [src + 'ai_ambulance.js'],
+    output     : 'ai_ambulance.js',
+    destination: dist
+  },
+  {
     input      : [src + 'mission.js'],
     output     : 'mission.js',
     destination: dist

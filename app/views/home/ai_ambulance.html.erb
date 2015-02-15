@@ -1,3 +1,4 @@
+<h1>系統指派</h1>
 <div class="pull-right"><a href="/mission">出勤中救護車</a></div>
 
 <h3>以下為到災點
@@ -9,6 +10,7 @@
     的救護車指派建議 ( 有<%= @injure %>位病患 )
 </h3>
 
+<h5>setup time: <%= @setup_time %> ; speed: <%= @speed.round(4) %> km/hr</h5>
 <table class="table">
     <thead>
         <tr>
@@ -25,9 +27,9 @@
     <tr>
         <td><%= data[:name] %></td>
         <td><%= data[:phone] %></td>
-        <td><%= data[:start_lat] %>, <%= data[:start_lng] %></td>
-        <td><%= data[:time_disaster] %></td>
-        <td><%= data[:time_hospital] %></td>
+        <td><%= data[:start_lat].round(3) %>, <%= data[:start_lng].round(3) %></td>
+        <td class="time"><%= data[:time_disaster]*1000%></td>
+        <td class="time"><%= data[:time_hospital]*1000%></td>
         <td><%= data[:hos_name] %></td>
         <!-- <td><%#= data["exist"] %></td> -->
 
@@ -84,5 +86,5 @@
 <input type="hidden" value="<%= @lng %>" id="end_lng">
 <% content_for :javascript do %>
 <script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry"></script>
-<script async="async" data-turbolinks-track="true" src="/assets/dist/emergency.js"></script>
+<script async="async" data-turbolinks-track="true" src="/assets/dist/ai_ambulance.js"></script>
 <% end %>

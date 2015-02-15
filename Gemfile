@@ -11,6 +11,7 @@ gem 'bootstrap-sass', '~> 3.3.3'
 gem 'font-awesome-rails'
 gem 'addressable', '~> 2.3.6'
 gem 'geocoder'
+gem 'gmaps_directions'
 gem "rufus-scheduler"
 gem "tw_hospital"
 # Use Uglifier as compressor for JavaScript assets

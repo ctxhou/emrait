@@ -31,9 +31,9 @@
             <div class="row">
                 <div class="col-md-6 right h4">
                     <% if @suggest_ambulance[distance] %>
-                        <div class="js-assign" id="<%= data["id"] %>" data-max="<%= data["number"] %>"><%= @suggest_ambulance[distance] %></div>
+                        <div class="js-assign" id="<%= data["id"] %>" data-max="<%= data["exist"] %>"><%= @suggest_ambulance[distance] %></div>
                     <% else %>
-                        <div class="js-assign" id="<%= data["id"] %>" data-max="<%= data["number"] %>">0</div>
+                        <div class="js-assign" id="<%= data["id"] %>" data-max="<%= data["exist"] %>">0</div>
                     <% end %>
                 </div>
                 <div class="col-md-6 left">
