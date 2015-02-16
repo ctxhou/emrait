@@ -25,8 +25,11 @@ class HomeController < ApplicationController
     end
 
     def emergency
-        @lat = params[:lat]
-        @lng = params[:lng]
+        length = params[:length].to_i
+        @geo_hash = {}
+        1.upto(length) do |k|
+            @geo_hash[k] = {lat: params["lat#{k}".intern], lng: params["lng#{k}".intern], address: params["address#{k}".intern]}
+        end
         @address = params[:address]
         @injure = params[:injure].to_i
         @suggest_ambulance, @abmulance_hash, @d_to_hospital = HomeHelper.compare_119_distance([@lat, @lng], @injure)
@@ -39,7 +42,7 @@ class HomeController < ApplicationController
         @lat = params[:lat]
         @lng = params[:lng]
         @setup_time = 1 # 15 min to pick up patient and place in hospital
-        @speed = 70 # speed: 70km/hr = (70/60)km/min
+        @speed = 50 # speed: 70km/hr = (70/60)km/min
         @address = params[:address]
         @injure = params[:injure].to_i
         @schedule, @d_to_hospital = AiAmbulanceHelper.compare_119_distance([@lat, @lng], @injure, @setup_time, @speed)
