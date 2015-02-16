@@ -2,7 +2,6 @@ var $ = require('jquery');
 require('./vendor/jQclock.min')
 
 var Backbone = require('backbone');
-var $ = require('jquery');
 var _ = require('underscore');
 Backbone.$ = $;
 

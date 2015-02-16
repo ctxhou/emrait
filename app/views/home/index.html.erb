@@ -1,60 +1,67 @@
-<% content_for :javascript do %>
-    <script async="async" data-turbolinks-track="true" src="/assets/dist/home.js"></script>
-<% end %>
-
 <div class="banner-container py2">
     <div class="banner">EMRAIT</div>
     <div class="center h4">緊急醫療資源指派與查詢工具</div>
 </div>
 <div class="form-container clearfix">
     <form class="form-horizontal" method="get" action="emergency">
+        <h3 id="first-title"></h3>
         <div class="form-group">
             <div class="col-md-2">
-                <select class="form-control" id="location-select">
+                <select class="form-control js-location-select" data-number="1">
                     <option value="location">地址</option>
                     <option value="geocode">座標</option>
                 </select>
             </div>
-            <div id="location-input">
+            <div id="location-input-1">
                 <div class="col-md-6" id="location">
-                    <input type="text" class="form-control" name="address" placeholder="輸入所在地址" id="address" required>
-                    <input type="hidden" name="lat" id="lat" required>
-                    <input type="hidden" name="lng" id="lng" required>
+                    <input type="text" class="form-control js-address" name="address" placeholder="輸入所在地址" data-number="1" required>
+                    <input type="hidden" name="lat1" id="lat1" required>
+                    <input type="hidden" name="lng1" id="lng1" required>
                 </div>
             </div>
-            <span id="msg" class="col-md-4"></span>
+            <span id="msg1" class="col-md-4"></span>
         </div>
         <div class="form-group">
             <label for="injure" class="col-md-2 control-label">傷患人數</label>
             <div class="col-md-10">
-                <input type="text" class="form-control" id="injure" placeholder="傷患人數" name="injure">
+                <input type="text" class="form-control" id="injure" placeholder="傷患人數" name="injure1">
             </div>
         </div>
-        <button type="submit" class="btn btn-primary pull-right" id="submit">Submit</button>
-        <!-- <button type="submit" class="btn btn-primary pull-right" disabled="disabled" id="submit">Submit</button> -->
+        <div id="multi"></div>
+        <input type="hidden" value="1" name="length" id="length">
+        <a id="new" class="btn btn-success">New</a>
+        <button type="submit" class="btn btn-primary pull-right" disabled="disabled" id="submit">Submit</button>
     </form>
 </div>
 <hr>
 <a href="/mission" class="h3" style="color: blue">查看出勤中救護車</a>
-<!-- <table class="table">
-    <thead>
-        <tr>
-            <th>醫院</th>
-            <th>通報119滿床</th>
-            <th>等待看診</th>
-            <th>等待住院</th>
-            <th>等待加護病床</th>
-            <th>等待推床</th>
-        </tr>
-    </thead>
-    <%# @json.each do |ary| %>
-    <tr>
-        <td><%#= HomeHelper.to_name(ary["hospital"]) %></td>
-        <td><%#= ary["to_119"] %></td>
-        <td><%#= ary["wait_see"] %></td>
-        <td><%#= ary["wait_bed"] %></td>
-        <td><%#= ary["wait_cure_bed"] %></td>
-        <td><%#= ary["wait_push_bed"] %></td>
-    </tr>
-    <%# end %>
-</table> -->
+
+<script type="text/x-handlebars-template" id="multi-disaster">
+    <hr>
+    <h3>災點{{number}}：</h3>
+    <div class="form-group">
+        <div class="col-md-2">
+            <select class="form-control js-location-select" data-number="{{number}}">
+                <option value="location">地址</option>
+                <option value="geocode">座標</option>
+            </select>
+        </div>
+        <div id="location-input-{{number}}">
+            <div class="col-md-6" id="location">
+                <input type="text" class="form-control js-address" name="address{{number}}" placeholder="輸入所在地址" data-number="{{number}}" required>
+                <input type="hidden" name="lat{{number}}" id="lat{{number}}" required>
+                <input type="hidden" name="lng{{number}}" id="lng{{number}}" required>
+            </div>
+        </div>
+        <span id="msg{{number}}" class="col-md-4"></span>
+    </div>
+    <div class="form-group">
+        <label for="injure" class="col-md-2 control-label">傷患人數</label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" id="injure{{number}}" placeholder="傷患人數" name="injure{{number}}">
+        </div>
+    </div>
+</script>
+<% content_for :javascript do %>
+    <script async="async" data-turbolinks-track="true" src="/assets/dist/home.js"></script>
+<% end %>

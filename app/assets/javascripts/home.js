@@ -1,53 +1,89 @@
 var $ = require('jquery');
 var _ = require('underscore');
+var Backbone = require('backbone');
+var Handlebars = require('handlebars')
+Backbone.$ = $;
+var Marionette = require('backbone.marionette');
 var GetGeo = require('./module/get_geo')
 var geocode = _.template('<div class="col-md-2">'+
-                    '<input type="text" class="form-control" placeholder="緯度" name="lat" id="lat" required>'+
+                    '<input type="text" class="form-control" placeholder="緯度" name="lat<%=number%>" id="lat<%=number%>" required>'+
                 '</div>'+'<div class="col-md-2">'+
-                '<input type="text" class="form-control" placeholder="經度" name="lng" id="lng" required></div>'+
+                '<input type="text" class="form-control" placeholder="經度" name="lng<%=number%>" id="lng<%=number%>" required></div>'+
                 '<div class="col-md-2">'+
-                '<a class="btn btn-default" id="get_geo">自動定位</a></div>'
+                '<a class="btn btn-default" id="get_geo<%=number%>">自動定位</a></div>'
                 )
-var location = _.template('<div class="col-md-10" id="location">'+
-                '<input type="text" class="form-control" name="address" placeholder="輸入所在地址" required id="address">'+
-                '<input type="hidden" name="lat" id="lat" required>'+
-                '<input type="hidden" name="lng" id="lng" required>'+
+var location = _.template('<div class="col-md-6" id="location">'+
+                '<input type="text" class="form-control js-address" name="address<%=number%>" placeholder="輸入所在地址" data-number="<%=number%>" required>'+
+                '<input type="hidden" name="lat<%=number%>" id="lat<%=number%>" required>'+
+                '<input type="hidden" name="lng<%=number%>" id="lng<%=number%>" required>'+
                 '</div>')
 
-var fill_geocode = function(ary) {
-    $("#lat").val(ary[0])
-    $("#lng").val(ary[1])
-    if ($("#lat").val()){
+
+var app = new Marionette.Application();
+app.addRegions({
+    modal: "#modal-view"
+})
+
+app.on("before:start", function() {
+    var that = this;
+    var count = 1;
+    var template = Handlebars.compile($("#multi-disaster").html())
+    $(document).on('change', '.js-location-select', function(event) {
+        var number = $(this).attr("data-number")
+        if ($(event.currentTarget).val()=="location") {
+            $("#location-input-"+number).html(location({number: number}));
+        } else {
+            $("#location-input-"+number).html(geocode({number: number}));
+            $("#get_geo"+number).click(function(event) {
+                GetGeo.geolocation_multi(that.fill_geocode, number)
+            });
+        }
+    });
+
+    $("#new").click(function(event) {
+        if (count == 1) {
+            $("#first-title").text("災點1");
+        }
+        count += 1;
+        $("#length").val(parseInt($("#length").val())+1)
+        var html = template({number: count})
+        $("#multi").append(html)
+    });
+
+    $(document).on('change', ".js-address", function() {
+        var google_url = "http://maps.googleapis.com/maps/api/geocode/json?address="
+        var val = $(this).val();
+        var number = $(this).attr("data-number")
+        $.get(google_url + val, function(data) {
+            /*optional stuff to do after success */
+            if (data.results[0]) {
+                var geo = data.results[0].geometry.location
+                $("#lat"+number).val(geo.lat)
+                $("#lng"+number).val(geo.lng)
+                $("#msg"+number).html("正確的地址！")
+                $("#submit").removeAttr('disabled')
+            } else {
+                $("#msg"+number).html("你輸入錯誤的地址...")
+                $("#submit").attr('disabled', "disabled")
+            }
+        });
+    })
+})
+
+
+app.fill_geocode = function(ary, number) {
+    $("#lat"+number).val(ary[0])
+    $("#lng"+number).val(ary[1])
+    if ($("#lat"+number).val()){
         $("#submit").removeAttr('disabled')
     }
 }
 
-$("#location-select").change(function(event) {
-    if ($(event.currentTarget).val()=="location") {
-        $("#location-input").html(location());
-    } else {
-        $("#location-input").html(geocode());
-        $("#get_geo").click(function(event) {
-            GetGeo.geolocation(fill_geocode)
-        });
+app.on("initialize:after", function() {
+    if (Backbone.history) {
+        Backbone.history.start();
     }
 });
 
-$("#address").change(function() {
-    var google_url = "http://maps.googleapis.com/maps/api/geocode/json?address="
-    var val = $(this).val();
-    $.get(google_url + val, function(data) {
-        /*optional stuff to do after success */
-        if (data.results[0]) {
-            var geo = data.results[0].geometry.location
-            $("#lat").val(geo.lat)
-            $("#lng").val(geo.lng)
-            $("#msg").html("正確的地址！")
-            $("#submit").removeAttr('disabled')
-        } else {
-            $("#msg").html("你輸入錯誤的地址...")
-            $("#submit").attr('disabled', "disabled")
-        }
-    });
-})
+app.start();
 

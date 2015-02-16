@@ -1,0 +1,24 @@
+<hr>
+<h2>災點{{number}}：</h2>
+<div class="form-group">
+    <div class="col-md-2">
+        <select class="form-control" id="location-select">
+            <option value="location">地址</option>
+            <option value="geocode">座標</option>
+        </select>
+    </div>
+    <div id="location-input">
+        <div class="col-md-6" id="location">
+            <input type="text" class="form-control" name="address" placeholder="輸入所在地址" id="address" required>
+            <input type="hidden" name="lat{{number}}" id="lat{{number}}" required>
+            <input type="hidden" name="lng{{number}}" id="lng{{number}}" required>
+        </div>
+    </div>
+    <span id="msg{{number}}" class="col-md-4"></span>
+</div>
+<div class="form-group">
+    <label for="injure" class="col-md-2 control-label">傷患人數</label>
+    <div class="col-md-10">
+        <input type="text" class="form-control" id="injure{{number}}" placeholder="傷患人數" name="injure">
+    </div>
+</div>
