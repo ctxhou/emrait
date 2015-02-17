@@ -25,6 +25,7 @@ class HomeController < ApplicationController
     end
 
     def emergency
+        @smart_url = URI.parse(request.original_url).query
         length = params[:length].to_i
         @geo_hash = {}
         1.upto(length) do |k|

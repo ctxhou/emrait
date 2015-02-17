@@ -1,5 +1,5 @@
 <div class="pull-right"><a href="/mission">出勤中救護車</a></div>
-<a href="<%= URI.escape("/smart_emergency/?lat=#{@lat}&lng=#{@lng}&injure=#{@injure}") %>">系統指派</a>
+<a href="<%= URI.escape("/smart_emergency/?#{@smart_url}") %>">系統指派</a>
 <div id="content"></div>
 
 <% if @d_to_hospital.length > 0 %>
