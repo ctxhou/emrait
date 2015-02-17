@@ -1,7 +1,11 @@
 var hbs = require('hbsfy/runtime');
 
 hbs.registerHelper('setIndex', function(value) {
-    this.index = Math.random()*1000; //I needed human readable index, not zero based
+    if (value == "rand"){
+        this.index = Math.round(Math.random()*100000000); //I needed human readable index, not zero based        
+    } else {
+        this.index = value
+    }
 });
 
 module.exports = hbs;

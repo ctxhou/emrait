@@ -63,25 +63,6 @@ app.on("before:start", function() {
         })
     });
     var total = parseInt($("#total").text());
-    $(".js-add").click(function(event) {
-        var id = $(this).attr("data-id");
-        var now = $("#"+id).text();
-        var max = $("#"+id).attr("data-max");
-        if (now < max) {
-            $("#"+id).text(parseInt(now)+1)     
-            total += 1 
-            $("#total").text(total)
-        }
-    });
-    $(".js-minus").click(function(event) {
-        var id = $(this).attr("data-id");
-        var now = $("#"+id).text();
-        if (parseInt(now) > 0) {
-            $("#"+id).text(parseInt(now)-1) 
-            total -= 1
-            $("#total").text(total)           
-        }
-    });
 })
 app.on("initialize:after", function() {
     if (Backbone.history) {

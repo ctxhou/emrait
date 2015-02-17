@@ -64,25 +64,6 @@ app.on("before:start", function() {
         })
     });
     var total = parseInt($("#total").text());
-    $(".js-add").click(function(event) {
-        var id = $(this).attr("data-id");
-        var now = $("#"+id).text();
-        var max = $("#"+id).attr("data-max");
-        if (now < max) {
-            $("#"+id).text(parseInt(now)+1)     
-            total += 1 
-            $("#total").text(total)
-        }
-    });
-    $(".js-minus").click(function(event) {
-        var id = $(this).attr("data-id");
-        var now = $("#"+id).text();
-        if (parseInt(now) > 0) {
-            $("#"+id).text(parseInt(now)-1) 
-            total -= 1
-            $("#total").text(total)           
-        }
-    });
 })
 app.on("initialize:after", function() {
     if (Backbone.history) {
@@ -185,30 +166,36 @@ module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partia
   if (stack1 != null) { buffer += stack1; }
   return buffer + " \n";
 },"3":function(depth0,helpers,partials,data,depths) {
-  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = " \n            <h3>以下為到災點"
+  var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, lambda=this.lambda, buffer = " \n            "
+    + escapeExpression(((helpers.setIndex || (depth0 && depth0.setIndex) || helperMissing).call(depth0, (data && data.key), {"name":"setIndex","hash":{},"data":data})))
+    + "\n            <h3>以下為鄰近災點"
     + escapeExpression(lambda((data && data.key), depth0))
-    + "的救護車指派建議</h3>\n            <table class=\"table\">\n                <thead>\n                    <tr>\n                        <th>距離(km)</th>\n                        <th>機構名稱</th>\n                        <th>電話</th>\n                        <!-- <th>救護車數</th> -->\n                        <th>建議派救護車數</th>\n                        <th>送至醫院</th>\n                        <th></th>\n                    </tr>\n                </thead>\n            ";
+    + "的救護車資訊</h3>\n            <table class=\"table\">\n                <thead>\n                    <tr>\n                        <th>距離(km)</th>\n                        <th>機構名稱</th>\n                        <th>電話</th>\n                        <!-- <th>救護車數</th> -->\n                        <th>建議派救護車數</th>\n                        <th>送至醫院</th>\n                        <th></th>\n                    </tr>\n                </thead>\n            ";
   stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.ambulance : depth0), {"name":"each","hash":{},"fn":this.program(4, data, depths),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "            </table>\n        ";
 },"4":function(depth0,helpers,partials,data,depths) {
-  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, lambda=this.lambda, buffer = " \n                <tr>\n                    <td>"
+  var stack1, helper, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, functionType="function", lambda=this.lambda, buffer = " \n                "
+    + escapeExpression(((helpers.setIndex || (depth0 && depth0.setIndex) || helperMissing).call(depth0, "rand", {"name":"setIndex","hash":{},"data":data})))
+    + "\n                <tr>\n                    <td>"
     + escapeExpression(((helper = (helper = helpers.distance || (depth0 != null ? depth0.distance : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"distance","hash":{},"data":data}) : helper)))
     + "</td>\n                    <td>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.name : stack1), depth0))
     + "</td>\n                    <td>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.phone : stack1), depth0))
     + "</td>\n                    <td>\n                        <div class=\"row\">\n                            <div class=\"col-md-6 right h4\">\n                                <div class=\"js-assign\" id=\""
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.id : stack1), depth0))
+    + escapeExpression(((helper = (helper = helpers.index || (depth0 != null ? depth0.index : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"index","hash":{},"data":data}) : helper)))
     + "\" data-max=\""
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.exist : stack1), depth0))
-    + "\">0</div>\n                            </div>\n                            <div class=\"col-md-6 left\">\n                                <ul>\n                                    <li class=\"mb2\">\n                                        <button class=\"glyphicon glyphicon-plus js-add\" data-id=\""
+    + "\" data-disaster=\""
+    + escapeExpression(lambda((depths[1] != null ? depths[1].index : depths[1]), depth0))
+    + "\" data-id="
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.id : stack1), depth0))
+    + ">0</div>\n                            </div>\n                            <div class=\"col-md-6 left\">\n                                <ul>\n                                    <li class=\"mb2\">\n                                        <button class=\"glyphicon glyphicon-plus js-add\" data-id=\""
+    + escapeExpression(((helper = (helper = helpers.index || (depth0 != null ? depth0.index : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"index","hash":{},"data":data}) : helper)))
     + "\"></button>\n                                    </li>\n                                    <li>\n                                        <button class=\"glyphicon glyphicon-minus js-minus\" data-id=\""
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.id : stack1), depth0))
-    + "\"></button>\n                                    </li>\n                                </ul>\n                            </div>\n                        </div>\n                    </td>\n                    <td>\n                        <ul>\n                        "
-    + escapeExpression(((helper = (helper = helpers.setIndex || (depth0 != null ? depth0.setIndex : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"setIndex","hash":{},"data":data}) : helper)))
-    + "\n";
+    + escapeExpression(((helper = (helper = helpers.index || (depth0 != null ? depth0.index : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"index","hash":{},"data":data}) : helper)))
+    + "\"></button>\n                                    </li>\n                                </ul>\n                            </div>\n                        </div>\n                    </td>\n                    <td>\n                        <ul>\n";
   stack1 = helpers.each.call(depth0, (depths[1] != null ? depths[1].hospital : depths[1]), {"name":"each","hash":{},"fn":this.program(5, data, depths),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "                        </ul>\n                    </td>\n                    <td>\n                        <button class=\"btn btn-link js-ambulance\" data-id=\""
@@ -224,17 +211,21 @@ module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partia
     + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
     + "</li>\n";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data,depths) {
-  var stack1;
+  var stack1, buffer = "";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.items : depth0), {"name":"if","hash":{},"fn":this.program(1, data, depths),"inverse":this.noop,"data":data});
-  if (stack1 != null) { return stack1; }
-  else { return ''; }
-  },"useData":true,"useDepths":true});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "<div class=\"result  right\">\n    <h3>共指派<span id=\"total\">0</span>台救護車</h3>\n    <button class=\"btn btn-success\" id=\"assign-submit\">一鍵指派</button>    \n</div>\n\n";
+},"useData":true,"useDepths":true});
 
 },{"hbsfy/runtime":38}],8:[function(require,module,exports){
 var hbs = require('hbsfy/runtime');
 
 hbs.registerHelper('setIndex', function(value) {
-    this.index = Math.random()*1000; //I needed human readable index, not zero based
+    if (value == "rand"){
+        this.index = Math.round(Math.random()*100000000); //I needed human readable index, not zero based        
+    } else {
+        this.index = value
+    }
 });
 
 module.exports = hbs;
@@ -372,7 +363,69 @@ var helper = require('../../templates/helper/index');
 Backbone.$ = $;
 
 module.exports = Backbone.Marionette.ItemView.extend({
-    template: templates
+    template: templates,
+
+    events: {
+        "click .js-add": "add_ambulance",
+        "click .js-minus": "less_ambulance",
+        "click #assign-submit": "assign"
+    },
+
+    initialize: function() {
+        this.total = 0
+    },
+
+    add_ambulance: function(e) {
+        var $target = $(e.currentTarget);
+        var id = $target.attr("data-id");
+        var now = $("#"+id).text();
+        var max = $("#"+id).attr("data-max");
+        if (now < max) {
+            $("#"+id).text(parseInt(now)+1)     
+            this.total += 1
+            $("#total").text(this.total)
+        }
+    },
+
+    less_ambulance: function(e) {
+        var $target = $(e.currentTarget);
+        var id = $target.attr("data-id");
+        var now = $("#"+id).text();
+        if (parseInt(now) > 0) {
+            $("#"+id).text(parseInt(now)-1) 
+            this.total -= 1
+            $("#total").text(this.total)           
+        }
+    },
+
+    assign: function() {
+        var json = {}
+        json["assign"] = []
+        $(".js-assign").each(function(i, obj) {
+            var val = $(this).text();
+            if (parseInt(val) != 0){
+                var id = $(this).attr('id');
+                var ambulance_id = $(this).attr('data-id');
+                var disaster = $(this).attr("data-disaster")
+                var lat = $("#lat"+disaster).val();
+                var lng = $("#lng"+disaster).val();
+                var hospital = $('input[name="send_hospital_'+id+'"]:checked').val();
+                json["assign"].push({exist: val, id: ambulance_id, end_lat: lat, end_lng: lng, hospital: hospital})
+            }
+        })
+        json = JSON.stringify(json)
+        console.log(json)
+        $.ajax({
+            url: "/assign_mission",
+            type: 'post',
+            contentType: "application/json; charset=utf-8",
+            data: json
+        })
+        .done(function() {
+            alert("指派成功")
+            location.replace("/mission")
+        })
+    }
 });
 },{"../../templates/emergency/show.hbs":7,"../../templates/helper/index":8,"backbone":17,"backbone.marionette":13,"jquery":9}],13:[function(require,module,exports){
 // MarionetteJS (Backbone.Marionette)
