@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150212140104) do
+ActiveRecord::Schema.define(version: 20150217143631) do
 
   create_table "ambulances", force: true do |t|
     t.integer  "seq_id"
@@ -56,6 +56,8 @@ ActiveRecord::Schema.define(version: 20150212140104) do
     t.datetime "updated_at"
     t.text     "status"
     t.text     "structure"
+    t.text     "disaster_time"
+    t.text     "hospital_time"
   end
 
   create_table "shelter_infos", force: true do |t|

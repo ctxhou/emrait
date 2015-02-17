@@ -4,9 +4,12 @@ Backbone.$ = $;
 
 
 module.exports = Backbone.Model.extend({
-    
-    urlRoot: "/hospital/",
 
-    idAttribute: "id"
+    initialize: function(options) {
+        this.id = options.id
+    },
 
+    url: function() {
+        return "/hospital/" + this.id
+    }
 });

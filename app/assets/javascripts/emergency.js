@@ -12,13 +12,18 @@ var Emergencies = require('./collections/emergencies');
 var EmergencyView = require('./views/emergency/show');
 var app = new Marionette.Application();
 app.addRegions({
-    content: "#content"
+    content: "#content",
+    modal: "#modal-view"
 })
 
 app.on("before:start", function() {
     var emergencies = new Emergencies();
-    // var hospitals = new Hospitals();
-    // hospitals.fetch(); // fetch the near hospital data
+    var hospitals = new Hospitals();
+    hospitals.fetch({
+        success: function() {
+            hospitals = hospitals.toJSON();
+        }
+    }); // fetch the near hospital data
     emergencies.fetch({
         success: function() {
             var emergencyView = new EmergencyView({collection: emergencies});
@@ -27,14 +32,15 @@ app.on("before:start", function() {
     })
     var lat = $("#end_lat").val();
     var lng = $("#end_lng").val();
-    $(".js-ambulance").click(function(event) {
+    $(document).on("click", ".js-ambulance", function(event) {
         var $target = $(event.currentTarget);
         var id = $target.attr("data-id");
         var ambulance = new Ambulance({id: id})
-
+        var disaster_id = $target.attr("data-disaster");
+        var tmp_hos = hospitals[0][disaster_id]
         ambulance.fetch({
             success: function() {
-                var ambulanceView = new AmbulanceView({model: ambulance, id: id, hospital: hospitals})
+                var ambulanceView = new AmbulanceView({disaster_id: disaster_id, model: ambulance, id: id, hospital: tmp_hos})
                 app.modal.show(ambulanceView)
             }
         })

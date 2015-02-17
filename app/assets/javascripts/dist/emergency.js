@@ -13,13 +13,18 @@ var Emergencies = require('./collections/emergencies');
 var EmergencyView = require('./views/emergency/show');
 var app = new Marionette.Application();
 app.addRegions({
-    content: "#content"
+    content: "#content",
+    modal: "#modal-view"
 })
 
 app.on("before:start", function() {
     var emergencies = new Emergencies();
-    // var hospitals = new Hospitals();
-    // hospitals.fetch(); // fetch the near hospital data
+    var hospitals = new Hospitals();
+    hospitals.fetch({
+        success: function() {
+            hospitals = hospitals.toJSON();
+        }
+    }); // fetch the near hospital data
     emergencies.fetch({
         success: function() {
             var emergencyView = new EmergencyView({collection: emergencies});
@@ -28,14 +33,15 @@ app.on("before:start", function() {
     })
     var lat = $("#end_lat").val();
     var lng = $("#end_lng").val();
-    $(".js-ambulance").click(function(event) {
+    $(document).on("click", ".js-ambulance", function(event) {
         var $target = $(event.currentTarget);
         var id = $target.attr("data-id");
         var ambulance = new Ambulance({id: id})
-
+        var disaster_id = $target.attr("data-disaster");
+        var tmp_hos = hospitals[0][disaster_id]
         ambulance.fetch({
             success: function() {
-                var ambulanceView = new AmbulanceView({model: ambulance, id: id, hospital: hospitals})
+                var ambulanceView = new AmbulanceView({disaster_id: disaster_id, model: ambulance, id: id, hospital: tmp_hos})
                 app.modal.show(ambulanceView)
             }
         })
@@ -200,7 +206,9 @@ module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partia
   if (stack1 != null) { buffer += stack1; }
   return buffer + "                        </ul>\n                    </td>\n                    <td>\n                        <button class=\"btn btn-link js-ambulance\" data-id=\""
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.id : stack1), depth0))
-    + "\" data-toggle=\"modal\" data-target=\"#myModal\">詳細資訊</button>\n                    </td>\n                </tr>\n";
+    + "\" data-toggle=\"modal\" data-target=\"#myModal\" data-disaster=\""
+    + escapeExpression(lambda((depths[1] != null ? depths[1].index : depths[1]), depth0))
+    + "\">詳細資訊</button>\n                    </td>\n                </tr>\n";
 },"5":function(depth0,helpers,partials,data,depths) {
   var helper, lambda=this.lambda, escapeExpression=this.escapeExpression, functionType="function", helperMissing=helpers.helperMissing;
   return "                            <li><input type=\"radio\" name=\"send_hospital_"
@@ -308,12 +316,12 @@ module.exports = Backbone.Marionette.ItemView.extend({
     },
 
     initialize: function(options) {
-        this.hospital = options.hospital.toJSON();
-        delete this.hospital["id"]
+        this.hospital = options.hospital
         this.start_lat = this.model.get("lat")
         this.start_lng = this.model.get("lng")
-        this.end_lat = $("#end_lat").val()
-        this.end_lng = $("#end_lng").val()
+        this.end_lat = $("#lat"+options.disaster_id).val()
+        this.end_lng = $("#lng"+options.disaster_id).val()
+        console.log(this.end_lat, this.start_lng)
     },
 
     templateHelpers: function() {

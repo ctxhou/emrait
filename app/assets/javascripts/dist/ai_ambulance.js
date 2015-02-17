@@ -22,20 +22,25 @@ app.on("before:start", function() {
         var time_stamp = $(this).text()
         $(this).clock({"timestamp": time_stamp, "calendar":"false"})
     })
-
-    var lat = $("#end_lat").val();
-    var lng = $("#end_lng").val();
+    $("#reset").click(function() {
+        var speed = $("#speed").val();
+        var setup = $("#setup").val();
+        var url = $("#this_url").val();
+        window.location.href = url+"&speed="+speed+"&setup="+setup
+    })
     $(".js-ambulance").click(function(event) {
         var $target = $(event.currentTarget);
         var id = $target.attr("data-id");
         var hos_id = $target.attr("data-hos-id")
         var ambulance = new Ambulance({id: id});
         var hospitals = new Hospital({id: hos_id});
+        var disaster_id = $target.attr("data-disaster")
         hospitals.fetch({
             success: function() {
+                hospitals = hospitals.toJSON();
                 ambulance.fetch({
                     success: function() {
-                        var ambulanceView = new AmbulanceView({model: ambulance, id: id, hospital: hospitals})
+                        var ambulanceView = new AmbulanceView({disaster_id: disaster_id, model: ambulance, id: id, hospital: hospitals})
                         app.modal.show(ambulanceView)
                     }
                 })
@@ -50,8 +55,14 @@ app.on("before:start", function() {
         $(".js-assign").each(function(i, obj) {
             // var val = $(this).attr("data-name");
             var id = $(this).attr('data-id');
-            var hospital = $(this).attr('data-hospital')
-            json["assign"].push({exist: 1, id: id, end_lat: lat, end_lng: lng, hospital: hospital})
+            var structure = $(this).attr("data-name");
+            var hospital = $(this).attr('data-hospital');
+            var lat = $(this).attr('data-lat');
+            var lng = $(this).attr('data-lng');
+            var rand_id = $(this).attr('data-rand')
+            var dis_time = $("#dis_time_"+rand_id+" .clocktime").text();
+            var hos_time = $("#hos_time_"+rand_id+" .clocktime").text();
+            json["assign"].push({dis_time:dis_time, hos_time:hos_time, name: structure, exist: 1, id: id, end_lat: lat, end_lng: lng, hospital: hospital})
         })
         json = JSON.stringify(json)
         $.ajax({
@@ -93,11 +104,14 @@ Backbone.$ = $;
 
 
 module.exports = Backbone.Model.extend({
-    
-    urlRoot: "/hospital/",
 
-    idAttribute: "id"
+    initialize: function(options) {
+        this.id = options.id
+    },
 
+    url: function() {
+        return "/hospital/" + this.id
+    }
 });
 },{"backbone":13,"jquery":6}],4:[function(require,module,exports){
 // hbsfy compiled Handlebars template
@@ -211,12 +225,12 @@ module.exports = Backbone.Marionette.ItemView.extend({
     },
 
     initialize: function(options) {
-        this.hospital = options.hospital.toJSON();
-        delete this.hospital["id"]
+        this.hospital = options.hospital
         this.start_lat = this.model.get("lat")
         this.start_lng = this.model.get("lng")
-        this.end_lat = $("#end_lat").val()
-        this.end_lng = $("#end_lng").val()
+        this.end_lat = $("#lat"+options.disaster_id).val()
+        this.end_lng = $("#lng"+options.disaster_id).val()
+        console.log(this.end_lat, this.start_lng)
     },
 
     templateHelpers: function() {

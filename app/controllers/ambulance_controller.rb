@@ -14,6 +14,7 @@ class AmbulanceController < ApplicationController
     def assign_mission
         # exist = params[:exist].to_i
         assign = params[:assign]
+        p assign
         assign.each do |param|
             end_lat = param[:end_lat]
             end_lng = param[:end_lng]
@@ -22,10 +23,20 @@ class AmbulanceController < ApplicationController
             start_lat = @ambulance["lat"]
             start_lng = @ambulance["lng"]
             structure = @ambulance["name"]
+            if param[:name]
+                structure = param[:name]
+            end
+            dis_time = "僅系統指派提供此時間"
+            hos_time = "僅系統指派提供此時間"
+            if param[:dis_time]
+                dis_time = param[:dis_time]
+                hos_time = param[:hos_time]
+            end
+
             seq_id = @ambulance["seq_id"] # 119 station id
             hospital = param[:hospital]
             exist.times do |k|
-                Mission.create(hospital: hospital, seq_id: param["id"], start_lat: start_lat, start_lng: start_lng, end_lat: end_lat, end_lng: end_lng, status: 'ing', structure: structure)
+                Mission.create(disaster_time: dis_time, hospital_time: hos_time, hospital: hospital, seq_id: param["id"], start_lat: start_lat, start_lng: start_lng, end_lat: end_lat, end_lng: end_lng, status: 'ing', structure: structure)
             end
 
             less_ambulance = @ambulance["exist"] - exist
