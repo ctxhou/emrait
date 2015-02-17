@@ -1,5 +1,5 @@
 <% content_for :javascript do %>
-    <script async="async" data-turbolinks-track="true" src="/assets/dist/home.js"></script>
+    <script async="async" data-turbolinks-track="true" src="/assets/dist/shelter.js"></script>
 <% end %>
 
 <div class="banner-container py2">
@@ -34,25 +34,3 @@
         <button type="submit" class="btn btn-primary pull-right" disabled="disabled" id="submit">Submit</button>
     </form>
 </div>
-<!-- <table class="table">
-    <thead>
-        <tr>
-            <th>醫院</th>
-            <th>通報119滿床</th>
-            <th>等待看診</th>
-            <th>等待住院</th>
-            <th>等待加護病床</th>
-            <th>等待推床</th>
-        </tr>
-    </thead>
-    <%# @json.each do |ary| %>
-    <tr>
-        <td><%#= HomeHelper.to_name(ary["hospital"]) %></td>
-        <td><%#= ary["to_119"] %></td>
-        <td><%#= ary["wait_see"] %></td>
-        <td><%#= ary["wait_bed"] %></td>
-        <td><%#= ary["wait_cure_bed"] %></td>
-        <td><%#= ary["wait_push_bed"] %></td>
-    </tr>
-    <%# end %>
-</table> -->
