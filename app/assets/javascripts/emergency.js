@@ -8,17 +8,25 @@ var bootstrap = require('bootstrap');
 var AmbulanceView = require('./views/ambulance/ambulance_modal');
 var Ambulance = require('./models/ambulance');
 var Hospitals = require('./collections/hospital');
-
+var Emergencies = require('./collections/emergencies');
+var EmergencyView = require('./views/emergency/show');
 var app = new Marionette.Application();
 app.addRegions({
-    modal: "#modal-view"
+    content: "#content"
 })
 
 app.on("before:start", function() {
+    var emergencies = new Emergencies();
+    // var hospitals = new Hospitals();
+    // hospitals.fetch(); // fetch the near hospital data
+    emergencies.fetch({
+        success: function() {
+            var emergencyView = new EmergencyView({collection: emergencies});
+            app.content.show(emergencyView);
+        }
+    })
     var lat = $("#end_lat").val();
     var lng = $("#end_lng").val();
-    var hospitals = new Hospitals({lat: lat, lng: lng});
-    hospitals.fetch(); // fetch the near hospital data
     $(".js-ambulance").click(function(event) {
         var $target = $(event.currentTarget);
         var id = $target.attr("data-id");
@@ -55,25 +63,6 @@ app.on("before:start", function() {
         })
     });
     var total = parseInt($("#total").text());
-    $(".js-add").click(function(event) {
-        var id = $(this).attr("data-id");
-        var now = $("#"+id).text();
-        var max = $("#"+id).attr("data-max");
-        if (now < max) {
-            $("#"+id).text(parseInt(now)+1)     
-            total += 1 
-            $("#total").text(total)
-        }
-    });
-    $(".js-minus").click(function(event) {
-        var id = $(this).attr("data-id");
-        var now = $("#"+id).text();
-        if (parseInt(now) > 0) {
-            $("#"+id).text(parseInt(now)-1) 
-            total -= 1
-            $("#total").text(total)           
-        }
-    });
 })
 app.on("initialize:after", function() {
     if (Backbone.history) {

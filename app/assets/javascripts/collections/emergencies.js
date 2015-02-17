@@ -8,5 +8,5 @@ module.exports = Backbone.Collection.extend({
     
     model: basic_model,
 
-    url: "/near_hospital?" + window.location.search.substring(1)
+    url: "/near_ambulance?" + window.location.search.substring(1)
 });

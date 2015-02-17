@@ -9,17 +9,25 @@ var bootstrap = require('bootstrap');
 var AmbulanceView = require('./views/ambulance/ambulance_modal');
 var Ambulance = require('./models/ambulance');
 var Hospitals = require('./collections/hospital');
-
+var Emergencies = require('./collections/emergencies');
+var EmergencyView = require('./views/emergency/show');
 var app = new Marionette.Application();
 app.addRegions({
-    modal: "#modal-view"
+    content: "#content"
 })
 
 app.on("before:start", function() {
+    var emergencies = new Emergencies();
+    // var hospitals = new Hospitals();
+    // hospitals.fetch(); // fetch the near hospital data
+    emergencies.fetch({
+        success: function() {
+            var emergencyView = new EmergencyView({collection: emergencies});
+            app.content.show(emergencyView);
+        }
+    })
     var lat = $("#end_lat").val();
     var lng = $("#end_lng").val();
-    var hospitals = new Hospitals({lat: lat, lng: lng});
-    hospitals.fetch(); // fetch the near hospital data
     $(".js-ambulance").click(function(event) {
         var $target = $(event.currentTarget);
         var id = $target.attr("data-id");
@@ -56,25 +64,6 @@ app.on("before:start", function() {
         })
     });
     var total = parseInt($("#total").text());
-    $(".js-add").click(function(event) {
-        var id = $(this).attr("data-id");
-        var now = $("#"+id).text();
-        var max = $("#"+id).attr("data-max");
-        if (now < max) {
-            $("#"+id).text(parseInt(now)+1)     
-            total += 1 
-            $("#total").text(total)
-        }
-    });
-    $(".js-minus").click(function(event) {
-        var id = $(this).attr("data-id");
-        var now = $("#"+id).text();
-        if (parseInt(now) > 0) {
-            $("#"+id).text(parseInt(now)-1) 
-            total -= 1
-            $("#total").text(total)           
-        }
-    });
 })
 app.on("initialize:after", function() {
     if (Backbone.history) {
@@ -83,7 +72,7 @@ app.on("initialize:after", function() {
 });
 
 app.start();
-},{"./collections/hospital":2,"./models/ambulance":3,"./views/ambulance/ambulance_modal":8,"backbone":13,"backbone.marionette":9,"bootstrap":14,"jquery":6,"underscore":35}],2:[function(require,module,exports){
+},{"./collections/emergencies":2,"./collections/hospital":3,"./models/ambulance":4,"./views/ambulance/ambulance_modal":11,"./views/emergency/show":12,"backbone":17,"backbone.marionette":13,"bootstrap":18,"jquery":9,"underscore":39}],2:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery');
 Backbone.$ = $;
@@ -94,18 +83,22 @@ module.exports = Backbone.Collection.extend({
     
     model: basic_model,
 
-    initialize: function(options){ 
-        if (options){
-            this.lng = options.lng; 
-            this.lat = options.lat;
-        }
-    },
-
-    url: function() {
-        return "/hospital_distance?lat=" + this.lat + "&lng=" + this.lng
-    }
+    url: "/near_ambulance?" + window.location.search.substring(1)
 });
-},{"../models/basic_model":4,"backbone":13,"jquery":6}],3:[function(require,module,exports){
+},{"../models/basic_model":5,"backbone":17,"jquery":9}],3:[function(require,module,exports){
+var Backbone = require('backbone');
+var $ = require('jquery');
+Backbone.$ = $;
+
+var basic_model = require('../models/basic_model');
+
+module.exports = Backbone.Collection.extend({
+    
+    model: basic_model,
+
+    url: "/near_hospital?" + window.location.search.substring(1)
+});
+},{"../models/basic_model":5,"backbone":17,"jquery":9}],4:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery');
 Backbone.$ = $;
@@ -118,7 +111,7 @@ module.exports = Backbone.Model.extend({
     idAttribute: "id"
 
 });
-},{"backbone":13,"jquery":6}],4:[function(require,module,exports){
+},{"backbone":17,"jquery":9}],5:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery');
 Backbone.$ = $;
@@ -127,7 +120,7 @@ Backbone.$ = $;
 module.exports = Backbone.Model.extend({
 
 });
-},{"backbone":13,"jquery":6}],5:[function(require,module,exports){
+},{"backbone":17,"jquery":9}],6:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partials,data) {
@@ -159,7 +152,85 @@ module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partia
     + "(A)到災點(B)<span id=\"hospital-route\"></span>的路徑</h4>\n    </div>\n    <div id=\"map\"></div>\n  </div>\n  <div class=\"modal-footer\">\n    <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n  </div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":34}],6:[function(require,module,exports){
+},{"hbsfy/runtime":38}],7:[function(require,module,exports){
+// hbsfy compiled Handlebars template
+var HandlebarsCompiler = require('hbsfy/runtime');
+module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partials,data,depths) {
+  var stack1, buffer = "";
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.items : depth0), {"name":"each","hash":{},"fn":this.program(2, data, depths),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer;
+},"2":function(depth0,helpers,partials,data,depths) {
+  var stack1, buffer = "        ";
+  stack1 = helpers.each.call(depth0, depth0, {"name":"each","hash":{},"fn":this.program(3, data, depths),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + " \n";
+},"3":function(depth0,helpers,partials,data,depths) {
+  var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, lambda=this.lambda, buffer = " \n            "
+    + escapeExpression(((helpers.setIndex || (depth0 && depth0.setIndex) || helperMissing).call(depth0, (data && data.key), {"name":"setIndex","hash":{},"data":data})))
+    + "\n            <h3>以下為鄰近災點"
+    + escapeExpression(lambda((data && data.key), depth0))
+    + "的救護車資訊</h3>\n            <table class=\"table\">\n                <thead>\n                    <tr>\n                        <th>距離(km)</th>\n                        <th>機構名稱</th>\n                        <th>電話</th>\n                        <!-- <th>救護車數</th> -->\n                        <th>建議派救護車數</th>\n                        <th>送至醫院</th>\n                        <th></th>\n                    </tr>\n                </thead>\n            ";
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.ambulance : depth0), {"name":"each","hash":{},"fn":this.program(4, data, depths),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "            </table>\n        ";
+},"4":function(depth0,helpers,partials,data,depths) {
+  var stack1, helper, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, functionType="function", lambda=this.lambda, buffer = " \n                "
+    + escapeExpression(((helpers.setIndex || (depth0 && depth0.setIndex) || helperMissing).call(depth0, "rand", {"name":"setIndex","hash":{},"data":data})))
+    + "\n                <tr>\n                    <td>"
+    + escapeExpression(((helper = (helper = helpers.distance || (depth0 != null ? depth0.distance : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"distance","hash":{},"data":data}) : helper)))
+    + "</td>\n                    <td>"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.name : stack1), depth0))
+    + "</td>\n                    <td>"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.phone : stack1), depth0))
+    + "</td>\n                    <td>\n                        <div class=\"row\">\n                            <div class=\"col-md-6 right h4\">\n                                <div class=\"js-assign\" id=\""
+    + escapeExpression(((helper = (helper = helpers.index || (depth0 != null ? depth0.index : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"index","hash":{},"data":data}) : helper)))
+    + "\" data-max=\""
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.exist : stack1), depth0))
+    + "\" data-disaster=\""
+    + escapeExpression(lambda((depths[1] != null ? depths[1].index : depths[1]), depth0))
+    + "\" data-id="
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.id : stack1), depth0))
+    + ">0</div>\n                            </div>\n                            <div class=\"col-md-6 left\">\n                                <ul>\n                                    <li class=\"mb2\">\n                                        <button class=\"glyphicon glyphicon-plus js-add\" data-id=\""
+    + escapeExpression(((helper = (helper = helpers.index || (depth0 != null ? depth0.index : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"index","hash":{},"data":data}) : helper)))
+    + "\"></button>\n                                    </li>\n                                    <li>\n                                        <button class=\"glyphicon glyphicon-minus js-minus\" data-id=\""
+    + escapeExpression(((helper = (helper = helpers.index || (depth0 != null ? depth0.index : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"index","hash":{},"data":data}) : helper)))
+    + "\"></button>\n                                    </li>\n                                </ul>\n                            </div>\n                        </div>\n                    </td>\n                    <td>\n                        <ul>\n";
+  stack1 = helpers.each.call(depth0, (depths[1] != null ? depths[1].hospital : depths[1]), {"name":"each","hash":{},"fn":this.program(5, data, depths),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "                        </ul>\n                    </td>\n                    <td>\n                        <button class=\"btn btn-link js-ambulance\" data-id=\""
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\" data-toggle=\"modal\" data-target=\"#myModal\">詳細資訊</button>\n                    </td>\n                </tr>\n";
+},"5":function(depth0,helpers,partials,data,depths) {
+  var helper, lambda=this.lambda, escapeExpression=this.escapeExpression, functionType="function", helperMissing=helpers.helperMissing;
+  return "                            <li><input type=\"radio\" name=\"send_hospital_"
+    + escapeExpression(lambda((depths[1] != null ? depths[1].index : depths[1]), depth0))
+    + "\" value=\""
+    + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
+    + "\" checked> &nbsp;"
+    + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
+    + "</li>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data,depths) {
+  var stack1, buffer = "";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.items : depth0), {"name":"if","hash":{},"fn":this.program(1, data, depths),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "<div class=\"result  right\">\n    <h3>共指派<span id=\"total\">0</span>台救護車</h3>\n    <button class=\"btn btn-success\" id=\"assign-submit\">一鍵指派</button>    \n</div>\n\n";
+},"useData":true,"useDepths":true});
+
+},{"hbsfy/runtime":38}],8:[function(require,module,exports){
+var hbs = require('hbsfy/runtime');
+
+hbs.registerHelper('setIndex', function(value) {
+    if (value == "rand"){
+        this.index = Math.round(Math.random()*100000000); //I needed human readable index, not zero based        
+    } else {
+        this.index = value
+    }
+});
+
+module.exports = hbs;
+
+},{"hbsfy/runtime":38}],9:[function(require,module,exports){
 (function (global){
 ;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 /*! jQuery v2.1.3 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
@@ -172,7 +243,7 @@ module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partia
 }).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (global){
 ;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 (function(m,w,C,u){function q(b,a){var d=[],c=/^[+-]?\d+(\.\d+)?$/,f={lat:"",lng:""};if("string"===typeof b||Array.isArray(b))if(d="string"===typeof b?b.replace(/\s+/,"").split(","):b,2===d.length)c.test(d[0])&&c.test(d[1])&&(f.lat=d[0],f.lng=d[1]);else return b;else if("object"===typeof b){if("function"===typeof b.lat||"function"===typeof b.lng)return b;b.hasOwnProperty("x")&&b.hasOwnProperty("y")?(f.lat=b.x,f.lng=b.y):b.hasOwnProperty("lat")&&b.hasOwnProperty("lng")&&(f.lat=b.lat,f.lng=b.lng)}return!0===
@@ -219,7 +290,7 @@ b.bindEvents(b.map,b.options.event))}};m.fn.tinyMap=function(b){var a=arguments,
 }).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],8:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
@@ -283,7 +354,80 @@ module.exports = Backbone.Marionette.ItemView.extend({
         })
     }
 });
-},{"../../templates/ambulance/ambulance_modal.hbs":5,"../../vendor/jquery.tinyMap-3.1.3.min":7,"backbone":13,"backbone.marionette":9,"jquery":6}],9:[function(require,module,exports){
+},{"../../templates/ambulance/ambulance_modal.hbs":6,"../../vendor/jquery.tinyMap-3.1.3.min":10,"backbone":17,"backbone.marionette":13,"jquery":9}],12:[function(require,module,exports){
+var $ = require('jquery');
+var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
+var templates = require('../../templates/emergency/show.hbs');
+var helper = require('../../templates/helper/index');
+Backbone.$ = $;
+
+module.exports = Backbone.Marionette.ItemView.extend({
+    template: templates,
+
+    events: {
+        "click .js-add": "add_ambulance",
+        "click .js-minus": "less_ambulance",
+        "click #assign-submit": "assign"
+    },
+
+    initialize: function() {
+        this.total = 0
+    },
+
+    add_ambulance: function(e) {
+        var $target = $(e.currentTarget);
+        var id = $target.attr("data-id");
+        var now = $("#"+id).text();
+        var max = $("#"+id).attr("data-max");
+        if (now < max) {
+            $("#"+id).text(parseInt(now)+1)     
+            this.total += 1
+            $("#total").text(this.total)
+        }
+    },
+
+    less_ambulance: function(e) {
+        var $target = $(e.currentTarget);
+        var id = $target.attr("data-id");
+        var now = $("#"+id).text();
+        if (parseInt(now) > 0) {
+            $("#"+id).text(parseInt(now)-1) 
+            this.total -= 1
+            $("#total").text(this.total)           
+        }
+    },
+
+    assign: function() {
+        var json = {}
+        json["assign"] = []
+        $(".js-assign").each(function(i, obj) {
+            var val = $(this).text();
+            if (parseInt(val) != 0){
+                var id = $(this).attr('id');
+                var ambulance_id = $(this).attr('data-id');
+                var disaster = $(this).attr("data-disaster")
+                var lat = $("#lat"+disaster).val();
+                var lng = $("#lng"+disaster).val();
+                var hospital = $('input[name="send_hospital_'+id+'"]:checked').val();
+                json["assign"].push({exist: val, id: ambulance_id, end_lat: lat, end_lng: lng, hospital: hospital})
+            }
+        })
+        json = JSON.stringify(json)
+        console.log(json)
+        $.ajax({
+            url: "/assign_mission",
+            type: 'post',
+            contentType: "application/json; charset=utf-8",
+            data: json
+        })
+        .done(function() {
+            alert("指派成功")
+            location.replace("/mission")
+        })
+    }
+});
+},{"../../templates/emergency/show.hbs":7,"../../templates/helper/index":8,"backbone":17,"backbone.marionette":13,"jquery":9}],13:[function(require,module,exports){
 // MarionetteJS (Backbone.Marionette)
 // ----------------------------------
 // v2.3.2
@@ -3413,7 +3557,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
   return Marionette;
 }));
 
-},{"backbone":13,"backbone.babysitter":10,"backbone.wreqr":11,"underscore":12}],10:[function(require,module,exports){
+},{"backbone":17,"backbone.babysitter":14,"backbone.wreqr":15,"underscore":16}],14:[function(require,module,exports){
 // Backbone.BabySitter
 // -------------------
 // v0.1.6
@@ -3605,7 +3749,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
 }));
 
-},{"backbone":13,"underscore":12}],11:[function(require,module,exports){
+},{"backbone":17,"underscore":16}],15:[function(require,module,exports){
 // Backbone.Wreqr (Backbone.Marionette)
 // ----------------------------------
 // v1.3.1
@@ -4047,7 +4191,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
 }));
 
-},{"backbone":13,"underscore":12}],12:[function(require,module,exports){
+},{"backbone":17,"underscore":16}],16:[function(require,module,exports){
 //     Underscore.js 1.6.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -5392,7 +5536,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
   }
 }).call(this);
 
-},{}],13:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 //     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -7002,7 +7146,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
 }));
 
-},{"underscore":35}],14:[function(require,module,exports){
+},{"underscore":39}],18:[function(require,module,exports){
 // This file is autogenerated via the `commonjs` Grunt task. You can require() this file in a CommonJS environment.
 require('../../js/transition.js')
 require('../../js/alert.js')
@@ -7016,7 +7160,7 @@ require('../../js/popover.js')
 require('../../js/scrollspy.js')
 require('../../js/tab.js')
 require('../../js/affix.js')
-},{"../../js/affix.js":15,"../../js/alert.js":16,"../../js/button.js":17,"../../js/carousel.js":18,"../../js/collapse.js":19,"../../js/dropdown.js":20,"../../js/modal.js":21,"../../js/popover.js":22,"../../js/scrollspy.js":23,"../../js/tab.js":24,"../../js/tooltip.js":25,"../../js/transition.js":26}],15:[function(require,module,exports){
+},{"../../js/affix.js":19,"../../js/alert.js":20,"../../js/button.js":21,"../../js/carousel.js":22,"../../js/collapse.js":23,"../../js/dropdown.js":24,"../../js/modal.js":25,"../../js/popover.js":26,"../../js/scrollspy.js":27,"../../js/tab.js":28,"../../js/tooltip.js":29,"../../js/transition.js":30}],19:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: affix.js v3.3.2
  * http://getbootstrap.com/javascript/#affix
@@ -7180,7 +7324,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],16:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: alert.js v3.3.2
  * http://getbootstrap.com/javascript/#alerts
@@ -7276,7 +7420,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],17:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: button.js v3.3.2
  * http://getbootstrap.com/javascript/#buttons
@@ -7394,7 +7538,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],18:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: carousel.js v3.3.2
  * http://getbootstrap.com/javascript/#carousel
@@ -7633,7 +7777,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],19:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: collapse.js v3.3.2
  * http://getbootstrap.com/javascript/#collapse
@@ -7846,7 +7990,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],20:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: dropdown.js v3.3.2
  * http://getbootstrap.com/javascript/#dropdowns
@@ -8009,7 +8153,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],21:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: modal.js v3.3.2
  * http://getbootstrap.com/javascript/#modals
@@ -8335,7 +8479,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],22:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: popover.js v3.3.2
  * http://getbootstrap.com/javascript/#popovers
@@ -8450,7 +8594,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],23:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: scrollspy.js v3.3.2
  * http://getbootstrap.com/javascript/#scrollspy
@@ -8627,7 +8771,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],24:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: tab.js v3.3.2
  * http://getbootstrap.com/javascript/#tabs
@@ -8782,7 +8926,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],25:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: tooltip.js v3.3.2
  * http://getbootstrap.com/javascript/#tooltip
@@ -9256,7 +9400,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],26:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: transition.js v3.3.2
  * http://getbootstrap.com/javascript/#transitions
@@ -9317,7 +9461,7 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],27:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -9353,7 +9497,7 @@ Handlebars.create = create;
 Handlebars['default'] = Handlebars;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":28,"./handlebars/exception":29,"./handlebars/runtime":30,"./handlebars/safe-string":31,"./handlebars/utils":32}],28:[function(require,module,exports){
+},{"./handlebars/base":32,"./handlebars/exception":33,"./handlebars/runtime":34,"./handlebars/safe-string":35,"./handlebars/utils":36}],32:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -9585,7 +9729,7 @@ var createFrame = function(object) {
   return frame;
 };
 exports.createFrame = createFrame;
-},{"./exception":29,"./utils":32}],29:[function(require,module,exports){
+},{"./exception":33,"./utils":36}],33:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -9614,7 +9758,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],30:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -9808,7 +9952,7 @@ exports.noop = noop;function initData(context, data) {
   }
   return data;
 }
-},{"./base":28,"./exception":29,"./utils":32}],31:[function(require,module,exports){
+},{"./base":32,"./exception":33,"./utils":36}],35:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -9820,7 +9964,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],32:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -9909,15 +10053,15 @@ exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
 }
 
 exports.appendContextPath = appendContextPath;
-},{"./safe-string":31}],33:[function(require,module,exports){
+},{"./safe-string":35}],37:[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime');
 
-},{"./dist/cjs/handlebars.runtime":27}],34:[function(require,module,exports){
+},{"./dist/cjs/handlebars.runtime":31}],38:[function(require,module,exports){
 module.exports = require("handlebars/runtime")["default"];
 
-},{"handlebars/runtime":33}],35:[function(require,module,exports){
+},{"handlebars/runtime":37}],39:[function(require,module,exports){
 //     Underscore.js 1.7.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors

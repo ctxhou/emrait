@@ -36,4 +36,18 @@ class AmbulanceController < ApplicationController
         end
     end
 
+    def near_ambulance
+        length = params[:length].to_i
+        @geo_hash = {}
+        1.upto(length) do |k|
+            next unless params["lat#{k}".intern]
+            @geo_hash[k] = {lat: params["lat#{k}".intern], lng: params["lng#{k}".intern], address: params["address#{k}".intern], injure: params["injure#{k}".intern].to_i}
+        end
+        @distance = params[:distance].to_i
+        @abmulance_hash = AmbulanceHelper.near_ambulance(@geo_hash, @distance)
+        render json: @abmulance_hash.to_json
+        # if @d_to_hospital.length == 0
+        #     @clinic = HomeHelper.near_clinic(@lat, @lng)
+        # end
+    end
 end

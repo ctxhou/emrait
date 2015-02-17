@@ -1,76 +1,6 @@
 <div class="pull-right"><a href="/mission">出勤中救護車</a></div>
-<a href="<%= URI.escape("/smart_emergency/?lat=#{@lat}&lng=#{@lng}&injure=#{@injure}") %>">系統指派</a>
-<h3>以下為到災點
-    <% if @address %>
-        <%= @address %>
-    <% else %>
-        <%= @lat %>, <%= @lng %>
-    <% end %>
-    的救護車指派建議 ( 有<%= @injure %>位病患 )
-</h3>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>距離(km)</th>
-            <th>機構名稱</th>
-            <th>電話</th>
-            <!-- <th>救護車數</th> -->
-            <th>建議派救護車數</th>
-            <th>送至醫院</th>
-            <th></th>
-        </tr>
-    </thead>
-    <% @abmulance_hash.each do |distance, data| %>
-    <tr>
-        <td><%= distance %></td>
-        <td><%= data["name"] %></td>
-        <td><%= data["phone"] %></td>
-        <!-- <td><%#= data["exist"] %></td> -->
-        <td>
-            <div class="row">
-                <div class="col-md-6 right h4">
-                    <% if @suggest_ambulance[distance] %>
-                        <div class="js-assign" id="<%= data["id"] %>" data-max="<%= data["exist"] %>"><%= @suggest_ambulance[distance] %></div>
-                    <% else %>
-                        <div class="js-assign" id="<%= data["id"] %>" data-max="<%= data["exist"] %>">0</div>
-                    <% end %>
-                </div>
-                <div class="col-md-6 left">
-                    <ul>
-                        <li class="mb2">
-                            <button class="glyphicon glyphicon-plus js-add" data-id="<%= data["id"] %>"></button>                    
-                        </li>
-                        <li>
-                            <button class="glyphicon glyphicon-minus js-minus" data-id="<%= data["id"] %>"></button>                    
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </td>
-        <td>
-            <ul>  
-            <% @d_to_hospital.each_with_index do |ary, index| %>
-                <% if index == 0 %>
-                    <li><input type="radio" name="send_hospital_<%= data["id"] %>" value="<%= ary[:name] %>" checked> &nbsp;<%= ary[:name] %></li>
-                <% else %>
-                    <li><input type="radio" name="send_hospital_<%= data["id"] %>" value="<%= ary[:name] %>"> &nbsp;<%= ary[:name] %></li>
-                <% end %>
-            <% end %>   
-            </ul> 
-        </td>
-        <td>
-            <button class="btn btn-link js-ambulance" data-id="<%= data["id"] %>" data-toggle="modal" data-target="#myModal">詳細資訊</button>
-        </td>
-    </tr>
-    <% end %>
-</table>
-<div class="result  right">
-    <h3>共指派 <span id="total"><%= @injure %></span>台救護車</h3>
-    <button class="btn btn-success" id="assign-submit">一鍵指派</button>    
-</div>
-
-<hr>
+<a href="<%= URI.escape("/smart_emergency/?#{@smart_url}") %>">系統指派</a>
+<div id="content"></div>
 
 <% if @d_to_hospital.length > 0 %>
     <div class="h4 pyb2">可送至以下醫院: (以下為此醫院即時資料)</div>
@@ -78,7 +8,7 @@
         <thead>
             <tr>
                 <th>醫院名稱</th>
-                <th>距離(km)</th>
+                <!-- <th>距離(km)</th> -->
                 <th>向119通報滿床</th>
                 <th>待看診</th>
                 <th>待推床</th>
@@ -89,7 +19,7 @@
         <% @d_to_hospital.each do |ary| %>
             <tr>
                 <td><%= ary[:name] %></td>
-                <td><%= ary[:distance] %></td>
+                <!-- <td><%#= ary[:distance] %></td> -->
                 <td><%= ary[:report_full] %></td>
                 <td><%= ary[:wait_see] %></td>
                 <td><%= ary[:wait_push_bed] %></td>
@@ -106,10 +36,11 @@
 <% end %>
 
 <hr>
-
+<% @geo_hash.each do |k, v| %>
+    <input type="hidden" id="lat<%= k %>" value="<%= v[:lat] %>">
+    <input type="hidden" id="lng<%= k %>" value="<%= v[:lng] %>">
+<% end %>
 <%= render "units/bootstrap_modal" %>
-<input type="hidden" value="<%= @lat %>" id="end_lat">
-<input type="hidden" value="<%= @lng %>" id="end_lng">
 <% content_for :javascript do %>
 <script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry"></script>
 <script async="async" data-turbolinks-track="true" src="/assets/dist/emergency.js"></script>

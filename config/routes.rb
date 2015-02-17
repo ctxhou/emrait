@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   post '/shelter/:id' => "shelter#create"
   get '/shelter_result' => "shelter#result"
   get '/hospital/:id' => "hospital#get_hospital"
+  get '/near_hospital' => "hospital#multi_near_hospital"
+  get '/near_ambulance/' => "ambulance#near_ambulance"
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

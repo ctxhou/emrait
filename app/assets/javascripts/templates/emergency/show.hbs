@@ -1,0 +1,61 @@
+{{#if items}}
+    {{#each items}} 
+        {{#each this}} {{!-- 災點 --}}
+            {{setIndex @key}}
+            <h3>以下為鄰近災點{{@key}}的救護車資訊</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>距離(km)</th>
+                        <th>機構名稱</th>
+                        <th>電話</th>
+                        <!-- <th>救護車數</th> -->
+                        <th>建議派救護車數</th>
+                        <th>送至醫院</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            {{#each ambulance}} {{!-- each災點 --}}
+                {{setIndex "rand"}}
+                <tr>
+                    <td>{{distance}}</td>
+                    <td>{{content.name}}</td>
+                    <td>{{content.phone}}</td>
+                    <td>
+                        <div class="row">
+                            <div class="col-md-6 right h4">
+                                <div class="js-assign" id="{{index}}" data-max="{{content.exist}}" data-disaster="{{../index}}" data-id={{content.id}}>0</div>
+                            </div>
+                            <div class="col-md-6 left">
+                                <ul>
+                                    <li class="mb2">
+                                        <button class="glyphicon glyphicon-plus js-add" data-id="{{index}}"></button>
+                                    </li>
+                                    <li>
+                                        <button class="glyphicon glyphicon-minus js-minus" data-id="{{index}}"></button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <ul>
+                        {{#each ../hospital}}
+                            <li><input type="radio" name="send_hospital_{{../index}}" value="{{name}}" checked> &nbsp;{{name}}</li>
+                        {{/each}}
+                        </ul>
+                    </td>
+                    <td>
+                        <button class="btn btn-link js-ambulance" data-id="{{content.id}}" data-toggle="modal" data-target="#myModal">詳細資訊</button>
+                    </td>
+                </tr>
+            {{/each}}
+            </table>
+        {{/each}} {{!-- end of 災點 --}}
+    {{/each}}
+{{/if}}
+<div class="result  right">
+    <h3>共指派<span id="total">0</span>台救護車</h3>
+    <button class="btn btn-success" id="assign-submit">一鍵指派</button>    
+</div>
+

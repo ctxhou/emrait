@@ -5,54 +5,6 @@ module HomeHelper
         return @@name[id]
     end 
 
-    def HomeHelper.compare_119_distance(geo, injure)
-        data_ary = Ambulance.all
-        abmulance_hash = {}
-        data_ary.each do |ary|
-            if ary["exist"].to_i > 0
-                dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
-                abmulance_hash[dis] = ary
-            end
-        end
-        d_to_hospital = self.distance_disaster_to_hospital(geo)
-        abmulance_hash = abmulance_hash.sort.to_h
-        suggest, abmulance_hash = self.suggest_ambulance(abmulance_hash, injure)
-        return suggest, abmulance_hash, d_to_hospital
-    end
-
-    def self.distance_disaster_to_hospital(disaster)
-        ary = []
-        hospital = Hospitals.all
-        hospital.each do |data|
-            dis = Geocoder::Calculations.distance_between(disaster, [data["lat"],data["lng"]]).round(3)
-            if dis <= 4 # if the hospital is in 4 km distance, return 
-                ary << {name: data["name"], distance: dis, lat: data["lat"], lng: data["lng"], address: data["address"],
-                        report_full: data["report_full"], wait_see: data["wait_see"], wait_push_bed:data["wait_push_bed"],
-                        wait_bed: data["wait_bed"], wait_cure_bed: data["wait_cure_bed"]}
-            end
-        end
-        return ary.sort_by {|k| k[:distance]}
-    end
-
-    def HomeHelper.suggest_ambulance(abmulance_hash, injure)
-        suggest = {}
-        count = 0
-        abmulance_hash.each do |dis, data|
-            suggest[dis] = 0
-            1.upto(data["exist"]) do |k|
-                if injure > 0
-                    suggest[dis] += 1
-                    injure -= 1
-                end
-            end
-            count += 1
-            if injure == 0
-                break
-            end
-        end
-        return suggest, (abmulance_hash.first count+4)
-    end
-
     def HomeHelper.get_near_shelter(geo)
         result_hash = {}
         distance = 1.5 #km
