@@ -8,7 +8,7 @@ module AiAmbulanceHelper
 
     def AiAmbulanceHelper.compare_119_distance(geo_hash, setup_time, speed, total_injure)
         data_ary = Ambulance.all
-        assign_queue = {}
+        ambulance_queue = {}
         setup_time = setup_time*60
         speed = speed/60.0
         data_ary.each do |ary|
@@ -17,48 +17,83 @@ module AiAmbulanceHelper
                     geo_hash.each do |id, content|
                         each_geo = [content[:lat], content[:lng]]
                         dis = Geocoder::Calculations.distance_between(each_geo, [ary["lat"],ary["lng"]]).round(3)
-                        if assign_queue.has_key? "#{ary[:name]}#{k}"
+                        if ambulance_queue.has_key? "#{ary[:name]}#{k}"
                             # 如果原本存在queue裡面的該消防局距離比較遠，那就用現在算到的近的取代之
-                            if assign_queue["#{ary[:name]}#{k}"][:distance] > dis
+                            if ambulance_queue["#{ary[:name]}#{k}"][:distance] > dis
                                 available_time = (dis/speed)*60.round(0)
                                 content = {available_time: available_time, distance: dis, disaster: id, 
                                             phone: ary[:phone], lat: ary[:lat], lng: ary[:lng], id: ary[:id]}
-                                assign_queue["#{ary[:name]}#{k}"] = content
+                                ambulance_queue["#{ary[:name]}#{k}"] = content
                             end
+                        else
+                            available_time = (dis/speed)*60.round(0)
+                            content = {available_time: available_time, distance: dis, disaster: id, 
+                                        phone: ary[:phone], lat: ary[:lat], lng: ary[:lng], id: ary[:id]}
+                            ambulance_queue["#{ary[:name]}#{k}"] = content
                         end
-                        
                     end
                 end
             end
         end
         d_to_hospital = HospitalHelper.nearest_hospital(geo_hash)
-        assign_queue = assign_queue.sort_by{|v| v[:distance]}
-        schedule = self.suggest_ambulance(d_to_hospital, assign_queue, geo_hash, setup_time, speed)
+
+        schedule = self.suggest_ambulance(d_to_hospital, ambulance_queue, geo_hash, setup_time, speed, total_injure)
+        schedule.sort!{|a, b| [a[:hos_lat], a[:time_disaster]] <=> [b[:hos_lat], b[:time_disaster]]}
         return schedule, d_to_hospital
     end
     # time unit: second
-    def AiAmbulanceHelper.suggest_ambulance(d_to_hospital, assign_queue, geo_hash, setup_time, speed, total_injure)
-        # near_hospital = d_to_hospital.first
-        # hos_id = near_hospital[:id]
-        # hospital_distance = near_hospital[:distance]
+    def AiAmbulanceHelper.suggest_ambulance(d_to_hospital, ambulance_queue, geo_hash, setup_time, speed, total_injure)
+        ambulance_queue = ambulance_queue.sort_by{|k,v| v[:available_time]}.to_h
         schedule = []
         now_time = Time.now.to_i
         assigned = []
         while total_injure > 0
-            first = assign_queue.shift
-            name = first[name]
-            available_time = first[:available_time]
-            dis_to_disaster = first[:distance]
-            disaster_id = fisrt[:disaster]
-            time_arrive_hospital = time_arrive_disaster + (d_to_hospital[disaster_id][:distance]/speed)*60.round(0) + setup_time
-            ambulance_hash[name]["available_time"] = time_arrive_hospital + setup_time
-            schedule << {hos_id: hos_id, id: value[:id], name: name, start_lat: value[:lat], start_lng: value[:lng], hos_lat: near_hospital[:lat], hos_lat: near_hospital[:lng], phone: value[:phone],
-                        hos_name: near_hospital[:name], time_disaster: time_arrive_disaster+now_time, time_hospital: time_arrive_hospital+now_time, distance: dis_to_disaster}
-            ambulance_hash = ambulance_hash.sort_by{|k,v| v["available_time"]}.to_h
-            injure -= 1
+            # first = ambulance_queue.shift
+            ambulance_queue.each do |k|
+                name = k[0]
+                value = k[1]
+                available_time = value[:available_time]
+                dis_to_disaster = value[:distance]
+                disaster_id = value[:disaster]
+                next if geo_hash[disaster_id][:injure] == 0
+                near_hospital = d_to_hospital[disaster_id]
+                # dis_to_disaster = Geocoder::Calculations.distance_between([value[:lat], value[:lng]], geo).round(3)
+                if assigned.include? name
+                    time_arrive_disaster = available_time + (dis_to_disaster/speed)*60.round(0)
+                else # 第一次被指派的救護車
+                    time_arrive_disaster = available_time 
+                end
+                next_disaster_id, next_distance = self.next_assign(geo_hash, [near_hospital[:lat], near_hospital[:lng]])
+                time_arrive_hospital = time_arrive_disaster + (near_hospital[:distance]/speed)*60.round(0) + setup_time
+                ambulance_queue[name][:available_time] = time_arrive_hospital + setup_time
+                ambulance_queue[name][:disaster] = next_disaster_id
+                ambulance_queue[name][:distance] = next_distance
+                schedule << {hos_id: near_hospital[:id], id: value[:id], name: name, start_lat: value[:lat], start_lng: value[:lng], hos_lat: near_hospital[:lat], hos_lat: near_hospital[:lng], phone: value[:phone],
+                            hos_name: near_hospital[:name], time_disaster: time_arrive_disaster+now_time, time_hospital: time_arrive_hospital+now_time, distance: dis_to_disaster,
+                            disaster_id: disaster_id}
+                ambulance_queue = ambulance_queue.sort_by{|k,v| v[:available_time]}.to_h
+                geo_hash[disaster_id][:injure] -= 1
+                total_injure -= 1
+                break
+            end
         end
         # p schedule
         return schedule
+    end
+
+    def self.next_assign(geo_hash, hos_geo)
+        distance = 100000
+        disaster = nil
+        geo_hash.each do |id, value|
+            next if value[:injure] == 0
+            dis_from_hos_to_disaster = Geocoder::Calculations.distance_between([value[:lat], value[:lng]], hos_geo).round(3)
+            if distance > dis_from_hos_to_disaster
+                distance = dis_from_hos_to_disaster
+                disaster = id
+            end
+        end
+
+        return disaster, distance
     end
 
     def self.distance_disaster_to_hospital(geo)

@@ -40,7 +40,7 @@ module HospitalHelper
                 d_to_hospital[id] = {distance: 1000} unless d_to_hospital.has_key? id
                 dis = Geocoder::Calculations.distance_between(each_geo, [data["lat"],data["lng"]]).round(3)
                 if dis < d_to_hospital[id][:distance]
-                    d_to_hospital[id] = {distance: dis, id: data["id"]}
+                    d_to_hospital[id] = {distance: dis, id: data["id"], lat: data["lat"], lng: data["lng"], name: data["name"]}
                 end
                 # d_to_hospital << {name: data["name"], distance: dis, lat: data["lat"], lng: data["lng"], address: data["address"],
                 #         report_full: data["report_full"], wait_see: data["wait_see"], wait_push_bed:data["wait_push_bed"],

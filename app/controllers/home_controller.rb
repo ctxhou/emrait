@@ -39,15 +39,15 @@ class HomeController < ApplicationController
         @setup_time = 1 # 15 min to pick up patient and place in hospital
         @speed = 50 # speed: 70km/hr = (70/60)km/min
         @geo_hash = {}
+        @total_injure = 0
         length = params[:length].to_i
-        injure = 0
         1.upto(length) do |k|
             next unless params["lat#{k}".intern]
             this_injure = params["injure#{k}".intern].to_i
             @geo_hash[k] = {lat: params["lat#{k}".intern], lng: params["lng#{k}".intern], address: params["address#{k}".intern], injure: this_injure}
-            total_injure += this_injure
+            @total_injure += this_injure
         end
-        @schedule, @d_to_hospital = AiAmbulanceHelper.compare_119_distance(@geo_hash, @setup_time, @speed, total_injure)
+        @schedule, @d_to_hospital = AiAmbulanceHelper.compare_119_distance(@geo_hash, @setup_time, @speed, @total_injure)
         if @d_to_hospital.length == 0
             @clinic = AiAmbulanceHelper.near_clinic(@lat, @lng)
         end
