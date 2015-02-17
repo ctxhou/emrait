@@ -15,12 +15,12 @@ module.exports = Backbone.Marionette.ItemView.extend({
     },
 
     initialize: function(options) {
-        this.hospital = options.hospital.toJSON();
-        delete this.hospital["id"]
+        this.hospital = options.hospital
         this.start_lat = this.model.get("lat")
         this.start_lng = this.model.get("lng")
-        this.end_lat = $("#end_lat").val()
-        this.end_lng = $("#end_lng").val()
+        this.end_lat = $("#lat"+options.disaster_id).val()
+        this.end_lng = $("#lng"+options.disaster_id).val()
+        console.log(this.end_lat, this.start_lng)
     },
 
     templateHelpers: function() {

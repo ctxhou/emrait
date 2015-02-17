@@ -5,8 +5,6 @@ class MissionController < ApplicationController
         @mission = Mission.find(params[:id])
         seq_id = @mission["seq_id"]
         @ambulance = Ambulance.find(seq_id)
-        p @ambulance
-        p "name: #{@ambulance["lat"]}"
         if @mission.update(mission_params)
             Ambulance.update(@ambulance["id"], exist: @ambulance["exist"]+1)
             respond_to do |format|

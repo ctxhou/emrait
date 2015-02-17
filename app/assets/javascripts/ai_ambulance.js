@@ -22,8 +22,6 @@ app.on("before:start", function() {
         $(this).clock({"timestamp": time_stamp, "calendar":"false"})
     })
 
-    var lat = $("#end_lat").val();
-    var lng = $("#end_lng").val();
     $(".js-ambulance").click(function(event) {
         var $target = $(event.currentTarget);
         var id = $target.attr("data-id");
@@ -49,8 +47,14 @@ app.on("before:start", function() {
         $(".js-assign").each(function(i, obj) {
             // var val = $(this).attr("data-name");
             var id = $(this).attr('data-id');
-            var hospital = $(this).attr('data-hospital')
-            json["assign"].push({exist: 1, id: id, end_lat: lat, end_lng: lng, hospital: hospital})
+            var structure = $(this).attr("data-name");
+            var hospital = $(this).attr('data-hospital');
+            var lat = $(this).attr('data-lat');
+            var lng = $(this).attr('data-lng');
+            var rand_id = $(this).attr('data-rand')
+            var dis_time = $("#dis_time_"+rand_id+" .clocktime").text();
+            var hos_time = $("#hos_time_"+rand_id+" .clocktime").text();
+            json["assign"].push({dis_time:dis_time, hos_time:hos_time, name: structure, exist: 1, id: id, end_lat: lat, end_lng: lng, hospital: hospital})
         })
         json = JSON.stringify(json)
         $.ajax({

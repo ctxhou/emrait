@@ -23,7 +23,7 @@ module HospitalHelper
         hospital.each do |data|
             dis = Geocoder::Calculations.distance_between(each_geo, [data["lat"],data["lng"]]).round(3)
             if dis <= 4 # if the hospital is in 4 km distance, return 
-                d_to_hospital << {name: data["name"], id: data["id"]}
+                d_to_hospital << {name: data["name"], id: data["id"], lat: data["lat"], lng: data["lng"]}
             end
         end
 

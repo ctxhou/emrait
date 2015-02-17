@@ -70,7 +70,7 @@ module AiAmbulanceHelper
                 ambulance_queue[name][:distance] = next_distance
                 schedule << {hos_id: near_hospital[:id], id: value[:id], name: name, start_lat: value[:lat], start_lng: value[:lng], hos_lat: near_hospital[:lat], hos_lat: near_hospital[:lng], phone: value[:phone],
                             hos_name: near_hospital[:name], time_disaster: time_arrive_disaster+now_time, time_hospital: time_arrive_hospital+now_time, distance: dis_to_disaster,
-                            disaster_id: disaster_id}
+                            disaster_id: disaster_id, rand_id: Random.rand(1000000)}
                 ambulance_queue = ambulance_queue.sort_by{|k,v| v[:available_time]}.to_h
                 geo_hash[disaster_id][:injure] -= 1
                 total_injure -= 1
