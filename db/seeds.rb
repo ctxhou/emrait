@@ -16,11 +16,11 @@ data_ary.each do |ary|
                       :lng=>ary["lng"])
 end
 
-# data_ary = JSON.load(open("http://140.116.96.118:9000/new.json"))
-# data_ary.each do |ary|
-#     hospital = Hospitals.find_by(hospital_id: ary["hospital"])
-#     hospital.update(report_full: ary["to_119"], wait_see: ary["wait_see"], wait_push_bed: ary["wait_push_bed"], wait_bed: ary["wait_bed"], wait_cure_bed: ary["wait_cure_bed"])
-# end
+data_ary = JSON.load(open("http://140.116.96.118:9000/new.json"))
+data_ary.each do |ary|
+    hospital = Hospitals.find_by(hospital_id: ary["hospital"])
+    hospital.update(report_full: ary["to_119"], wait_see: ary["wait_see"], wait_push_bed: ary["wait_push_bed"], wait_bed: ary["wait_bed"], wait_cure_bed: ary["wait_cure_bed"])
+end
 
 Shelter.delete_all
 data_ary = JSON.load(open("http://www.datagarage.io/api/54ce0b394abca63f6426bd97/"))
