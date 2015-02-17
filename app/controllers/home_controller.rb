@@ -28,14 +28,10 @@ class HomeController < ApplicationController
         length = params[:length].to_i
         @geo_hash = {}
         1.upto(length) do |k|
-            @geo_hash[k] = {lat: params["lat#{k}".intern], lng: params["lng#{k}".intern], address: params["address#{k}".intern]}
+            next unless params["lat#{k}".intern]
+            @geo_hash[k] = {lat: params["lat#{k}".intern], lng: params["lng#{k}".intern], address: params["address#{k}".intern], injure: params["injure#{k}".intern].to_i}
         end
-        @address = params[:address]
-        @injure = params[:injure].to_i
-        @suggest_ambulance, @abmulance_hash, @d_to_hospital = HomeHelper.compare_119_distance([@lat, @lng], @injure)
-        if @d_to_hospital.length == 0
-            @clinic = HomeHelper.near_clinic(@lat, @lng)
-        end
+        @d_to_hospital = HospitalHelper.distance_disaster_to_hospital(@geo_hash)
     end
 
     def ai_ambulance
