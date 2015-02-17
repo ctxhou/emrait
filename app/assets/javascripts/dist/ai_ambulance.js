@@ -29,11 +29,13 @@ app.on("before:start", function() {
         var hos_id = $target.attr("data-hos-id")
         var ambulance = new Ambulance({id: id});
         var hospitals = new Hospital({id: hos_id});
+        var disaster_id = $target.attr("data-disaster")
         hospitals.fetch({
             success: function() {
+                hospitals = hospitals.toJSON();
                 ambulance.fetch({
                     success: function() {
-                        var ambulanceView = new AmbulanceView({model: ambulance, id: id, hospital: hospitals})
+                        var ambulanceView = new AmbulanceView({disaster_id: disaster_id, model: ambulance, id: id, hospital: hospitals})
                         app.modal.show(ambulanceView)
                     }
                 })
@@ -97,11 +99,14 @@ Backbone.$ = $;
 
 
 module.exports = Backbone.Model.extend({
-    
-    urlRoot: "/hospital/",
 
-    idAttribute: "id"
+    initialize: function(options) {
+        this.id = options.id
+    },
 
+    url: function() {
+        return "/hospital/" + this.id
+    }
 });
 },{"backbone":13,"jquery":6}],4:[function(require,module,exports){
 // hbsfy compiled Handlebars template

@@ -32,7 +32,7 @@
         <td class="time" id="hos_time_<%= data[:rand_id]%>"><%= data[:time_hospital]*1000%></td>
         <td><%= data[:hos_name] %></td>
         <td>
-            <button class="btn btn-link js-ambulance" data-id="<%= data[:id] %>" data-toggle="modal" data-target="#myModal" data-hos-id="<%= data[:hos_id] %>">詳細資訊</button>
+            <button class="btn btn-link js-ambulance" data-id="<%= data[:id] %>" data-toggle="modal" data-target="#myModal" data-hos-id="<%= data[:hos_id] %>" data-disaster="<%= data[:disaster_id]%>">詳細資訊</button>
         </td>
         <input type="hidden" class="js-assign" data-name="<%= data[:name] %>" data-hospital="<%= data[:hos_name] %>" data-id="<%= data[:id] %>" data-rand="<%= data[:rand_id] %>">
     </tr>
@@ -79,7 +79,10 @@
 <% end %>
 
 <hr>
-
+<% @geo_hash.each do |k, v| %>
+    <input type="hidden" id="lat<%= k %>" value="<%= v[:lat] %>">
+    <input type="hidden" id="lng<%= k %>" value="<%= v[:lng] %>">
+<% end %>
 <%= render "units/bootstrap_modal" %>
 <input type="hidden" value="<%= @lat %>" id="end_lat">
 <input type="hidden" value="<%= @lng %>" id="end_lng">
