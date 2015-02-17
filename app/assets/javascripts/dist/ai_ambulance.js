@@ -22,7 +22,12 @@ app.on("before:start", function() {
         var time_stamp = $(this).text()
         $(this).clock({"timestamp": time_stamp, "calendar":"false"})
     })
-
+    $("#reset").click(function() {
+        var speed = $("#speed").val();
+        var setup = $("#setup").val();
+        var url = $("#this_url").val();
+        window.location.href = url+"&speed="+speed+"&setup="+setup
+    })
     $(".js-ambulance").click(function(event) {
         var $target = $(event.currentTarget);
         var id = $target.attr("data-id");

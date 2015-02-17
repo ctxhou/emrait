@@ -36,8 +36,11 @@ class HomeController < ApplicationController
     end
 
     def ai_ambulance
+        @smart_url = URI.parse(request.original_url).query
         @setup_time = 1 # 15 min to pick up patient and place in hospital
         @speed = 50 # speed: 70km/hr = (70/60)km/min
+        @setup_time = params[:setup].to_i if params[:setup] # 15 min to pick up patient and place in hospital
+        @speed = params[:speed].to_i if params[:speed] # speed: 70km/hr = (70/60)km/min
         @geo_hash = {}
         @total_injure = 0
         length = params[:length].to_i

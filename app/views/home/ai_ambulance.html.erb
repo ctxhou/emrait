@@ -1,17 +1,17 @@
 <h1>系統指派</h1>
 <div class="pull-right"><a href="/mission">出勤中救護車</a></div>
+<input type="hidden" value="<%= URI.escape("/smart_emergency/?#{@smart_url}") %>" id="this_url">
 
-<h3>以下為到災點
-    <% if @address %>
-        <%= @address %>
-    <% else %>
-        <%= @lat %>, <%= @lng %>
-    <% end %>
-    的救護車指派建議 ( 有<%= @injure %>位病患 )
-</h3>
+<h3>以下為到災點的救護車指派建議 ( 有<%= @total_injure %>位病患 )</h3>
 
-<h5>setup time: <%= @setup_time %> ; speed: <%= @speed.round(4) %> km/hr</h5>
-<table class="table">
+<h4>
+    <div class="row">
+        <div class="col-md-4">setup time: <input type="number" value="<%= @setup_time %>" id="setup"> min;</div>
+        <div class="col-md-4">speed: <input type="number" value="<%= @speed.round(4) %>" id="speed"> km/hr</div>
+        <div class="col-md-2"><button class="btn btn-success" id="reset">重設</button></div>
+    </div>
+</h4>
+<table class="table"> 
     <thead>
         <tr>
             <th>名稱</th>
