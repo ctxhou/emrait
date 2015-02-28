@@ -4,27 +4,33 @@ require "json"
 
 class HomeController < ApplicationController
     def index
+        @header = ["", "", ""]
         # uri = "http://140.116.96.118:9000/new.json"
         # @json = JSON.load(open(uri))
     end
 
     def clinic
-
+        @header = ["", "", "active"]
     end
 
     def shelter
-
     end
 
 
 
     def clinic_search
+        @header = ["", "", "active"]
         @address = params[:address]
         @lat = params[:lat]
         @lng = params[:lng]
     end
 
-    def emergency
+    def emergency_input
+        @header = ["active", "", ""]
+    end
+
+    def emergency_result
+        @header = ["active", "", ""]
         @smart_url = URI.parse(request.original_url).query
         length = params[:length].to_i
         @geo_hash = {}

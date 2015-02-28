@@ -2,10 +2,11 @@ class ShelterController < ApplicationController
     skip_before_filter :verify_authenticity_token
 
     def index
-
+        @header = ["", "active", ""]
     end
 
     def result
+        @header = ["", "active", ""]
         @lat = params[:lat]
         @lng = params[:lng]
         @victims = params[:victims]
@@ -15,10 +16,10 @@ class ShelterController < ApplicationController
     end
 
     def show
+        @header = ["", "active", ""]
         @id = params[:id]
         @shelter = Shelter.find(@id)
         @shelter_info = ShelterInfo.where(shelter_id: @id)
-        p "id: #{@shelter_info}"
     end
 
     def create
