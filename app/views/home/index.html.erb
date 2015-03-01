@@ -19,7 +19,7 @@
                 <div class="thumbnail" style="border:none">
                     <%= image_tag("ambulance2.png", class:"feature-thumb") %>
                     <div class="caption">
-                        <h3 class="center">緊急救護車指派</h3>
+                        <h3 class="center">救護車及醫院指派工具</h3>
                     </div>
                 </div>
             </div>
@@ -52,18 +52,104 @@
             </span>
         </div>
         <div class="feature-content">
-            <div class="row">
+            <div class="row vcenter">
                 <div class="col-md-8">
                     發生災難時，可依其影響層面大小與受傷程度輕重關係，分成由政府等級的救災中心統籌負責救災、抑或是輕度傷患自行求醫等兩種情境。<br>
-                    以目前救災中心的救護車指派而言，並沒有系統化的決策方式，若發生大量傷患、醫療資源捉襟見肘時，此決策更形重要。
-                    目前醫療資源之資料建構與整合極不完備，民眾必須耗時搜尋且找到之資訊可能早已過時錯誤。
-                    為讓救災中心及民眾能快速方便地查詢緊急醫療資源，並進而作出合適的就醫決策，我們擬實作兩個網路應用程式: (i) 救災中心使用之救護車及醫院指派決策工具     (ii)民眾使用之醫療資源查詢工具: 
-                    其中第一項工具可協助救災中心指派救護車，而第二項工具則可讓現場的救災人員或民眾處理無須救護車運送的災民，且亦可供民眾日常檢索相關資訊，依據其欲看診的科別檢索相關醫療資訊
+                    以目前救災中心的救護車指派而言，並沒有系統化的決策方式，若發生大量傷患、醫療資源捉襟見肘時，此決策更形重要。<br>
+                    <!-- 目前醫療資源之資料建構與整合極不完備，民眾必須耗時搜尋且找到之資訊可能早已過時錯誤。<br> -->
+                    為讓救災中心及民眾能快速方便地查詢緊急醫療資源，並進而作出合適的就醫決策，本組實作以下兩個工具： <br>
+                    <ul class="ml3" style="font-size:inherit; list-style-type:square">
+                        <li>救災中心使用之救護車及醫院指派決策工具</li>
+                        <li>民眾使用之醫療資源查詢工具</li>
+                    </ul>
+                    第一項工具可協助救災中心指派救護車，而第二項工具則可讓現場的救災人員或民眾處理無須救護車運送的災民，且亦可供民眾日常檢索相關資訊，依據其欲看診的科別檢索相關醫療資訊。
                 </div>
                 <div class="col-md-3">
                     <%= image_tag("emrait.svg", class:"img-responsive", alt:"Responsive image") %>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="feature-block">
+        <div class="feature-head">
+            <span class="feature-head__logo">
+                <%= image_tag("ambulance2.png", height:30, width:30) %>
+            </span>
+            <span class="feature-head__word h4">
+                救護車及醫院指派工具
+            </span>
+        </div>
+        <div class="feature-content">
+            <div class="row vcenter mb4">
+                <div class="col-md-1 mr3">
+                    <%= image_tag("click.svg", height:80, width:80) %>
+                </div>
+                <div class="col-md-8">
+                    <h4>一鍵指派</h4>
+                    <p style="font-size:15px;">僅需輸入災點所在位置、災民人數，系統即會計算最佳的救護車、醫院、病患配置。</p>
+                </div>
+            </div>
+            <div class="row vcenter mb4">
+                <div class="col-md-1 mr3">
+                    <%= image_tag("multi.png", height:80, width:80) %>
+                </div>
+                <div class="col-md-8">
+                    <h4>多災點輸入</h4>
+                    <p style="font-size:15px;">如近期發生的高雄氣爆，救災人員可以輸入各災點資訊，系統會給予根據現況的最佳配置。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="feature-block">
+        <div class="feature-head">
+            <span class="feature-head__logo">
+                <%= image_tag("shelter.svg", height:30, width:30) %>
+            </span>
+            <span class="feature-head__word h4">
+                災民收容所指引
+            </span>
+        </div>
+        <div class="feature-content">
+            <div class="row vcenter mb4">
+                <div class="col-md-1 mr3">
+                    <%= image_tag("horn.png", height:80, width:80) %>
+                </div>
+                <div class="col-md-8">
+                    <h4>民眾回報</h4>
+                    <p style="font-size:15px;">
+                        目前災民收容所的資訊僅有地點，當發生災難時，並無法即刻知道各個災民收容所的現況。<br>
+                        透過民眾回報機制，能夠讓欲前往該收容所的災閔，或是一般民眾得知該收容所的最新資訊。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="feature-block">
+        <div class="feature-head">
+            <span class="feature-head__logo">
+                <%= image_tag("clinic.svg", height:30, width:30) %>
+            </span>
+            <span class="feature-head__word h4">
+                鄰近診所查詢
+            </span>
+        </div>
+        <div class="feature-content">
+            <div class="row vcenter mb4">
+                <div class="col-md-1 mr3">
+                    <%= image_tag("clinic_type.svg", height:80, width:80) %>
+                </div>
+                <div class="col-md-8">
+                    <h4>診所查詢</h4>
+                    <p style="font-size:15px;">
+                        民眾可依據自己所在地或是輸入地址查詢該地區鄰近的診所。<br>
+                        此外，提供了科別的分類供民眾篩選，並可知道該診所的相關資訊。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="center mb4">
+        <a href="/emergency_input" class="btn btn-success btn-submit">開始使用！</a>       
     </div>
 </div>
