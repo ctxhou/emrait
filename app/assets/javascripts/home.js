@@ -2,15 +2,16 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Handlebars = require('handlebars')
+var bootstrap = require('bootstrap')
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var GetGeo = require('./module/get_geo')
-var geocode = _.template('<div class="col-md-2">'+
+var geocode = _.template('<div class="col-md-3">'+
                     '<input type="text" class="form-control" placeholder="緯度" name="lat<%=number%>" id="lat<%=number%>" required>'+
-                '</div>'+'<div class="col-md-2">'+
+                '</div>'+'<div class="col-md-3">'+
                 '<input type="text" class="form-control" placeholder="經度" name="lng<%=number%>" id="lng<%=number%>" required></div>'+
                 '<div class="col-md-2">'+
-                '<a class="btn btn-default" id="get_geo<%=number%>">自動定位</a></div>'
+                '<a class="btn btn-default" id="get_geo<%=number%>" data-loading-text="定位中..." class="btn btn-primary" autocomplete="off">自動定位</a></div>'
                 )
 var location = _.template('<div class="col-md-6" id="location">'+
                 '<input type="text" class="form-control js-address" name="address<%=number%>" placeholder="輸入所在地址" data-number="<%=number%>" required>'+
@@ -18,13 +19,16 @@ var location = _.template('<div class="col-md-6" id="location">'+
                 '<input type="hidden" name="lng<%=number%>" id="lng<%=number%>" required>'+
                 '</div>')
 
-
+function getRandom(min, max) {
+  return Math.round((Math.random() * (max - min) + min));
+}
 var app = new Marionette.Application();
 app.addRegions({
     modal: "#modal-view"
 })
 
 app.on("before:start", function() {
+    $('[data-toggle="tooltip"]').tooltip()
     var that = this;
     var count = 1;
     var template = Handlebars.compile($("#multi-disaster").html())
@@ -39,15 +43,33 @@ app.on("before:start", function() {
             });
         }
     });
-
-    $("#new").click(function(event) {
-        if (count == 1) {
-            $("#first-title").text("災點1");
-        }
+    $(".js-remove").hide();
+    $(document).on("click", ".js-new", function(){
         count += 1;
         $("#length").val(parseInt($("#length").val())+1)
-        var html = template({number: count})
+        var html = template({number: count, rand:getRandom(2, 100000)})
         $("#multi").append(html)
+        if (count == 1) {
+            $(".js-remove").hide();
+        } else {
+            $(".js-remove").show();
+        }
+    })
+    $(document).on('click', '.js-remove', function(event) {
+        $target = $(event.currentTarget);
+        count -= 1;
+        $("#length").val(parseInt($("#length").val())-1)
+        var disaster = $target.attr("data-disaster")
+        $("#"+disaster).remove();
+        $(".js-disaster-name").each(function(e) {
+            var count = (e+1).toString()
+            $(this).text("災點"+count)
+        })
+        if (count == 1) {
+            $(".js-remove").hide();
+        } else {
+            $(".js-remove").show();
+        }
     });
 
     $(document).on('change', ".js-address", function() {

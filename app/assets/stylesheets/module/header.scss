@@ -1,0 +1,15 @@
+.logo {
+    display: inline-block !important;
+    // height:28px;
+    margin-top: -7px;
+}
+
+.navbar-brand {
+    &:hover {
+        opacity: .8;
+    }
+}
+
+.navbar {
+    margin-bottom: 0 !important;
+}

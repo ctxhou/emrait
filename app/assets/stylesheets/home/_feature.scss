@@ -1,0 +1,24 @@
+.feature-block {
+    margin-bottom: 50px;
+}
+.feature-head {
+    display: inline-block;
+    margin-bottom: 30px;
+}
+
+.feature-head__word {
+    padding-bottom: 3px;
+    border-bottom: 2px double $blue;
+    vertical-align: middle;
+}
+
+.feature-content {
+    padding: 0 50px;
+    font-size: 20px;
+    line-height: 1.7;
+}
+
+
+.feature-thumb{
+    width: 128px;
+}

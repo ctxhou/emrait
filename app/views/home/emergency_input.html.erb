@@ -1,0 +1,92 @@
+<div class="banner-container py2">
+    <div class="row vcenter">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="banner">EMRAIT</div>
+            <div class="center h4">緊急醫療資源指派與查詢工具</div>            
+        </div>
+        <div class="col-md-4">
+            <a href="/mission">
+                <%= image_tag("ambulance2.png", width:90, :title=>"查看出勤中救護車", data:{ :toggle=>"tooltip", :placement=>"bottom"}) %>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="form-container clearfix">
+    <form class="form-horizontal" method="get" action="emergency_result">
+        <div class="row vcenter disaster-block" id="disaster1">
+            <div class="col-md-1"><button type="button" class="glyphicon glyphicon-plus js-new" data-toggle="tooltip" data-placement="bottom" title="新增災點"></button></div>
+            <div class="col-md-2"><h3 class="js-disaster-name">災點1</h3></div>
+            <div class="col-md-8">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <select class="form-control js-location-select" data-number="1">
+                            <option value="location">地址</option>
+                            <option value="geocode">座標</option>
+                        </select>
+                    </div>
+                    <div id="location-input-1">
+                        <div class="col-md-7" id="location">
+                            <input type="text" class="form-control js-address" name="address1" placeholder="輸入所在地址" data-number="1" required>
+                            <input type="hidden" name="lat1" id="lat1" required>
+                            <input type="hidden" name="lng1" id="lng1" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="injure" class="col-md-3 control-label">傷患人數</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="injure" placeholder="傷患人數" name="injure1">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1"><button class="glyphicon glyphicon-remove js-remove" data-toggle="tooltip" data-placement="bottom" title="移除此災點" data-disaster="disaster1"></button></div>
+        </div>
+    
+        <div id="multi"></div>
+        <input type="hidden" value="1" name="length" id="length">
+        <input type="hidden" value="5" name="distance">
+        <!-- <a id="new" class="btn btn-success">New</a> -->
+        <div class="row center">
+            <button type="submit" class="btn btn-primary btn-submit" disabled="disabled" id="submit">查詢</button>
+        </div>
+    </form>
+</div>
+<hr>
+<!-- <a href="/mission" class="h3" style="color: blue">查看出勤中救護車</a> -->
+
+<script type="text/x-handlebars-template" id="multi-disaster">
+    <div class="row vcenter disaster-block" id="disaster{{rand}}">
+        <div class="col-md-1"><button type="button" class="glyphicon glyphicon-plus js-new" data-toggle="tooltip" data-placement="bottom" title="新增災點"></button></div>
+        <div class="col-md-2"><h3 class="js-disaster-name">災點{{number}}</h3></div>
+        <div class="col-md-8">
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <select class="form-control js-location-select" data-number="{{number}}">
+                        <option value="location">地址</option>
+                        <option value="geocode">座標</option>
+                    </select>
+                </div>
+                <div id="location-input-{{number}}">
+                    <div class="col-md-7" id="location">
+                        <input type="text" class="form-control js-address" name="address{{number}}" placeholder="輸入所在地址" data-number="{{number}}" required>
+                        <input type="hidden" name="lat{{number}}" id="lat{{number}}" required>
+                        <input type="hidden" name="lng{{number}}" id="lng{{number}}" required>
+                    </div>
+                </div>
+                <span id="msg1" class="col-md-2"></span>
+            </div>
+            <div class="form-group row">
+                <label for="injure" class="col-md-3 control-label">傷患人數</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="injure{{number}}" placeholder="傷患人數" name="injure{{number}}">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1"><button class="glyphicon glyphicon-remove js-remove" data-toggle="tooltip" data-placement="bottom" title="移除此災點" data-disaster="disaster{{rand}}"></button></div>
+    </div>
+</script>
+<% content_for :javascript do %>
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> -->
+    <script async="async" data-turbolinks-track="true" src="/assets/dist/home.js"></script>
+<% end %>

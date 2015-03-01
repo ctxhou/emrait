@@ -4,8 +4,11 @@
 @import 'partials/_align';
 @import 'partials/whitespace';
 @import 'partials/typography';
+@import 'partials/bootstrap';
 
-
+@import "module/footer";
+@import "module/header";
 
 @import "home/content";
-@import "vendor/bootstrap";
+@import "home/feature";
+@import "vendor/bootstrap.min";
