@@ -11,7 +11,7 @@ var geocode = _.template('<div class="col-md-3">'+
                 '</div>'+'<div class="col-md-3">'+
                 '<input type="text" class="form-control" placeholder="經度" name="lng<%=number%>" id="lng<%=number%>" required></div>'+
                 '<div class="col-md-2">'+
-                '<a class="btn btn-default" id="get_geo<%=number%>">自動定位</a></div>'
+                '<a class="btn btn-default" id="get_geo<%=number%>" data-loading-text="定位中..." class="btn btn-primary" autocomplete="off">自動定位</a></div>'
                 )
 var location = _.template('<div class="col-md-6" id="location">'+
                 '<input type="text" class="form-control js-address" name="address<%=number%>" placeholder="輸入所在地址" data-number="<%=number%>" required>'+
@@ -42,11 +42,17 @@ app.on("before:start", function() {
             });
         }
     });
+    $(".js-remove").hide();
     $(document).on("click", ".js-new", function(){
         count += 1;
         $("#length").val(parseInt($("#length").val())+1)
         var html = template({number: count, rand:getRandom(2, 100000)})
         $("#multi").append(html)
+        if (count == 1) {
+            $(".js-remove").hide();
+        } else {
+            $(".js-remove").show();
+        }
     })
     $(document).on('click', '.js-remove', function(event) {
         $target = $(event.currentTarget);
@@ -58,6 +64,11 @@ app.on("before:start", function() {
             var count = (e+1).toString()
             $(this).text("災點"+count)
         })
+        if (count == 1) {
+            $(".js-remove").hide();
+        } else {
+            $(".js-remove").show();
+        }
     });
 
     $(document).on('change', ".js-address", function() {

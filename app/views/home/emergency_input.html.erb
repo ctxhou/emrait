@@ -3,48 +3,50 @@
     <div class="center h4">緊急醫療資源指派與查詢工具</div>
 </div>
 <div class="form-container clearfix">
-    <div class="row vcenter" id="disaster1">
-        <div class="col-md-1"><button type="button" class="glyphicon glyphicon-plus js-new" data-toggle="tooltip" data-placement="bottom" title="新增災點"></button></div>
-        <div class="col-md-2"><h3 class="js-disaster-name">災點1</h3></div>
-        <div class="col-md-8">
-            <div class="form-group row">
-                <div class="col-md-3">
-                    <select class="form-control js-location-select" data-number="1">
-                        <option value="location">地址</option>
-                        <option value="geocode">座標</option>
-                    </select>
-                </div>
-                <div id="location-input-1">
-                    <div class="col-md-7" id="location">
-                        <input type="text" class="form-control js-address" name="address1" placeholder="輸入所在地址" data-number="1" required>
-                        <input type="hidden" name="lat1" id="lat1" required>
-                        <input type="hidden" name="lng1" id="lng1" required>
+    <form class="form-horizontal" method="get" action="emergency_result">
+        <div class="row vcenter disaster-block" id="disaster1">
+            <div class="col-md-1"><button type="button" class="glyphicon glyphicon-plus js-new" data-toggle="tooltip" data-placement="bottom" title="新增災點"></button></div>
+            <div class="col-md-2"><h3 class="js-disaster-name">災點1</h3></div>
+            <div class="col-md-8">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <select class="form-control js-location-select" data-number="1">
+                            <option value="location">地址</option>
+                            <option value="geocode">座標</option>
+                        </select>
+                    </div>
+                    <div id="location-input-1">
+                        <div class="col-md-7" id="location">
+                            <input type="text" class="form-control js-address" name="address1" placeholder="輸入所在地址" data-number="1" required>
+                            <input type="hidden" name="lat1" id="lat1" required>
+                            <input type="hidden" name="lng1" id="lng1" required>
+                        </div>
                     </div>
                 </div>
-                <span id="msg1" class="col-md-2"></span>
-            </div>
-            <div class="form-group row">
-                <label for="injure" class="col-md-3 control-label">傷患人數</label>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" id="injure" placeholder="傷患人數" name="injure1">
+                <div class="form-group row">
+                    <label for="injure" class="col-md-3 control-label">傷患人數</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="injure" placeholder="傷患人數" name="injure1">
+                    </div>
                 </div>
             </div>
+            <div class="col-md-1"><button class="glyphicon glyphicon-remove js-remove" data-toggle="tooltip" data-placement="bottom" title="移除此災點" data-disaster="disaster1"></button></div>
         </div>
-        <div class="col-md-1"><button class="glyphicon glyphicon-remove js-remove" data-toggle="tooltip" data-placement="bottom" title="移除此災點" data-disaster="disaster1"></button></div>
-    </div>
     
-    <div id="multi"></div>
-    <input type="hidden" value="1" name="length" id="length">
-    <input type="hidden" value="5" name="distance">
-    <!-- <a id="new" class="btn btn-success">New</a> -->
-    <button type="submit" class="btn btn-primary pull-right" disabled="disabled" id="submit">查詢</button>
+        <div id="multi"></div>
+        <input type="hidden" value="1" name="length" id="length">
+        <input type="hidden" value="5" name="distance">
+        <!-- <a id="new" class="btn btn-success">New</a> -->
+        <div class="row center">
+            <button type="submit" class="btn btn-primary btn-submit" disabled="disabled" id="submit">查詢</button>
+        </div>
+    </form>
 </div>
 <hr>
 <a href="/mission" class="h3" style="color: blue">查看出勤中救護車</a>
 
 <script type="text/x-handlebars-template" id="multi-disaster">
-    <div class="row vcenter" id="disaster{{rand}}">
-        <hr>
+    <div class="row vcenter disaster-block" id="disaster{{rand}}">
         <div class="col-md-1"><button type="button" class="glyphicon glyphicon-plus js-new" data-toggle="tooltip" data-placement="bottom" title="新增災點"></button></div>
         <div class="col-md-2"><h3 class="js-disaster-name">災點{{number}}</h3></div>
         <div class="col-md-8">
