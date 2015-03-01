@@ -28,6 +28,7 @@ app.addRegions({
 })
 
 app.on("before:start", function() {
+    $('[data-toggle="tooltip"]').tooltip()
     var that = this;
     var count = 1;
     var template = Handlebars.compile($("#multi-disaster").html())

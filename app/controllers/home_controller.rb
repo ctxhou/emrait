@@ -65,6 +65,7 @@ class HomeController < ApplicationController
 
     def mission
         @mission = Mission.where(status: "ing").order(:created_at)
+        @header = ["", "", ""]
     end
 
     def reset

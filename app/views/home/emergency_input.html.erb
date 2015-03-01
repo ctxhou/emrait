@@ -1,6 +1,16 @@
 <div class="banner-container py2">
-    <div class="banner">EMRAIT</div>
-    <div class="center h4">緊急醫療資源指派與查詢工具</div>
+    <div class="row vcenter">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="banner">EMRAIT</div>
+            <div class="center h4">緊急醫療資源指派與查詢工具</div>            
+        </div>
+        <div class="col-md-4">
+            <a href="/mission">
+                <%= image_tag("ambulance2.png", width:90, :title=>"查看出勤中救護車", data:{ :toggle=>"tooltip", :placement=>"bottom"}) %>
+            </a>
+        </div>
+    </div>
 </div>
 <div class="form-container clearfix">
     <form class="form-horizontal" method="get" action="emergency_result">
@@ -43,7 +53,7 @@
     </form>
 </div>
 <hr>
-<a href="/mission" class="h3" style="color: blue">查看出勤中救護車</a>
+<!-- <a href="/mission" class="h3" style="color: blue">查看出勤中救護車</a> -->
 
 <script type="text/x-handlebars-template" id="multi-disaster">
     <div class="row vcenter disaster-block" id="disaster{{rand}}">

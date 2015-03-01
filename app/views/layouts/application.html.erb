@@ -10,9 +10,10 @@
     </head>
     <body>
         <%= render "units/header" %>
-        <div class="container">
+        <div class="container" style="min-height:85vh;">
             <%= yield %>
         </div>
+        <%= render "units/footer" %>
        <%= yield :javascript %>
     </body>
 </html>
