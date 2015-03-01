@@ -13,7 +13,7 @@
     </div>
 </div>
 <div class="form-container clearfix">
-    <form class="form-horizontal" method="get" action="emergency_result">
+    <form class="form-horizontal" method="get" action="smart_emergency">
         <div class="row vcenter disaster-block" id="disaster1">
             <div class="col-md-1"><button type="button" class="glyphicon glyphicon-plus js-new" data-toggle="tooltip" data-placement="bottom" title="新增災點"></button></div>
             <div class="col-md-2"><h3 class="js-disaster-name">災點1</h3></div>
@@ -32,6 +32,7 @@
                             <input type="hidden" name="lng1" id="lng1" required>
                         </div>
                     </div>
+                    <span id="msg1" class="col-md-2"></span>
                 </div>
                 <div class="form-group row">
                     <label for="injure" class="col-md-3 control-label">傷患人數</label>
@@ -52,7 +53,6 @@
         </div>
     </form>
 </div>
-<hr>
 <!-- <a href="/mission" class="h3" style="color: blue">查看出勤中救護車</a> -->
 
 <script type="text/x-handlebars-template" id="multi-disaster">
@@ -74,7 +74,7 @@
                         <input type="hidden" name="lng{{number}}" id="lng{{number}}" required>
                     </div>
                 </div>
-                <span id="msg1" class="col-md-2"></span>
+                <span id="msg{{number}}" class="col-md-2"></span>
             </div>
             <div class="form-group row">
                 <label for="injure" class="col-md-3 control-label">傷患人數</label>

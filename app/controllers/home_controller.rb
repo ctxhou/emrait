@@ -43,8 +43,9 @@ class HomeController < ApplicationController
     end
 
     def ai_ambulance
+        @header = ["active", "", ""]
         @smart_url = URI.parse(request.original_url).query
-        @setup_time = 1 # 15 min to pick up patient and place in hospital
+        @setup_time = 10 # 15 min to pick up patient and place in hospital
         @speed = 50 # speed: 70km/hr = (70/60)km/min
         @setup_time = params[:setup].to_i if params[:setup] # 15 min to pick up patient and place in hospital
         @speed = params[:speed].to_i if params[:speed] # speed: 70km/hr = (70/60)km/min
@@ -58,9 +59,9 @@ class HomeController < ApplicationController
             @total_injure += this_injure
         end
         @schedule, @d_to_hospital = AiAmbulanceHelper.compare_119_distance(@geo_hash, @setup_time, @speed, @total_injure)
-        if @d_to_hospital.length == 0
-            @clinic = AiAmbulanceHelper.near_clinic(@lat, @lng)
-        end
+        # if @d_to_hospital.length == 0
+        #     @clinic = AiAmbulanceHelper.near_clinic(@lat, @lng)
+        # end
     end
 
     def mission

@@ -17,6 +17,9 @@ app.addRegions({
 })
 
 app.on("before:start", function() {
+    $('[data-toggle="popover"]').popover({
+        "html": true
+    })
     $(".time").each(function() {
         var time_stamp = $(this).text()
         $(this).clock({"timestamp": time_stamp, "calendar":"false"})

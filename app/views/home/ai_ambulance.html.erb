@@ -6,9 +6,29 @@
 
 <h4>
     <div class="row">
-        <div class="col-md-4">setup time: <input type="number" value="<%= @setup_time %>" id="setup"> min;</div>
-        <div class="col-md-4">speed: <input type="number" value="<%= @speed.round(4) %>" id="speed"> km/hr</div>
-        <div class="col-md-2"><button class="btn btn-success" id="reset">重設</button></div>
+        <div class="col-md-3">
+            <div class="form-group vcenter">
+              <label for="setup" class="col-sm-6 control-label">設置時間</label>
+              <div class="col-sm-4">
+                <input type="number" class="form-control" id="setup" value="<%= @setup_time %>">
+              </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group vcenter">
+              <label for="speed" class="col-sm-6 control-label">救護車時速</label>
+              <div class="col-sm-4">
+                <input type="number" class="form-control" id="speed" value="<%= @speed.round(4) %>" >
+              </div>
+            </div>
+
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success" id="reset">重設</button>
+            <button class="btn btn-link" data-container="body" data-toggle="popover" data-placement="right" data-content="這兩個參數為用來預估指派方式的參數。<br>設置時間為救護車到災點以及到醫院的預估處理時間 ">
+                <i class="glyphicon glyphicon-question-sign" ></i>
+            </button>
+        </div>
     </div>
 </h4>
 <table class="table"> 

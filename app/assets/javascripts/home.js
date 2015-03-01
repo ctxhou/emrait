@@ -58,7 +58,7 @@ app.on("before:start", function() {
     $(document).on('click', '.js-remove', function(event) {
         $target = $(event.currentTarget);
         count -= 1;
-        $("#length").val(parseInt($("#length").val())-1)
+        // $("#length").val(parseInt($("#length").val())-1)
         var disaster = $target.attr("data-disaster")
         $("#"+disaster).remove();
         $(".js-disaster-name").each(function(e) {
