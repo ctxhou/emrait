@@ -1,0 +1,69 @@
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+            <h1>EMRAIT</h1>
+            <h3>緊急醫療資源指派與查詢工具</h3>
+            </div>
+            <div class="col-md-3">
+                <%= image_tag("ambulance.png") %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="feature-block">
+        <div class="row">
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail" style="border:none">
+                    <%= image_tag("ambulance2.png", class:"feature-thumb") %>
+                    <div class="caption">
+                        <h3 class="center">緊急救護車指派</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail" style="border:none">
+                    <%= image_tag("shelter.svg", class:"feature-thumb") %>
+                    <div class="caption">
+                        <h3 class="center">災民收容所指引</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail" style="border:none">
+                    <%= image_tag("clinic.svg", class:"feature-thumb") %>
+                    <div class="caption">
+                        <h3 class="center">鄰近診所查詢</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="feature-block">
+        <div class="feature-head">
+            <span class="feature-head__logo">
+                <%= image_tag("info.svg", height:30, width:30) %>
+            </span>
+            <span class="feature-head__word h4">
+                系統簡介
+            </span>
+        </div>
+        <div class="feature-content">
+            <div class="row">
+                <div class="col-md-8">
+                    發生災難時，可依其影響層面大小與受傷程度輕重關係，分成由政府等級的救災中心統籌負責救災、抑或是輕度傷患自行求醫等兩種情境。<br>
+                    以目前救災中心的救護車指派而言，並沒有系統化的決策方式，若發生大量傷患、醫療資源捉襟見肘時，此決策更形重要。
+                    目前醫療資源之資料建構與整合極不完備，民眾必須耗時搜尋且找到之資訊可能早已過時錯誤。
+                    為讓救災中心及民眾能快速方便地查詢緊急醫療資源，並進而作出合適的就醫決策，我們擬實作兩個網路應用程式: (i) 救災中心使用之救護車及醫院指派決策工具     (ii)民眾使用之醫療資源查詢工具: 
+                    其中第一項工具可協助救災中心指派救護車，而第二項工具則可讓現場的救災人員或民眾處理無須救護車運送的災民，且亦可供民眾日常檢索相關資訊，依據其欲看診的科別檢索相關醫療資訊
+                </div>
+                <div class="col-md-3">
+                    <%= image_tag("emrait.svg", class:"img-responsive", alt:"Responsive image") %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

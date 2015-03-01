@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="645px" height="661px" viewBox="0 0 645 661" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.0.1 (7597) - http://www.bohemiancoding.com/sketch -->
+    <title>Artboard 1</title>
+    <description>Created with Sketch.</description>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Artboard-1" sketch:type="MSArtboardGroup" fill="#D0011B">
+            <rect id="Rectangle-1" sketch:type="MSShapeGroup" x="252" y="107" width="132" height="443"></rect>
+            <rect id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(318.000000, 328.500000) scale(-1, -1) rotate(-90.000000) translate(-318.000000, -328.500000) " x="252" y="107" width="132" height="443"></rect>
+            <polygon id="Triangle-1" sketch:type="MSShapeGroup" points="318.5 7 428 107 209 107 "></polygon>
+            <polygon id="Triangle-4" sketch:type="MSShapeGroup" transform="translate(317.500000, 600.000000) scale(1, -1) translate(-317.500000, -600.000000) " points="317.5 550 427 650 208 650 "></polygon>
+            <polygon id="Triangle-2" sketch:type="MSShapeGroup" transform="translate(54.500000, 328.000000) rotate(-90.000000) translate(-54.500000, -328.000000) " points="54.5 278 164 378 -55 378 "></polygon>
+            <polygon id="Triangle-3" sketch:type="MSShapeGroup" transform="translate(588.500000, 328.000000) scale(-1, 1) rotate(-90.000000) translate(-588.500000, -328.000000) " points="588.5 278 698 378 479 378 "></polygon>
+        </g>
+    </g>
+</svg>

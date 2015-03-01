@@ -7,6 +7,7 @@ class HomeController < ApplicationController
         @header = ["", "", ""]
         # uri = "http://140.116.96.118:9000/new.json"
         # @json = JSON.load(open(uri))
+        render layout: "index"
     end
 
     def clinic
