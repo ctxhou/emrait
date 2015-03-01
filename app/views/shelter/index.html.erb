@@ -6,8 +6,10 @@
     <div class="banner">EMRAIT</div>
     <div class="center h4">鄰近災民收容所查詢</div>
 </div>
+<hr>
 <div class="form-container">
     <form class="form-horizontal" method="get" action="shelter_result">
+        <div class="row col-md-offset-2">
         <div class="form-group">
             <div class="col-md-2">
                 <select class="form-control" id="location-select">
@@ -16,7 +18,7 @@
                 </select>
             </div>
             <div id="location-input">
-                <div class="col-md-6" id="location">
+                <div class="col-md-7" id="location">
                     <input type="text" class="form-control" name="address" placeholder="輸入所在地址" id="address" required>
                     <input type="hidden" name="lat" id="lat" required>
                     <input type="hidden" name="lng" id="lng" required>
@@ -27,10 +29,14 @@
 
         <div class="form-group">
             <label for="victims" class="col-md-2 control-label">災民人數</label>
-            <div class="col-md-10">
+            <div class="col-md-5">
                 <input type="text" class="form-control" id="victims" placeholder="災民人數" name="victims">
             </div>
         </div>
-        <button type="submit" class="btn btn-primary pull-right" disabled="disabled" id="submit">Submit</button>
+        </div>
+        <div class="row center">
+            <button type="submit" class="btn btn-primary btn-submit" disabled="disabled" id="submit">查詢</button>
+        </div>
+
     </form>
 </div>
