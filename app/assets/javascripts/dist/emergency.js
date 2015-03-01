@@ -18,6 +18,7 @@ app.addRegions({
 })
 
 app.on("before:start", function() {
+    console.log('hi')
     var emergencies = new Emergencies();
     var hospitals = new Hospitals();
     hospitals.fetch({

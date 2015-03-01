@@ -2,17 +2,15 @@
 <html>
     <head>
         <title>EMRAIT</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-        <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+        <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
         <%= yield :stylesheet %>
         <%= csrf_meta_tags %>
     </head>
     <body>
         <%= render "units/header" %>
-        <div class="container">
-            <%= yield %>
-        </div>
-       <%= yield :javascript %>
+        <%= yield %>
+        <%= yield :javascript %>
+        <%= render "units/footer" %>
     </body>
 </html>

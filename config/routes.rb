@@ -7,7 +7,8 @@ Rails.application.routes.draw do
   get '/clinic' => "home#clinic"
   get '/clinic_search' => "home#clinic_search"
   get '/clinic/:lat/:lng' => 'clinic#get_clinic', :constraints => { :lng => /[\w+\.]+/, :lat => /[\w+\.]+/ }
-  get '/emergency' => "home#emergency"
+  get '/emergency_input' => "home#emergency_input"
+  get '/emergency_result' => "home#emergency_result"
   get '/smart_emergency' => "home#ai_ambulance"
   get '/ambulance/:id' => "ambulance#show"
   post '/assign_mission' => "ambulance#assign_mission"
