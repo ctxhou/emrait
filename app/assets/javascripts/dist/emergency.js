@@ -18,7 +18,9 @@ app.addRegions({
 })
 
 app.on("before:start", function() {
-    console.log('hi')
+    // $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    // })
     var emergencies = new Emergencies();
     var hospitals = new Hospitals();
     hospitals.fetch({
