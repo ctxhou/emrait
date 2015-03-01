@@ -93,10 +93,10 @@ clinic_app.show_list = function(clinics, geo, map) {
         var $target = $(e.currentTarget)
         if ($target.hasClass('active')) {
             $target.removeClass('active');
-            subject = _.without(subject, $target.text())
+            subject = _.without(subject, $target.attr('data-name'))
         } else {
             $target.addClass('active')
-            subject.push($target.text());
+            subject.push($target.attr('data-name'));
         }
         var filterApps = new_clinics.filter(function(model) {
             return _.some(model.attributes, function(val, attr) {
@@ -116,7 +116,7 @@ clinic_app.show_list = function(clinics, geo, map) {
 
 }
  
-var subejct_button = _.template("<button class='btn btn-default js-subject' style='margin-right:4px; margin-bottom:4px'><img src='<%= path %>' style='height:20px;'>&nbsp;|&nbsp;<%= sub %></button>")
+var subejct_button = _.template("<button class='btn btn-default js-subject' style='margin-right:4px; margin-bottom:4px' data-name='<%= sub %>'><img src='<%= path %>' style='height:20px;'>&nbsp;|&nbsp;<%= sub %></button>")
 // refactor data used to rename data and count distance
 clinic_app.refactor_data = function(cb, clinics, geo, map) {
     var pos, clinics_add_distance = [], tmp_dis, obj;
