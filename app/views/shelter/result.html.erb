@@ -1,28 +1,30 @@
-<% if @shelter_hash.length > 0 %>
-    <h2>鄰近災民收容所列表</h2>
-    <div class="h4">有<%= @victims %>位災民</div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>距離(km)</th>
-                <th>收容所名稱</th>
-                <th>縣市</th>
-                <th>地址</th>
-                <th></th>
-            </tr>
-        </thead>
-        <% @shelter_hash.each do |distance, ary| %>
-            <tr>
-                <td><%= distance %></td>
-                <td><%= ary["name"] %></td>
-                <td><%= ary["city"] %></td>
-                <td><%= ary["address"] %></td>
-                <td><button class="btn btn-primary js-shelter" data-lat="<%= ary["lat"] %>" data-lng="<%= ary["lng"] %>" data-toggle="modal" data-target="#myModal">路徑規劃</button></td>
-                <td><a href="/shelter/<%= ary["id"] %>" class="btn btn-link">民眾回報</a></td>
-            </tr>
+<h2>鄰近災民收容所列表</h2>
+<div class="h4">有<%= @victims %>位災民</div>
+<div class="row">
+    <div class="col-md-3">
+        <% if @shelter_hash.length > 0 %>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>距離(km)</th>
+                        <th>收容所名稱</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <% @shelter_hash.each do |distance, ary| %>
+                    <tr>
+                        <td><%= distance %></td>
+                        <td><button class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="<%=ary["city"]%><%= ary["address"] %>"><%= ary["name"] %></button></td>
+                        <td><button class="btn btn-primary js-shelter" data-lat="<%= ary["lat"] %>" data-lng="<%= ary["lng"] %>" data-toggle="modal" data-target="#myModal">路徑規劃</button></td>
+                        <td><a href="/shelter/<%= ary["id"] %>" class="btn btn-link">民眾回報</a></td>
+                    </tr>
+                <% end %>
+            </table>
         <% end %>
-    </table>
-<% end %>
+    </div>
+    <div class="col-md-9"><div id="shelter-map"></div></div>
+</div>
+
 
 <input type="hidden" value="<%= @lat %>" id="lat">
 <input type="hidden" value="<%= @lng %>" id="lng">
