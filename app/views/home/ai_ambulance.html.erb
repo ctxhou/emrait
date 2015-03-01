@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="form-group vcenter">
-              <label for="setup" class="col-sm-6 control-label">設置時間</label>
+              <label for="setup" class="col-sm-6 control-label">設置時間(分)</label>
               <div class="col-sm-4">
                 <input type="number" class="form-control" id="setup" value="<%= @setup_time %>">
               </div>
@@ -16,7 +16,7 @@
         </div>
         <div class="col-md-3">
             <div class="form-group vcenter">
-              <label for="speed" class="col-sm-6 control-label">救護車時速</label>
+              <label for="speed" class="col-sm-6 control-label">救護車時速(km/hr)</label>
               <div class="col-sm-4">
                 <input type="number" class="form-control" id="speed" value="<%= @speed.round(4) %>" >
               </div>
