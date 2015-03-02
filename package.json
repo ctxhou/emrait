@@ -37,7 +37,8 @@
     "require-dir": "~0.1.0",
     "vinyl-source-stream": "~1.0.0",
     "gulp-ruby-sass": "~1.0.0-alpha.3",
-    "gulp-notify": "~2.2.0"
+    "gulp-notify": "~2.2.0",
+    "spin": "0.0.1"
   },
   "dependencies": {
     "backbone": "^1.1.2",

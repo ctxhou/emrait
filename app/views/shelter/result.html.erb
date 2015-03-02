@@ -1,6 +1,11 @@
 <h2>鄰近災民收容所列表</h2>
 <div class="h4">有<%= @victims %>位災民</div>
-<div id="content"></div>
+<div id="content">
+    <div class="spin-container center"  style="margin-top:5em">
+        <div id="spin"></div>
+        <div style="padding-top:7em">讀取中...</div>
+    </div>
+</div>
 
 
 <input type="hidden" value="<%= @lat %>" id="lat">

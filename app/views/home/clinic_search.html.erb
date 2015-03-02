@@ -12,7 +12,12 @@
 <input type="hidden" id="lng_val" value="<%= @lng %>">
 <div class="row">
     <div class="col-md-4" style="height:80vh; overflow:scroll">
-        <div id="list_area"></div>
+        <div id="list_area">
+            <div class="spin-container center"  style="margin-top:5em">
+                <div id="spin"></div>
+                <div style="padding-top:7em">讀取中...</div>
+            </div>
+        </div>
     </div>
     <div class="col-md-8">
         <div id="gmap"></div>
