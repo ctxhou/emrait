@@ -48,3 +48,14 @@
     margin-bottom: 30px;
     border-top: 2px solid #eee;
 }
+
+.note {
+    margin-left: 10px;
+    color: green;
+    &:before {
+        color: red;
+        font-style: italic;
+        content: "for";
+        margin-right: 10px;
+    }
+}

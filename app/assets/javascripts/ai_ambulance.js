@@ -10,6 +10,7 @@ var bootstrap = require('bootstrap');
 var AmbulanceView = require('./views/ambulance/ambulance_modal');
 var Ambulance = require('./models/ambulance');
 var Hospital = require('./models/hospital');
+require("./vendor/jquery.tinyMap-3.1.3.min")
 
 var app = new Marionette.Application();
 app.addRegions({
@@ -17,6 +18,17 @@ app.addRegions({
 })
 
 app.on("before:start", function() {
+    var lat = $("#lat1").val();
+    var lng = $("#lng1").val();
+    $.getJSON('/ai_direction?'+ window.location.search.substring(1), function(json, textStatus) {
+        console.log(json)
+        var map = $("#gmap").tinyMap({
+            zoom: 15,
+            center: {lat:lat, lng:lng},
+            direction: json
+        })
+    });
+
     $('[data-toggle="popover"]').popover({
         "html": true
     })

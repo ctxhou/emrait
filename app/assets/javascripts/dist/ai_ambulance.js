@@ -11,6 +11,7 @@ var bootstrap = require('bootstrap');
 var AmbulanceView = require('./views/ambulance/ambulance_modal');
 var Ambulance = require('./models/ambulance');
 var Hospital = require('./models/hospital');
+require("./vendor/jquery.tinyMap-3.1.3.min")
 
 var app = new Marionette.Application();
 app.addRegions({
@@ -18,6 +19,17 @@ app.addRegions({
 })
 
 app.on("before:start", function() {
+    var lat = $("#lat1").val();
+    var lng = $("#lng1").val();
+    $.getJSON('/ai_direction?'+ window.location.search.substring(1), function(json, textStatus) {
+        console.log(json)
+        var map = $("#gmap").tinyMap({
+            zoom: 15,
+            center: {lat:lat, lng:lng},
+            direction: json
+        })
+    });
+
     $('[data-toggle="popover"]').popover({
         "html": true
     })
@@ -87,7 +99,7 @@ app.on("initialize:after", function() {
 });
 
 app.start();
-},{"./models/ambulance":2,"./models/hospital":3,"./vendor/jQclock.min":5,"./views/ambulance/ambulance_modal":8,"backbone":13,"backbone.marionette":9,"bootstrap":14,"jquery":6,"underscore":35}],2:[function(require,module,exports){
+},{"./models/ambulance":2,"./models/hospital":3,"./vendor/jQclock.min":5,"./vendor/jquery.tinyMap-3.1.3.min":7,"./views/ambulance/ambulance_modal":8,"backbone":13,"backbone.marionette":9,"bootstrap":14,"jquery":6,"underscore":35}],2:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery');
 Backbone.$ = $;
