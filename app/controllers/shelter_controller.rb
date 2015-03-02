@@ -10,9 +10,19 @@ class ShelterController < ApplicationController
         @lat = params[:lat]
         @lng = params[:lng]
         @victims = params[:victims]
-        if @victims
-            @shelter_hash = HomeHelper.get_near_shelter([@lat, @lng])
+        # if @victims
+        #     @shelter_hash = HomeHelper.get_near_shelter([@lat, @lng])
+        # end
+    end
+
+    def near_shelter
+        lat = params[:lat]
+        lng = params[:lng]
+        victims = params[:victims]
+        if victims
+            shelter_hash = HomeHelper.get_near_shelter([lat, lng])
         end
+        render json: shelter_hash.to_json
     end
 
     def show

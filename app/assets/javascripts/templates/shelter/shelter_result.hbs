@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>距離(km)</th>
+                    <th>收容所名稱</th>
+                    <th></th>
+                </tr>
+            </thead>
+            {{#each items}}
+                <tr>
+                    <td>{{distance}}</td>
+                    <td><button class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="{{city}}{{address}}">{{name}}</button></td>
+                    <td><button class="btn btn-primary js-route" data-lat="{{lat}}" data-lng="{{lng}}">路徑規劃</button></td>
+                    <td><a href="/shelter/{{id}}" class="btn btn-link">民眾回報</a></td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+    <div class="col-md-6 mt4"><div id="gmap"></div></div>
+</div>

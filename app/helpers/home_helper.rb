@@ -6,17 +6,26 @@ module HomeHelper
     end 
 
     def HomeHelper.get_near_shelter(geo)
-        result_hash = {}
+        result_hash = []
         distance = 1.5 #km
         box = Geocoder::Calculations.bounding_box(geo, distance)
         shelter = Shelter.where(lat: (box[0]..box[2]), lng:(box[1]..box[3]))
         shelter.each do |ary|
             dis = Geocoder::Calculations.distance_between(geo, [ary["lat"],ary["lng"]]).round(3)
             if dis < 1.2
-                result_hash[dis] = ary
+                tmp = {}
+                tmp["distance"] = dis
+                tmp["name"] = ary[:name]
+                tmp["id"] = ary[:id]
+                tmp["city"] = ary[:city]
+                tmp["address"] = ary[:address]
+                tmp["lat"] = ary[:lat]
+                tmp["lng"] = ary[:lng]
+                result_hash.push(tmp)
             end
         end
-        return result_hash.sort.to_h
+        # p result_hash
+        return result_hash.sort_by {|k| k["distance"]}
     end
 
 

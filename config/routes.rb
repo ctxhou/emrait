@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get '/hospital/:id' => "hospital#get_hospital"
   get '/near_hospital' => "hospital#multi_near_hospital"
   get '/near_ambulance/' => "ambulance#near_ambulance"
+  get '/near_shelter/' => "shelter#near_shelter"
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

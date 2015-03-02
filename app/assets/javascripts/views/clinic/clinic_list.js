@@ -40,7 +40,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
                 position = marker.position
             }
         }
-        this.map.tinyMap('clear', 'direction')
+        this.map.tinyMap('clear', 'direction');
         this.map.tinyMap('modify', {
             direction: [
                 {
@@ -48,8 +48,6 @@ module.exports = Backbone.Marionette.ItemView.extend({
                     'to': [position.k, position.D]
                 }
             ]
-        })
-
-
+        });
     }
 });
