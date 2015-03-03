@@ -4,34 +4,37 @@ require "json"
 
 class HomeController < ApplicationController
     def index
-        @header = ["", "", ""]
+        @header = ["", "", "", ""]
         # uri = "http://140.116.96.118:9000/new.json"
         # @json = JSON.load(open(uri))
         render layout: "index"
     end
 
     def clinic
-        @header = ["", "", "active"]
+        @header = ["", "", "active", ""]
     end
 
     def shelter
     end
 
+    def api
+        @header = ["", "", "", "active"]
+    end
 
 
     def clinic_search
-        @header = ["", "", "active"]
+        @header = ["", "", "active", ""]
         @address = params[:address]
         @lat = params[:lat]
         @lng = params[:lng]
     end
 
     def emergency_input
-        @header = ["active", "", ""]
+        @header = ["active", "", "", ""]
     end
 
     def emergency_result
-        @header = ["active", "", ""]
+        @header = ["active", "", "", ""]
         @smart_url = URI.parse(request.original_url).query
         length = params[:length].to_i
         @geo_hash = {}
@@ -43,7 +46,7 @@ class HomeController < ApplicationController
     end
 
     def ai_ambulance
-        @header = ["active", "", ""]
+        @header = ["active", "", "", ""]
         @smart_url = URI.parse(request.original_url).query
         @setup_time = 10 # 15 min to pick up patient and place in hospital
         @speed = 50 # speed: 70km/hr = (70/60)km/min
@@ -66,7 +69,7 @@ class HomeController < ApplicationController
 
     def mission
         @mission = Mission.where(status: "ing").order(:created_at)
-        @header = ["", "", ""]
+        @header = ["", "", "", ""]
     end
 
     def reset

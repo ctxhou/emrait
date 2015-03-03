@@ -50,7 +50,6 @@ class AiAmbulanceController < ApplicationController
             tmp = {}
             tmp[:from] = geo_code[id]
             tmp[:to] = geo
-            tmp[:color] = "#777"
             tmp[:icon] = {to: "http://i.imgur.com/g8CFAxs.png"}
             result.unshift(tmp)
         end
