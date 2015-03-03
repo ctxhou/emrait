@@ -10,7 +10,8 @@ var bootstrap = require('bootstrap');
 var AmbulanceView = require('./views/ambulance/ambulance_modal');
 var Ambulance = require('./models/ambulance');
 var Hospital = require('./models/hospital');
-require("./vendor/jquery.tinyMap-3.1.3.min")
+require("./vendor/jquery.tinyMap.min")
+require("./vendor/readmore.min")
 
 var app = new Marionette.Application();
 app.addRegions({
@@ -25,10 +26,20 @@ app.on("before:start", function() {
         var map = $("#gmap").tinyMap({
             zoom: 15,
             center: {lat:lat, lng:lng},
-            direction: json
+            direction: json,
+            interval: 10000
         })
+        $(".js-panto").click(function(event) {
+            $target = $(event.currentTarget)
+            $("#gmap").tinyMap('panto', $target.attr("data-geo"))
+        });
     });
-
+    $('#readmore').readmore({
+      speed: 75,
+      collapsedHeight: 0,
+      moreLink: '<a href="#" style="font-size:19px">詳細指派清單</a>',
+      lessLink: '<a href="#">Read less</a>'
+    });
     $('[data-toggle="popover"]').popover({
         "html": true
     })

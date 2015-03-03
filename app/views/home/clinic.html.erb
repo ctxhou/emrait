@@ -3,9 +3,35 @@
     <div class="center h4">全台診所資料查詢</div>
 </div>
 
-<%= render "units/clinic_form" %>
-
+<%#= render "units/clinic_form" %>
+<div class="form-container">
+<form class="form-horizontal" method="get" action="/clinic_search">
+    <div class="row col-md-offset-2">
+        <div class="form-group">
+            <div class="col-md-2">
+                <select class="form-control" id="location-select">
+                    <option value="location">地址</option>
+                    <option value="geocode">座標</option>
+                </select>
+            </div>
+            <div id="location-input">
+                <div class="col-md-7" id="location">
+                    <input type="text" class="form-control" name="address" placeholder="輸入所在地址" id="address" required>
+                    <input type="hidden" name="lat" id="lat" required>
+                    <input type="hidden" name="lng" id="lng" required>
+                </div>
+            </div>
+            <span id="msg" class="col-md-4"></span>
+        </div>
+    </div>
+    <div class="row center">
+        <button type="submit" class="btn btn-primary btn-submit" disabled="disabled" id="submit">查詢</button>
+    </div>
+</div>
+</div>
 
 <% content_for :javascript do %>
-    <script async="async" data-turbolinks-track="true" src="/assets/dist/clinic.js"></script>
+    <!-- <script async="async" data-turbolinks-track="true" src="/assets/dist/clinic.js"></script> -->
+    <script async="async" data-turbolinks-track="true" src="/assets/dist/shelter.js"></script>
+
 <% end %>
