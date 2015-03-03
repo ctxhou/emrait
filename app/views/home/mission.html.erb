@@ -1,4 +1,4 @@
-<h3>出勤中救護車</h3>
+<h3>出勤中救護車 <button id="reset" class="btn btn-default pull-right">重置任務</button></h3>
 <table class="table">
     <thead>
         <tr>
@@ -16,7 +16,7 @@
             <td><%= ary["disaster_time"] %></td>
             <td><%= ary["hospital_time"] %></td>
             <td><%= ary["hospital"] %></td>
-            <td><button class="btn btn-success js-mission-complete" data-tr="row_<%= index%>" data-id="<%= ary["id"] %>" data-lat="<%= ary[:start_lat] %>" data-lng="<%= ary[:start_lng] %>">任務完成</button></td>
+            <td><button class="btn btn-success js-mission-complete" data-tr="row_<%= index%>" data-id="<%= ary["id"] %>" data-lat="<%= ary[:start_lat] %>" data-lng="<%= ary[:start_lng] %>">回報任務完成</button></td>
         </tr>
     <% end %>
 </table>

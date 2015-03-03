@@ -12,7 +12,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
     },
 
     show_map: function(map) {
-        this.data.push({id: "current", addr: [this.geo[0], this.geo[1]],'text': '<strong>目前位置</strong>', 'icon': 'http://app.essoduke.org/tinyMap/4.png', 'label': '目前位置', 'css': 'current_location'})
+        this.data.push({id: "current", addr: [this.geo[0], this.geo[1]],'text': '<strong>目前位置</strong>', 'icon': 'http://i.imgur.com/mx7VyAx.png', 'label': '目前位置', 'css': 'current_location'})
         map.tinyMap('modify', { 
             marker: this.data
         })

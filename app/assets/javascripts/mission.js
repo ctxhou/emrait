@@ -16,3 +16,8 @@ $(".js-mission-complete").click(function(event) {
         })
     })
 });
+
+$("#reset").click(function(event) {
+    /* Act on the event */
+    $(".js-mission-complete").click();
+});

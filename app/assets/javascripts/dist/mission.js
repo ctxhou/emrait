@@ -17,6 +17,11 @@ $(".js-mission-complete").click(function(event) {
         })
     })
 });
+
+$("#reset").click(function(event) {
+    /* Act on the event */
+    $(".js-mission-complete").click();
+});
 },{"bootstrap":3,"jquery":2}],2:[function(require,module,exports){
 (function (global){
 ;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {

@@ -19,7 +19,7 @@ class AiAmbulanceController < ApplicationController
             total_injure += this_injure
             geo_code[k] =  [params["lat#{k}".intern].to_f, params["lng#{k}".intern].to_f]
         end
-        hos_geo = nil
+        hos_geo = {}
         schedule, d_to_hospital = AiAmbulanceHelper.compare_119_distance(geo_hash, setup_time, speed, total_injure)
         schedule.each do |k|
             id = k[:id]
@@ -38,7 +38,7 @@ class AiAmbulanceController < ApplicationController
             tmp[:from] = [k[:start_lat], k[:start_lng]]
             tmp[:fromText] = k[:name]
             # tmp[:toText] = k[:name]
-            hos_geo = [k[:hos_lat], k[:hos_lng]]
+            hos_geo[disaster_id] = [k[:hos_lat], k[:hos_lng]]
             # tmp[:waypoint] = [geo_code[disaster_id]]
             tmp[:to] = geo_code[disaster_id]
             tmp[:color] = color_json[k[:name]]
@@ -46,11 +46,14 @@ class AiAmbulanceController < ApplicationController
             tmp[:icon] = {to:"http://i.imgur.com/B8xApKX.png", from: "http://i.imgur.com/rXh2tJE.png"} #http://i.imgur.com/g8CFAxs.png
             result.push(tmp)
         end
-        tmp = {}
-        tmp[:from] = geo_code[1]
-        p "hos: #{geo_code[1]}"
-        tmp[:to] = hos_geo
-        result << tmp
+        hos_geo.each do |id, geo|
+            tmp = {}
+            tmp[:from] = geo_code[id]
+            tmp[:to] = geo
+            tmp[:color] = "#777"
+            tmp[:icon] = {to: "http://i.imgur.com/g8CFAxs.png"}
+            result.unshift(tmp)
+        end
         render json: result.to_json
     end
 end
