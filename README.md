@@ -17,7 +17,7 @@ EMRAIT共提供三個工具：
     * 可指引民眾查詢合適的診所資訊(電話、住址、路線、營業時間)
     
 ## Website
-URL: emrait.cloudapp.net
+URL: [emrait.cloudapp.net](http://emrait.cloudapp.net/)
 
 ## Open data使用
 
