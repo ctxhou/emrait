@@ -3,6 +3,7 @@ class ShelterController < ApplicationController
 
     def index
         @header = ["", "active", ""]
+        @all_event = ShelterInfo.all
     end
 
     def result
