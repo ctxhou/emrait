@@ -40,3 +40,17 @@
 
     </form>
 </div>
+<hr>
+<div id="real_time_info" class="left">
+    <h4>災民收容所即時資訊</h4>
+    <% @all_event.each do |k| %>
+        <div class="row">
+            <div class="col-md-3">
+                <%= k[:name] %>說 : <%= k[:content] %>
+            </div>
+            <div class="col-md-3">
+                <a href="/shelter/<%= k[:shelter_id] %>"><%= Shelter.find(k[:shelter_id])[:name]%></a>
+            </div>
+        </div>
+    <% end %>
+</div>
