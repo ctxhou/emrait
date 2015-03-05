@@ -12,11 +12,15 @@ var Shelters = require('./collections/shelter');
 var bootstrap = require('bootstrap')
 var Spinner = require('spin')
 var app = new Marionette.Application();
+var ShelterInfo = require('./module/shelter_bottom_info');
+
 app.addRegions({
     content: "#content"
 })
 
 app.on("before:start", function() {
+
+    ShelterInfo.init();
     var disaster_lat = $("#lat").val();
     var disaster_lng = $("#lng").val();
     var shelters = new Shelters();

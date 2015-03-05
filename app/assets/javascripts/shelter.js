@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var GetGeo = require('./module/get_geo')
+var ShelterInfo = require('./module/shelter_bottom_info');
 
 var geocode = _.template('<div class="col-md-2">'+
                     '<input type="text" class="form-control" placeholder="緯度" name="lat" id="lat" required>'+
@@ -14,6 +15,7 @@ var location = _.template('<div class="col-md-6" id="location">'+
                 '<input type="hidden" name="lng" id="lng" required>'+
                 '</div>')
 
+ShelterInfo.init();
 function fill_geocode(ary) {
     $("#lat").val(ary[0])
     $("#lng").val(ary[1])

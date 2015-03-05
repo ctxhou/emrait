@@ -1,0 +1,18 @@
+<div id="shelter_info" class="hidden-xs" data-placement="top" >
+    <button class="btn btn-link"><i class="glyphicon glyphicon-info-sign"></i></button>
+</div>
+
+<h4 class="popover-title" id="popover-head" style="display:none">災民收容所即時資訊</h4>
+    <div id="popover-content" style="display:none">
+        <% ShelterInfo.all.each do |k| %>
+            <div class="row mb1">
+                <div class="col-md-9">
+                     <%= k[:name] %>說 : <%= k[:content] %>
+                </div>
+                <div class="col-md-3">
+                     <a href="/shelter/<%= k[:shelter_id] %>"><%= Shelter.find(k[:shelter_id])[:name]%></a>
+                </div>
+            </div>
+        <% end %>
+    </div>
+</div>

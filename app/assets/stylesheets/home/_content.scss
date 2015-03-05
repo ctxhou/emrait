@@ -59,3 +59,18 @@
         margin-right: 10px;
     }
 }
+
+
+#shelter_info {
+    position: fixed;
+    left:2%;
+    bottom: 15%;
+    button {
+        color: red;
+        font-size: 2em;
+        &:hover {
+            opacity: .8;
+        }
+    }
+
+}
