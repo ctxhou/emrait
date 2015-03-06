@@ -112,6 +112,10 @@
     <input type="hidden" id="lat<%= k %>" value="<%= v[:lat] %>">
     <input type="hidden" id="lng<%= k %>" value="<%= v[:lng] %>">
 <% end %>
+<div class="spin-container center"  style="margin-top:5em; display: none; position: fixed; top: 10%; left:50%">
+    <div id="spin"></div>
+    <div style="padding-top:2.5em; color: red; font-size:30px">指派中...</div>
+</div>
 <%= render "units/bootstrap_modal" %>
 <input type="hidden" value="<%= @lat %>" id="end_lat">
 <input type="hidden" value="<%= @lng %>" id="end_lng">
