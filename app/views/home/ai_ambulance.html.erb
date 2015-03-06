@@ -1,5 +1,9 @@
 <h1>系統指派</h1>
-<div class="pull-right"><a href="/mission">出勤中救護車</a></div>
+<div class="pull-right">
+    <a href="<%= URI.escape("/emergency_result/?#{@smart_url}") %>">手動指派</a>
+    <br>
+    <a href="/mission">出勤中救護車</a>
+</div>
 <input type="hidden" value="<%= URI.escape("/smart_emergency/?#{@smart_url}") %>" id="this_url">
 <h3>以下為到災點的救護車指派建議 ( 有<%= @total_injure %>位病患 )</h3>
 <h4>
