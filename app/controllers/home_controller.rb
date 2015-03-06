@@ -62,6 +62,8 @@ class HomeController < ApplicationController
             @total_injure += this_injure
         end
         @schedule, @d_to_hospital = AiAmbulanceHelper.compare_119_distance(@geo_hash, @setup_time, @speed, @total_injure)
+        p 'hos'
+        p @d_to_hospital
         # if @d_to_hospital.length == 0
         #     @clinic = AiAmbulanceHelper.near_clinic(@lat, @lng)
         # end
