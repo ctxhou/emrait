@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20150217143631) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "ambulances", force: true do |t|
     t.integer  "seq_id"
     t.string   "site_type"
