@@ -125,5 +125,7 @@
 <input type="hidden" value="<%= @lng %>" id="end_lng">
 <% content_for :javascript do %>
 <script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry"></script>
-<script async="async" data-turbolinks-track="true" src="/assets/dist/ai_ambulance.js"></script>
+<!-- <script async="async" data-turbolinks-track="true" src="/assets/dist/ai_ambulance.js"></script> -->
+<%= javascript_include_tag 'dist/ai_ambulance' %>
+
 <% end %>
