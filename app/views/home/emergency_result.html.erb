@@ -43,5 +43,6 @@
 <%= render "units/bootstrap_modal" %>
 <% content_for :javascript do %>
 <script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry"></script>
-<script async="async" data-turbolinks-track="true" src="/assets/dist/emergency.js"></script>
+<%= javascript_include_tag "dist/emergency" %>
+
 <% end %>
