@@ -43,7 +43,6 @@ module AiAmbulanceHelper
     end
     # time unit: second
     def AiAmbulanceHelper.suggest_ambulance(d_to_hospital, ambulance_queue, geo_hash, setup_time, speed, total_injure)
-        p ambulance_queue.sort_by{|k,v| v[:available_time]}
         ambulance_queue = ambulance_queue.sort_by{|k,v| v[:available_time]}.to_h
         schedule = []
         now_time = Time.now.to_i
