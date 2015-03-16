@@ -23,33 +23,7 @@ clinic_app.addRegions({
 })
 
 clinic_app.on("before:start", function() {
-    this.subject_to_image = {
-        "不分科": "/assets/map/none.png",
-        "內科": "/assets/map/inner.png",
-        "兒科": "/assets/map/child.png",
-        "復健科": "/assets/map/leg.png",
-        "眼科": "/assets/map/eye.png",
-        "牙科": "/assets/map/tooth.png",
-        "精神科": "/assets/map/brain.png",
-        "耳鼻喉科": "/assets/map/ear.png",
-        "婦產科": "/assets/map/pregnant.png", 
-        "外科": "/assets/map/outer.png", 
-        "口腔顎面外科": "/assets/map/tooth.png", 
-        "中醫科":"/assets/map/chinese.png", 
-        "骨科": "/assets/map/bone.png", 
-        "神經科":"/assets/map/god.png", 
-        "整形外科": "/assets/map/plastic.png", 
-        "神經外科": "/assets/map/god.png", 
-        "泌尿科": "/assets/map/pipi.png", 
-        "病理科": "/assets/map/bing.png", 
-        "急診醫學科": "/assets/map/hurry.png", 
-        "麻醉科":"/assets/map/ma.png", 
-        "放射線科":"/assets/map/fun.png", 
-        "洗腎科":"/assets/map/kidney.png", 
-        "齒顎矯正科": "/assets/map/tooth.png",
-        "皮膚科":"/assets/map/skin.png",
-        "家醫科": "/assets/map/home.png"
-    }
+
     var opts = {
       lines: 13, // The number of lines to draw
       length: 20, // The length of each line
@@ -158,14 +132,14 @@ clinic_app.refactor_data = function(cb, clinics, geo, map) {
                 category = val
             }
         });
-        if ( that.subject_to_image[category])
-            input_obj["icon"] = {url: that.subject_to_image[category], size:[32, 32]}
+        if ( window.subject_to_image[category])
+            input_obj["icon"] = {url: window.subject_to_image[category], size:[32, 32]}
         clinics_add_distance.push(input_obj)
     }
     subject = _.uniq(subject)
     // show subject button
     $.each(subject, function(index, val) {
-        $("#subject_button").append(subejct_button({sub: val, path: that.subject_to_image[val]}))
+        $("#subject_button").append(subejct_button({sub: val, path: window.subject_to_image[val]}))
     });
     cb.call(this, clinics_add_distance, geo, map)
 }

@@ -26,6 +26,35 @@
 
 <% content_for :javascript do %>
 <script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry"></script>
+<script>
+    window.subject_to_image = {
+        "不分科": "<%= asset_path 'map/none.png'%>",
+        "內科": "<%= asset_path 'map/inner.png'%>",
+        "兒科": "<%= asset_path 'map/child.png'%>",
+        "復健科": "<%= asset_path 'map/leg.png'%>",
+        "眼科": "<%= asset_path 'map/eye.png'%>",
+        "牙科": "<%= asset_path 'map/tooth.png'%>",
+        "精神科": "<%= asset_path 'map/brain.png'%>",
+        "耳鼻喉科": "<%= asset_path 'map/ear.png'%>",
+        "婦產科": "<%= asset_path 'map/pregnant.png'%>",
+        "外科": "<%= asset_path 'map/outer.png'%>",
+        "口腔顎面外科": "<%= asset_path 'map/tooth.png'%>",
+        "中醫科":"<%= asset_path 'map/chinese.png'%>", 
+        "骨科": "<%= asset_path 'map/bone.png'%>", 
+        "神經科":"<%= asset_path 'map/god.png'%>", 
+        "整形外科": "<%= asset_path 'map/plastic.png'%>", 
+        "神經外科": "<%= asset_path 'map/god.png'%>", 
+        "泌尿科": "<%= asset_path 'map/pipi.png'%>", 
+        "病理科": "<%= asset_path 'map/bing.png'%>", 
+        "急診醫學科": "<%= asset_path 'map/hurry.png'%>", 
+        "麻醉科":"<%= asset_path 'map/ma.png'%>", 
+        "放射線科":"<%= asset_path 'map/fun.png'%>", 
+        "洗腎科":"<%= asset_path 'map/kidney.png'%>", 
+        "齒顎矯正科": "<%= asset_path 'map/tooth.png'%>",
+        "皮膚科":"<%= asset_path 'map/skin.png'%>",
+        "家醫科": "<%= asset_path 'map/home.png'%>"
+    }
+</script>
 <%= javascript_include_tag "dist/clinic_search" %>
 
 <% end %>
