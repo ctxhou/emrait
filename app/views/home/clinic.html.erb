@@ -32,6 +32,8 @@
 
 <% content_for :javascript do %>
     <!-- <script async="async" data-turbolinks-track="true" src="/assets/dist/clinic.js"></script> -->
-    <script async="async" data-turbolinks-track="true" src="/assets/dist/shelter.js"></script>
+    <!-- <script async="async" data-turbolinks-track="true" src="/assets/dist/shelter.js"></script> -->
+<%= javascript_include_tag "dist/clinic" %>
+<%= javascript_include_tag "dist/shelter" %>
 
 <% end %>
