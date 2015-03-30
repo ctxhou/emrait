@@ -48,6 +48,7 @@ clinic_app.on("before:start", function() {
         zoom: 15,
         center: {lat:geo[0], lng:geo[1]}
     })
+
     this.initView(geo, map);
     $("#get_geo").click(function(event) {
         GetGeo.geolocation(that.setCoor);
